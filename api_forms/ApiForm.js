@@ -76,7 +76,6 @@ class ApiForm extends Component {
   };
 
   handleFieldChange = (updatedFieldsData={}, updateOnFinish=false) => {
-    console.log(updatedFieldsData)
     let wasValid = undefined;
     let isValid = undefined;
 
@@ -97,10 +96,8 @@ class ApiForm extends Component {
       }
 
       isValid = this.isFormValid(newState);
-      console.log(newState);
       return newState
     }, () => {
-      console.log('callback');
       const formValues = {};
 
       for (const field of this.props.fields) {
@@ -110,10 +107,6 @@ class ApiForm extends Component {
       this.props.onFormValueChange(formValues);
 
       const updateOnLoad = typeof(this.props.updateOnLoad) !== 'undefined' ? this.props.updateOnLoad : true;
-
-      console.log(wasValid);
-      console.log(isValid);
-      console.log(updateOnLoad);
 
       if (!wasValid && isValid && updateOnLoad) {
         this.updateSearchResults();
