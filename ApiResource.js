@@ -216,8 +216,8 @@ export class ApiResourceObject {
       body: JSON.stringify(payload)
     }).then(json => {
       dispatch({
-        type: 'updateApiResource',
-        payload: json
+        type: 'updateApiResourceObject',
+        apiResourceObject: json
       });
     });
   }
