@@ -2,6 +2,7 @@ import { apiSettings } from './settings';
 import Big from 'big.js';
 import moment from 'moment';
 import locale_es from "moment/locale/es";
+import {fetchApiResource, filterApiResourceObjectsByType} from "./ApiResource";
 
 // REF: https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
 export function camelize(str) {
@@ -155,4 +156,27 @@ export function parseDateToCurrentTz(dateStr) {
   * handles DST, so if two dates are in different DST then they have a 1 hour
   * offset */
   return moment(dateStr).utcOffset(offset, true);
+}
+
+export function loadResources(requiredResources, store, callback) {
+  const apiResourceObjects = {};
+
+  for (let resource of requiredResources) {
+    fetchApiResource(resource, store.dispatch)
+        .then((apiResourceObjectList) => {
+          const state = store.getState();
+
+          for (const apiResourceObject of apiResourceObjectList) {
+            apiResourceObjects[apiResourceObject.url] = apiResourceObject
+          }
+
+          if (state.authToken && requiredResources.every(resource => filterApiResourceObjectsByType(apiResourceObjects, resource).length)) {
+            callback(
+                state.authToken,
+                store.dispatch,
+                apiResourceObjects
+            )
+          }
+        })
+  }
 }
