@@ -170,7 +170,7 @@ export function loadResources(requiredResources, store, callback) {
             apiResourceObjects[apiResourceObject.url] = apiResourceObject
           }
 
-          if (state.authToken && requiredResources.every(resource => filterApiResourceObjectsByType(apiResourceObjects, resource).length)) {
+          if (requiredResources.every(resource => filterApiResourceObjectsByType(apiResourceObjects, resource).length)) {
             callback(
                 state.authToken,
                 store.dispatch,

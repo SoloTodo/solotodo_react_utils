@@ -1,5 +1,5 @@
 import { apiSettings } from "./settings"
-import {camelize, fetchAuth, formatCurrency} from './utils';
+import {camelize, fetchAuth} from './utils';
 
 export function filterApiResourceObjectsByType(apiResourceObjects, resource) {
   const apiResourceEndpoint = apiSettings.apiResourceEndpoints[resource];
@@ -57,14 +57,7 @@ export function addApiResourceStateToPropsUtils(mapStateToProps=null) {
       originalMapStateToPropsResult = mapStateToProps(state, ownProps)
     }
 
-    const user = state.apiResourceObjects[apiSettings.ownUserUrl];
-    const preferredNumberFormat = state.apiResourceObjects[user.preferred_number_format];
-    const preferredCurrency = state.apiResourceObjects[user.preferred_currency];
-
-    const result = {
-      preferredCurrency: preferredCurrency,
-      preferredCountry: state.apiResourceObjects[user.preferred_country],
-      preferredNumberFormat: state.apiResourceObjects[user.preferred_number_format],
+    return {
       ApiResourceObject: (jsonData) => {
         return new ApiResourceObject(jsonData, state.apiResourceObjects)
       },
@@ -80,34 +73,8 @@ export function addApiResourceStateToPropsUtils(mapStateToProps=null) {
       filterApiResourceObjectsByType: resource => {
         return filterApiResourceObjectsByType(state.apiResourceObjects, resource)
       },
-      formatCurrency: (value, currency=null, convertToPreferredCurrency=false) => {
-        if (!currency) {
-          currency = preferredCurrency
-        }
-
-        return formatCurrency(
-            value,
-            currency,
-            convertToPreferredCurrency ? preferredCurrency : null,
-            preferredNumberFormat.thousands_separator,
-            preferredNumberFormat.decimal_separator)
-      },
-      convertToPreferredCurrency: (value, currency) => {
-        if (value === null) {
-          return null;
-        }
-
-        const originalCurrencyExchangeRate = currency.exchange_rate;
-        const exchangeRate = preferredCurrency.exchange_rate / originalCurrencyExchangeRate;
-
-        return value * exchangeRate;
-      },
       ...originalMapStateToPropsResult
     };
-
-    result.propsFromState = Object.keys(result).concat('propsFromState');
-
-    return result;
   }
 }
 
