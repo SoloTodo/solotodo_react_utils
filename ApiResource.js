@@ -58,6 +58,7 @@ export function addApiResourceStateToPropsUtils(mapStateToProps=null) {
     }
 
     return {
+      authToken: state.authToken,
       ApiResourceObject: (jsonData) => {
         return new ApiResourceObject(jsonData, state.apiResourceObjects)
       },
