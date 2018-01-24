@@ -180,3 +180,32 @@ export function loadResources(requiredResources, store, callback) {
         })
   }
 }
+
+export function areObjectsEqual(objA, objB) {
+  const objAUrl = objA ? objA.url : null;
+  const objBUrl = objB ? objB.url : null;
+
+  return objAUrl === objBUrl;
+}
+
+export function areObjectListsEqual(listA, listB) {
+  if (listA === null && listB === null) {
+    return true;
+  }
+
+  if (listA !== listB) {
+    return false
+  }
+
+  if (listA.length !== listB.length) {
+    return false
+  }
+
+  for (let i = 0; i < listA.length; i++) {
+    if (listA[i].url !== listB[i].url) {
+      return false;
+    }
+  }
+
+  return true;
+}

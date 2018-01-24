@@ -65,5 +65,10 @@ export function loadedResourcesReducer(state=[], action) {
     return [...state, action.resource]
   }
 
+  if (action.type === 'setAuthToken') {
+    // If the user changes, invalidate the resources we may have fetched
+    return []
+  }
+
   return state
 }

@@ -7,24 +7,26 @@ import {
 } from "../ApiResource";
 
 class RequiredResources extends Component {
+  constructor(props) {
+    super(props);
+    this.resourcesLoading = [];
+  }
+
   componentDidMount() {
-    this.componentUpdate(this.props)
+    this.componentUpdate(this.props.resources, this.props.loadedResources)
   }
 
   componentWillReceiveProps(nextProps) {
-    const oldResources = this.props.resources;
-    const newResources = nextProps.resources;
-
-    if (oldResources.length !== newResources.length || !oldResources.every((v, i)=> v === newResources[i])) {
-      this.componentUpdate(nextProps);
-    }
+    this.componentUpdate(nextProps.resources, nextProps.loadedResources);
   }
 
-  componentUpdate(props) {
-    const requiredResources = props.resources || [];
-    for (let requiredResource of requiredResources) {
-      if (!props.loadedResources.includes(requiredResource)) {
-        props.fetchApiResource(requiredResource, props.dispatch)
+  componentUpdate(requiredResources, loadedResources) {
+    for (const requiredResource of requiredResources) {
+      if (!loadedResources.includes(requiredResource) && !this.resourcesLoading.includes(requiredResource)) {
+        this.resourcesLoading.push(requiredResource);
+        this.props.fetchApiResource(requiredResource, this.props.dispatch).then(() => {
+          this.resourcesLoading = this.resourcesLoading.filter(resource => resource !== requiredResource)
+        })
       }
     }
   }
