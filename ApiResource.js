@@ -9,6 +9,8 @@ export function filterApiResourceObjectsByType(apiResourceObjects, resource) {
 export function fetchApiResource(resource, dispatch, authToken=null) {
   const resourceUrl = apiSettings.apiResourceEndpoints[resource];
 
+  // console.log(authToken)
+
   let resourceRequest = null;
 
   if (authToken) {
@@ -65,8 +67,8 @@ export function addApiResourceStateToPropsUtils(mapStateToProps=null) {
       fetchAuth: (input, init={}) => {
         return fetchAuth(state.authToken, input, init);
       },
-      fetchApiResource: (resource, dispatch) => {
-        return fetchApiResource(resource, dispatch, state.authToken)
+      fetchApiResource: (resource, dispatch, authToken=state.authToken) => {
+        return fetchApiResource(resource, dispatch, authToken)
       },
       fetchApiResourceObject: (resource, id, dispatch) => {
         return fetchApiResourceObject(resource, id, dispatch, state.authToken)

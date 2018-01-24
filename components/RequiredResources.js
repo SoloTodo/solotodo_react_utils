@@ -13,18 +13,19 @@ class RequiredResources extends Component {
   }
 
   componentDidMount() {
-    this.componentUpdate(this.props.resources, this.props.loadedResources)
+    this.componentUpdate(this.props.resources, this.props.loadedResources, this.props.authToken)
   }
 
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps.resources, nextProps.loadedResources);
+    this.componentUpdate(nextProps.resources, nextProps.loadedResources, nextProps.authToken);
   }
 
-  componentUpdate(requiredResources, loadedResources) {
+  componentUpdate(requiredResources, loadedResources, authToken) {
     for (const requiredResource of requiredResources) {
       if (!loadedResources.includes(requiredResource) && !this.resourcesLoading.includes(requiredResource)) {
         this.resourcesLoading.push(requiredResource);
-        this.props.fetchApiResource(requiredResource, this.props.dispatch).then(() => {
+        // console.log('fetching');
+        this.props.fetchApiResource(requiredResource, this.props.dispatch, authToken).then(() => {
           this.resourcesLoading = this.resourcesLoading.filter(resource => resource !== requiredResource)
         })
       }
