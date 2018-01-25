@@ -16,7 +16,11 @@ export function fetchAuth(authToken, input, init={}) {
   if (!init.headers) {
     init.headers = {}
   }
-  init.headers.Authorization = `Token ${authToken}`;
+
+  if (authToken) {
+    init.headers.Authorization = `Token ${authToken}`;
+  }
+
   init.headers['Content-Type'] = 'application/json';
   init.headers['Accept'] = 'application/json';
 

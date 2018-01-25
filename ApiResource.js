@@ -9,17 +9,7 @@ export function filterApiResourceObjectsByType(apiResourceObjects, resource) {
 export function fetchApiResource(resource, dispatch, authToken=null) {
   const resourceUrl = apiSettings.apiResourceEndpoints[resource];
 
-  // console.log(authToken)
-
-  let resourceRequest = null;
-
-  if (authToken) {
-    resourceRequest = fetchAuth(authToken, resourceUrl)
-  } else {
-    resourceRequest = fetch(resourceUrl).then(res => res.json())
-  }
-
-  return resourceRequest.then(json => {
+  return fetchAuth(authToken, resourceUrl).then(json => {
     dispatch({
       type: 'addApiResource',
       apiResourceObjects: json,
