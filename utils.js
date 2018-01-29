@@ -197,7 +197,7 @@ export function areObjectListsEqual(listA, listB) {
     return true;
   }
 
-  if (listA !== listB) {
+  if (typeof(listA) !== typeof(listB)) {
     return false
   }
 
