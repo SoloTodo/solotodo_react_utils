@@ -181,7 +181,8 @@ class ApiFormDiscreteRangeField extends Component {
       return (
           <Tooltip
               prefixCls="rc-slider-tooltip"
-              overlay={<span>{resultCount} <FormattedMessage id="results_lower_case" defaultMessage="results" /></span>}
+              // overlay={<span>{resultCount} <FormattedMessage id="results_lower_case" defaultMessage="results" /></span>}
+              overlay={<span>{resultCount} resultados</span>}
               visible={dragging}
               placement="top"
               key={index}
