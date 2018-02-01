@@ -213,3 +213,27 @@ export function areObjectListsEqual(listA, listB) {
 
   return true;
 }
+
+export function areListsEqual(listA, listB) {
+  if (listA === null && listB === null) {
+    return true;
+  }
+
+  if (typeof(listA) !== typeof(listB)) {
+    return false
+  }
+
+  if (listA.length !== listB.length) {
+    return false
+  }
+
+  for (let i = 0; i < listA.length; i++) {
+    if (listA[i] !== listB[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+

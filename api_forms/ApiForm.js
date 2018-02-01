@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import './ApiForm.css'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {listToObject} from "../utils";
+import {areListsEqual, listToObject} from "../utils";
 import {addApiResourceStateToPropsUtils} from "../ApiResource";
 
 class ApiForm extends Component {
@@ -48,6 +48,10 @@ class ApiForm extends Component {
           nextObject: nextObject
         });
       }
+    }
+
+    if (!areListsEqual(this.props.endpoints, nextProps.endpoints)) {
+      this.updateSearchResults(null, nextProps);
     }
 
     if (changedObjects.length) {
