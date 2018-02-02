@@ -6,7 +6,6 @@ import Tooltip from 'rc-tooltip';
 import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
-import {FormattedMessage} from "react-intl";
 import RcDiscreteRange from "./RcDiscreteRange";
 
 
@@ -181,8 +180,7 @@ class ApiFormDiscreteRangeField extends Component {
       return (
           <Tooltip
               prefixCls="rc-slider-tooltip"
-              // overlay={<span>{resultCount} <FormattedMessage id="results_lower_case" defaultMessage="results" /></span>}
-              overlay={<span>{resultCount} resultados</span>}
+              overlay={<span>{resultCount} {this.props.resultCountSuffix}</span>}
               visible={dragging}
               placement="top"
               key={index}

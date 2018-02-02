@@ -6,7 +6,6 @@ import Tooltip from 'rc-tooltip';
 import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
-import {FormattedMessage} from "react-intl";
 import RcContinuousRange from "./RcContinuousRange";
 
 
@@ -206,7 +205,7 @@ class ApiFormContinuousRangeField extends Component {
       return (
           <Tooltip
               prefixCls="rc-slider-tooltip"
-              overlay={<span>{valueRangeAsText} {this.props.unit} ({resultCount} <FormattedMessage id="results_lower_case" defaultMessage="results" />)</span>}
+              overlay={<span>{valueRangeAsText} {this.props.unit} ({resultCount} {this.props.resultCountSuffix})</span>}
               visible={dragging}
               placement="top"
               key={index}
