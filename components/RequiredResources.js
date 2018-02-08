@@ -24,7 +24,6 @@ class RequiredResources extends Component {
     for (const requiredResource of requiredResources) {
       if (!loadedResources.includes(requiredResource) && !this.resourcesLoading.includes(requiredResource)) {
         this.resourcesLoading.push(requiredResource);
-        // console.log('fetching');
         this.props.fetchApiResource(requiredResource, this.props.dispatch, authToken).then(() => {
           this.resourcesLoading = this.resourcesLoading.filter(resource => resource !== requiredResource)
         })

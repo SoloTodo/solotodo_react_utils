@@ -57,7 +57,7 @@ export function formatCurrency(value, valueCurrency, conversionCurrency, thousan
   let formattingCurrency = valueCurrency;
 
   if (conversionCurrency && valueCurrency.url !== conversionCurrency.url) {
-    value *= conversionCurrency.exchangeRate / valueCurrency.exchangeRate;
+    value *= new Big(conversionCurrency.exchangeRate) / new Big(valueCurrency.exchangeRate);
     formattingCurrency = conversionCurrency
   }
 
@@ -236,4 +236,24 @@ export function areListsEqual(listA, listB) {
   return true;
 }
 
+export function areValueListsEqual(listA, listB) {
+  if (listA === null && listB === null) {
+    return true;
+  }
 
+  if (typeof(listA) !== typeof(listB)) {
+    return false
+  }
+
+  if (listA.length !== listB.length) {
+    return false
+  }
+
+  for (let i = 0; i < listA.length; i++) {
+    if (listA[i].id !== listB[i].id) {
+      return false;
+    }
+  }
+
+  return true;
+}
