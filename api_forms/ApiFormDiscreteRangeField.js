@@ -7,7 +7,7 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcDiscreteRange from "./RcDiscreteRange";
-import {areValueListsEqual} from "../utils";
+import {areListsEqual, areValueListsEqual} from "../utils";
 
 
 class ApiFormDiscreteRangeField extends Component {
@@ -27,7 +27,10 @@ class ApiFormDiscreteRangeField extends Component {
     }
 
     if (!areValueListsEqual(this.props.choices, nextProps.choices)) {
-      this.notifyNewParams(this.parseIdFromUrl(nextProps));
+      const newValues = this.parseIdFromUrl(nextProps);
+      if (!areListsEqual(this.props.value, newValues)) {
+        this.notifyNewParams(newValues, nextProps);
+      }
     }
   }
 
