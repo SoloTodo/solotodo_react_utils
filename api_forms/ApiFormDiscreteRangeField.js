@@ -7,6 +7,7 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcDiscreteRange from "./RcDiscreteRange";
+import {areListsEqual, areValueListsEqual} from "../utils";
 
 
 class ApiFormDiscreteRangeField extends Component {
@@ -16,20 +17,40 @@ class ApiFormDiscreteRangeField extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseIdFromUrl(), nextProps)
+      this.notifyNewParams(this.parseIdFromUrl(), nextProps);
+      return;
     }
 
     if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseIdFromUrl())
+      this.notifyNewParams(this.parseIdFromUrl());
+      return;
+    }
+
+    if (!areValueListsEqual(this.props.choices, nextProps.choices)) {
+      const newValues = this.parseIdFromUrl(nextProps);
+      if (!areListsEqual(this.props.value, newValues)) {
+        this.notifyNewParams(newValues, nextProps);
+      }
     }
   }
 
-  parseIdFromUrl = () => {
+  parseIdFromUrl = (props=null) => {
+    props = props || this.props;
+
     // Obtain URL params
     const parameters = queryString.parse(window.location.search);
 
-    const startId = parseInt(parameters[changeCase.snakeCase(this.props.name) + '_start'], 10) || null;
-    const endId = parseInt(parameters[changeCase.snakeCase(this.props.name) + '_end'], 10) || null;
+    let startId = parseInt(parameters[changeCase.snakeCase(props.name) + '_start'], 10);
+    const startChoice = props.choices.filter(choice => choice.id === startId)[0] || null;
+    if (!startChoice) {
+      startId = null
+    }
+
+    let endId = parseInt(parameters[changeCase.snakeCase(props.name) + '_end'], 10);
+    const endChoice = props.choices.filter(choice => choice.id === endId)[0];
+    if (!endChoice) {
+      endId = null
+    }
 
     return {
       startId,
@@ -82,30 +103,25 @@ class ApiFormDiscreteRangeField extends Component {
             <Range />
           </div>)
     }
-    let startId = null;
-    let endId = null;
-    if (this.props.value) {
-      startId = this.props.value.startId;
-      endId = this.props.value.endId;
-    }
+
+    const min = choices[0].value;
+    const max = choices[choices.length - 1].value;
+
+    const startId = this.props.value ? this.props.value.startId : null;
+    const endId = this.props.value ? this.props.value.endId : null;
 
     let marks = {};
     let valueDocCountDict = {};
     let ongoingDocCount = 0;
 
-    let startValue = null;
-    let endValue = null;
+    const startChoice = choices.filter(choice => choice.id === startId)[0];
+    const endChoice = choices.filter(choice => choice.id === endId)[0];
+
+    const startValue = startChoice ? startChoice.value : min;
+    const endValue = endChoice ? endChoice.value : max;
 
     for (const choice of choices) {
       marks[choice.value] = choice.label;
-
-      if (choice.id === startId) {
-        startValue = choice.value
-      }
-
-      if (choice.id === endId) {
-        endValue = choice.value
-      }
 
       valueDocCountDict[choice.value] = {
         ownDocCount: choice.doc_count,
@@ -115,44 +131,13 @@ class ApiFormDiscreteRangeField extends Component {
       ongoingDocCount += choice.doc_count;
     }
 
-    const min = choices[0].value;
-    const max = choices[choices.length - 1].value;
-
-    if (startValue === null) {
-      startValue = min
-    }
-
-    if (endValue === null) {
-      endValue = max
-    }
-
     const handleValueChange = newValues => {
-      let newStartId = null;
-      let newEndId = null;
+      const newStartChoice = choices.filter(choice => choice.value === newValues[0])[0];
+      const newEndChoice = choices.filter(choice => choice.value === newValues[1])[0];
 
-      for (const choice of choices) {
-        if (choice.value === newValues[0]) {
-          newStartId = choice.id
-        }
+      const newStartId = newStartChoice.value === min ? null : newStartChoice.id;
+      const newEndId = newEndChoice.value === max ? null : newEndChoice.id;
 
-        if (choice.value === newValues[1]) {
-          newEndId = choice.id
-        }
-      }
-
-      if (newValues[0] <= min) {
-        newStartId = null
-      }
-
-      if (newValues[1] >= max) {
-        newEndId = null
-      }
-
-      // The range may change dynamically due to changes in the results
-      // e.g. The original search form may contain notebook with screen sizes
-      // from 4 to 21", but applying a filter compressed the range to 14 - 17"
-      // The internal range values may change (to accomodate the new range)
-      // but if the actual value doesn't change then don't notify it.
       if (this.props.value.startId !== newStartId || this.props.value.endId !== newEndId) {
         this.notifyNewParams({
           startId: newStartId,
@@ -199,6 +184,7 @@ class ApiFormDiscreteRangeField extends Component {
                   marks={marks}
                   min={min}
                   max={max}
+                  value={[startValue, endValue]}
                   onAfterChange={handleValueChange}
                   handle={handle}
               />

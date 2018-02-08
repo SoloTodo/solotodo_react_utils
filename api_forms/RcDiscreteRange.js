@@ -1,60 +1,41 @@
 import React, {Component} from 'react'
 import {Range} from "rc-slider";
 
+/**
+ * We need to wrap rc-slider to allow moving the handles without changing the
+ * ApiForm values, the values are only commited to ApiForm when the user lets
+ * go of the handle
+ */
+
 class RcDiscreteRange extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      startValue: undefined,
-      endValue: undefined
+      startValue: props.value[0],
+      endValue: props.value[1]
     }
   }
 
   componentWillReceiveProps(newProps) {
-    const oldMarks = this.props.marks;
-    const newMarks = newProps.marks;
-
-    if (JSON.stringify(oldMarks) !== JSON.stringify(newMarks)) {
-      this.onChange([this.state.startValue, this.state.endValue], newProps)
+    if (this.props.value[0] !== newProps.value[0] || this.props.value[1] !== newProps.value[1]) {
+      this.setState({
+        startValue: newProps.value[0],
+        endValue: newProps.value[1]
+      })
     }
   }
 
-  onChange = (values, newProps) => {
-    const props = newProps ? newProps : this.props;
-
-    let startValue = values[0];
-    let endValue = values[1];
-
-    if (startValue <= props.min) {
-      startValue = undefined
-    }
-
-    if (endValue >= props.max) {
-      endValue = undefined
-    }
-
+  onChange = values => {
     this.setState({
-      startValue,
-      endValue
-    }, () => {
-      if (newProps) {
-        newProps.onAfterChange([startValue, endValue])
-      }
+      startValue: values[0],
+      endValue: values[1]
     })
   };
 
   render() {
-    let startValue = this.state.startValue;
-    let endValue = this.state.endValue;
-
-    if (typeof(startValue) === 'undefined') {
-      startValue = this.props.min
-    }
-
-    if (typeof(endValue) === 'undefined') {
-      endValue = this.props.max
-    }
+    const startValue = this.state.startValue || this.props.min;
+    const endValue = this.state.endValue || this.props.max;
 
     return <Range
         marks={this.props.marks}
