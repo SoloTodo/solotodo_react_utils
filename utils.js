@@ -1,4 +1,4 @@
-import { apiSettings } from './settings';
+import {apiSettings} from './settings';
 import Big from 'big.js';
 import moment from 'moment';
 import locale_es from "moment/locale/es";
@@ -6,10 +6,12 @@ import {fetchApiResource, filterApiResourceObjectsByType} from "./ApiResource";
 
 // REF: https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
 export function camelize(str) {
-  return str.replace(/_([a-z])/g, function (g) { return g[1].toUpperCase(); });
+  return str.replace(/_([a-z])/g, function (g) {
+    return g[1].toUpperCase();
+  });
 }
 
-export function fetchAuth(authToken, input, init={}) {
+export function fetchAuth(authToken, input, init = {}) {
   if (!input.includes(apiSettings.endpoint)) {
     input = apiSettings.endpoint + input
   }
@@ -37,8 +39,8 @@ export function navigatorLanguage() {
   // on different fields on the `navigator` object, so we make sure to account
   // for these different by checking all of them
   const language = (navigator.languages && navigator.languages[0]) ||
-      navigator.language ||
-      navigator.userLanguage;
+    navigator.language ||
+    navigator.userLanguage;
 
   return language.toLowerCase().split(/[_-]+/)[0];
 }
@@ -102,12 +104,12 @@ export function setLocale(locale) {
  */
 function _formatCurrency(value, n, x, s, c) {
   const re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
-      num = value.toFixed(Math.max(0, ~~n));
+    num = value.toFixed(Math.max(0, ~~n));
 
   return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
 }
 
-export function listToObject(list, key='id') {
+export function listToObject(list, key = 'id') {
   const result = {};
 
   for (const item of list) {
@@ -156,9 +158,9 @@ const offset = moment().utcOffset();
 
 export function parseDateToCurrentTz(dateStr) {
   /* Handle all the dates using the CURRENT timezone of the browser
-  * This is different than just calling moment(dateStr) because moment()
-  * handles DST, so if two dates are in different DST then they have a 1 hour
-  * offset */
+   * This is different than just calling moment(dateStr) because moment()
+   * handles DST, so if two dates are in different DST then they have a 1 hour
+   * offset */
   return moment(dateStr).utcOffset(offset, true);
 }
 
@@ -167,21 +169,21 @@ export function loadResources(requiredResources, store, callback) {
 
   for (let resource of requiredResources) {
     fetchApiResource(resource, store.dispatch)
-        .then((apiResourceObjectList) => {
-          const state = store.getState();
+      .then((apiResourceObjectList) => {
+        const state = store.getState();
 
-          for (const apiResourceObject of apiResourceObjectList) {
-            apiResourceObjects[apiResourceObject.url] = apiResourceObject
-          }
+        for (const apiResourceObject of apiResourceObjectList) {
+          apiResourceObjects[apiResourceObject.url] = apiResourceObject
+        }
 
-          if (requiredResources.every(resource => filterApiResourceObjectsByType(apiResourceObjects, resource).length)) {
-            callback(
-                state.authToken,
-                store.dispatch,
-                apiResourceObjects
-            )
-          }
-        })
+        if (requiredResources.every(resource => filterApiResourceObjectsByType(apiResourceObjects, resource).length)) {
+          callback(
+            state.authToken,
+            store.dispatch,
+            apiResourceObjects
+          )
+        }
+      })
   }
 }
 
@@ -212,6 +214,21 @@ export function areObjectListsEqual(listA, listB) {
   }
 
   return true;
+}
+
+export function getRedirectUrl(authToken, entity) {
+  return fetchAuth(authToken, `entities/${entity.id}/affiliate_url/`).then(response => {
+    return response.affiliate_url
+  }).catch(() => {
+    return entity.externalUrl || entity.external_url
+  })
+}
+
+export function postLeads(authToken, websiteId, entity) {
+  let petition = {website: websiteId};
+  petition = JSON.stringify(petition);
+
+  return fetchAuth(authToken, `entities/${entity.id}/register_lead/`, {method: 'POST', body: petition});
 }
 
 export function areListsEqual(listA, listB) {
