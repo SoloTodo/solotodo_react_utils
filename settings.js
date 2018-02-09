@@ -31,6 +31,7 @@ export const apiSettings = {
     wtb_brand_update_logs: endpoint + 'wtb/brand_update_logs/',
     wtb_entities: endpoint + 'wtb/entities/',
     category_columns: endpoint + 'category_columns/',
+    budgets: endpoint + 'budgets/',
   },
   ownUserUrl: endpoint + 'users/me/',
 };

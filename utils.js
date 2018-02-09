@@ -30,7 +30,12 @@ export function fetchAuth(authToken, input, init = {}) {
     if (!res.ok) {
       throw res
     }
-    return res.json()
+
+    if (res.status === 204) {
+      return res
+    } else {
+      return res.json()
+    }
   })
 }
 
