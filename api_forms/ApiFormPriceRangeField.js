@@ -22,11 +22,11 @@ class ApiFormPriceRangeField extends Component {
     }
 
     if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseValueFromUrl(nextProps))
+      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps, false)
     }
   }
 
-  parseValueFromUrl = (props) => {
+  parseValueFromUrl = props => {
     props = props || this.props;
     const parameters = queryString.parse(window.location.search);
 
@@ -39,7 +39,7 @@ class ApiFormPriceRangeField extends Component {
     }
   };
 
-  notifyNewParams(values, props=null) {
+  notifyNewParams(values, props=null, allowUpdateResults=true) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -71,7 +71,7 @@ class ApiFormPriceRangeField extends Component {
       }
     };
 
-    props.onChange(result, Boolean(this.props.updateResultsOnChange))
+    props.onChange(result, allowUpdateResults && Boolean(this.props.updateResultsOnChange))
   }
 
   render() {

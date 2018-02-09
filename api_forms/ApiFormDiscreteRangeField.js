@@ -22,19 +22,19 @@ class ApiFormDiscreteRangeField extends Component {
     }
 
     if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseIdFromUrl());
+      this.notifyNewParams(this.parseIdFromUrl(nextProps), nextProps, false);
       return;
     }
 
     if (!areValueListsEqual(this.props.choices, nextProps.choices)) {
       const newValues = this.parseIdFromUrl(nextProps);
       if (!areListsEqual(this.props.value, newValues)) {
-        this.notifyNewParams(newValues, nextProps);
+        this.notifyNewParams(newValues, nextProps, false);
       }
     }
   }
 
-  parseIdFromUrl = (props=null) => {
+  parseIdFromUrl = props => {
     props = props || this.props;
 
     // Obtain URL params
@@ -58,7 +58,7 @@ class ApiFormDiscreteRangeField extends Component {
     }
   };
 
-  notifyNewParams(ids, props=null) {
+  notifyNewParams(ids, props=null, allowUpdateResults=true) {
     props = props ? props : this.props;
 
     if (!props.onChange) {
@@ -90,7 +90,7 @@ class ApiFormDiscreteRangeField extends Component {
       }
     };
 
-    props.onChange(result, Boolean(this.props.updateResultsOnChange))
+    props.onChange(result, allowUpdateResults && Boolean(this.props.updateResultsOnChange))
   }
 
   render() {

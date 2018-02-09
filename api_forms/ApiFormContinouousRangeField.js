@@ -7,6 +7,7 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcContinuousRange from "./RcContinuousRange";
+import {areListsEqual, areValueListsEqual} from "../utils";
 
 
 class ApiFormContinuousRangeField extends Component {
@@ -16,15 +17,24 @@ class ApiFormContinuousRangeField extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps)
+      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps);
+      return;
     }
 
     if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseValueFromUrl(nextProps))
+      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps, false);
+      return;
+    }
+
+    if (!areValueListsEqual(this.props.choices, nextProps.choices)) {
+      const newValues = this.parseValueFromUrl(nextProps);
+      if (!areListsEqual(this.props.value, newValues)) {
+        this.notifyNewParams(newValues, nextProps);
+      }
     }
   }
 
-  parseValueFromUrl = (props) => {
+  parseValueFromUrl = props => {
     props = props || this.props;
     const parameters = queryString.parse(window.location.search);
 
@@ -37,7 +47,7 @@ class ApiFormContinuousRangeField extends Component {
     }
   };
 
-  notifyNewParams(values, props=null) {
+  notifyNewParams(values, props, allowUpdateResults=true) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -69,7 +79,7 @@ class ApiFormContinuousRangeField extends Component {
       }
     };
 
-    props.onChange(result, Boolean(this.props.updateResultsOnChange))
+    props.onChange(result, allowUpdateResults && Boolean(this.props.updateResultsOnChange))
   }
 
   render() {
@@ -84,7 +94,6 @@ class ApiFormContinuousRangeField extends Component {
     }
 
     const step = this.props.step;
-
     const bucketDocCountDict = {};
 
     for (const choice of originalChoices) {
@@ -116,13 +125,10 @@ class ApiFormContinuousRangeField extends Component {
       })
     }
 
-    let marks = {};
     let valueDocCountDict = {};
     let ongoingDocCount = 0;
 
     for (const choice of newChoices) {
-      marks[choice.value] = choice.value;
-
       valueDocCountDict[choice.value] = {
         ownDocCount: choice.exactDocCount,
         aggregatedDocCount: ongoingDocCount
@@ -134,20 +140,15 @@ class ApiFormContinuousRangeField extends Component {
     const min = newChoices[0].value;
     const max = newChoices[newChoices.length - 1].value;
 
+    let startValue = this.props.value ? this.props.value.startValue : null;
+    let endValue = this.props.value ? this.props.value.endValue : null;
 
-    let startValue = this.props.value ? this.props.value.startValue : undefined;
-    let endValue = this.props.value ? this.props.value.endValue : undefined;
-
-    if (typeof(startValue) === 'undefined') {
+    if (startValue && startValue < min) {
       startValue = null
-    } else if (startValue < min) {
-      startValue = min
     }
 
-    if (typeof(endValue) === 'undefined') {
+    if (endValue && endValue > max) {
       endValue = null
-    } else if (endValue > max) {
-      endValue = max
     }
 
     const handleValueChange = newValues => {
@@ -183,8 +184,8 @@ class ApiFormContinuousRangeField extends Component {
     const handle = (props) => {
       const { value, dragging, index, ...restProps } = props;
 
-      let concreteStartValue = startValue !== null ? startValue : min;
-      let concreteEndValue = endValue !== null ? endValue : max;
+      let concreteStartValue = startValue || min;
+      let concreteEndValue = endValue || max;
 
       let startDocCounts = {};
       let endDocCounts = {};
@@ -221,7 +222,7 @@ class ApiFormContinuousRangeField extends Component {
             <label>{this.props.label}</label>
             <div className="pb-2">
               <RcContinuousRange
-                  value={[startValue, endValue]}
+                  value={[startValue || min, endValue || max]}
                   min={min}
                   max={max}
                   step={this.props.step}

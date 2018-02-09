@@ -15,18 +15,14 @@ class ApiForm extends Component {
 
   componentWillMount() {
     this.props.setFieldChangeHandler(this.handleFieldChange);
+    this.unlisten = this.props.history.listen(this.handleHistoryChange);
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.location.search !== nextProps.location.search && nextProps.history.action === 'POP') {
-      const formValues = {};
-
-      for (const field of this.props.fields) {
-        formValues[field] = this.state[field] ? this.state[field].fieldValues : undefined
-      }
-
-      this.handleFieldChange(this.defaultState());
-    }
     const currentObservedObjects = this.props.observedObjects || [];
 
     const currentObservedObjectsDict = listToObject(currentObservedObjects, 'id');
@@ -51,7 +47,7 @@ class ApiForm extends Component {
     }
 
     if (!areListsEqual(this.props.endpoints, nextProps.endpoints)) {
-      this.updateSearchResults(null, nextProps);
+      this.updateSearchResults(nextProps);
     }
 
     if (changedObjects.length) {
@@ -59,6 +55,12 @@ class ApiForm extends Component {
       this.updateSearchResults();
     }
   }
+
+  handleHistoryChange = (location, action) => {
+    this.props.onResultsChange(null);
+    this.handleFieldChange(this.defaultState());
+  };
+
 
   defaultState = () => {
     let params = {};
@@ -115,14 +117,44 @@ class ApiForm extends Component {
       if (!wasValid && isValid && updateOnLoad) {
         this.updateSearchResults();
       } else if (isValid && updateOnFinish) {
-        this.updateSearchResults(true)
+        this.pushUrl()
       }
     });
   };
 
-  updateSearchResults = (pushLocation=false, props=null) => {
+  pushUrl = props => {
     props = props ? props : this.props;
 
+    let pageAndOrderingParams = '';
+
+    if (props.page) {
+      pageAndOrderingParams += `page=${props.page}&`
+    }
+
+    if (props.pageSize) {
+      pageAndOrderingParams += `page_size=${props.pageSize}&`;
+    }
+
+    if (props.ordering) {
+      pageAndOrderingParams += `ordering=${props.ordering}&`;
+    }
+
+    let urlSearch = '?';
+
+    for (const fieldName of Object.keys(this.state)) {
+      for (const urlParamKey of Object.keys(this.state[fieldName].urlParams)) {
+        for (const urlParamValue of this.state[fieldName].urlParams[urlParamKey]) {
+          urlSearch += `${urlParamKey}=${urlParamValue}&`
+        }
+      }
+    }
+
+    const newRoute = props.history.location.pathname + urlSearch + pageAndOrderingParams;
+    props.history.push(newRoute)
+  };
+
+  updateSearchResults = (props=null) => {
+    props = props ? props : this.props;
     props.onResultsChange(null);
 
     let pageAndOrderingParams = '';
@@ -141,18 +173,10 @@ class ApiForm extends Component {
 
     let apiSearch = '';
 
-    let urlSearch = '?';
-
     for (const fieldName of Object.keys(this.state)) {
       for (const apiParamKey of Object.keys(this.state[fieldName].apiParams)) {
         for (const apiParamValue of this.state[fieldName].apiParams[apiParamKey]) {
           apiSearch += `${apiParamKey}=${apiParamValue}&`
-        }
-      }
-
-      for (const urlParamKey of Object.keys(this.state[fieldName].urlParams)) {
-        for (const urlParamValue of this.state[fieldName].urlParams[urlParamKey]) {
-          urlSearch += `${urlParamKey}=${urlParamValue}&`
         }
       }
     }
@@ -179,12 +203,6 @@ class ApiForm extends Component {
 
       i++;
     }
-
-    if (pushLocation) {
-      const newRoute = props.history.location.pathname + urlSearch + pageAndOrderingParams;
-      props.history.push(newRoute)
-    }
-
   };
 
   render() {

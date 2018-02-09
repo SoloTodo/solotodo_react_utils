@@ -187,14 +187,14 @@ export function loadResources(requiredResources, store, callback) {
   }
 }
 
-export function areObjectsEqual(objA, objB) {
-  const objAUrl = objA ? objA.url : null;
-  const objBUrl = objB ? objB.url : null;
+export function areObjectsEqual(objA, objB, valueField='url') {
+  const objAValue = objA ? objA[valueField] : null;
+  const objBValue = objB ? objB[valueField] : null;
 
-  return objAUrl === objBUrl;
+  return objAValue === objBValue;
 }
 
-export function areObjectListsEqual(listA, listB) {
+export function areObjectListsEqual(listA, listB, valueField='url') {
   if (listA === null && listB === null) {
     return true;
   }
@@ -208,12 +208,22 @@ export function areObjectListsEqual(listA, listB) {
   }
 
   for (let i = 0; i < listA.length; i++) {
-    if (listA[i].url !== listB[i].url) {
+    if (listA[i][valueField] !== listB[i][valueField]) {
       return false;
     }
   }
 
   return true;
+}
+
+export function areValuesEqual(valueA, valueB, valueField='url') {
+  if (typeof(valueA) !== typeof(valueB)) {
+    return false;
+  } else if (Array.isArray(valueA)) {
+    return areObjectListsEqual(valueA, valueB, valueField)
+  } else {
+    return areObjectsEqual(valueA, valueB, valueField)
+  }
 }
 
 export function getRedirectUrl(authToken, entity) {

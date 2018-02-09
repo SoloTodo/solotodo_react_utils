@@ -3,30 +3,38 @@ import Select from "react-select";
 import queryString from 'query-string';
 import {createOption, createOptions} from "../form_utils";
 import changeCase from 'change-case'
+import {areValuesEqual} from "../utils";
+
 
 class ApiFormChoiceField extends Component {
   componentWillMount() {
-    this.notifyNewParams(this.parseValueFromUrl())
+    this.notifyNewParams(this.parseValueFromUrl());
   }
 
   componentWillReceiveProps(nextProps) {
+    const newValue = this.parseValueFromUrl(nextProps);
+
     if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps)
+      this.notifyNewParams(newValue, nextProps);
+      return;
     }
 
     if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseValueFromUrl())
+      this.notifyNewParams(newValue, nextProps, false);
+      return;
+    }
+
+    if (!areValuesEqual(nextProps.value, newValue)) {
+      this.notifyNewParams(newValue, nextProps);
     }
   }
 
-  parseValueFromUrl = (props) => {
+  parseValueFromUrl = props => {
     props = props || this.props;
 
     const parameters = queryString.parse(window.location.search);
-
     const urlField = props.urlField || changeCase.snake(props.name);
     let valueIds = parameters[urlField];
-
     const choices = this.sanitizeChoices(props);
 
     if (props.multiple) {
@@ -68,8 +76,8 @@ class ApiFormChoiceField extends Component {
     }
   };
 
-  notifyNewParams(valueOrValues, props) {
-    props = props ? props : this.props;
+  notifyNewParams(valueOrValues, props, allowUpdateResults=true) {
+    props = props || this.props;
 
     if (!props.onChange) {
       return;
@@ -118,7 +126,7 @@ class ApiFormChoiceField extends Component {
       }
     };
 
-    props.onChange(result, Boolean(this.props.updateResultsOnChange))
+    props.onChange(result, allowUpdateResults && Boolean(this.props.updateResultsOnChange))
   }
 
   handleValueChange = (vals) => {
@@ -151,9 +159,10 @@ class ApiFormChoiceField extends Component {
       selectedChoices = createOptions(selectedChoices);
     } else {
       if (this.props.value) {
-        selectedChoices = createOption(choices.filter(choice => choice.id === this.props.value.id)[0])
-      } else {
-        selectedChoices = null
+        const matchingChoice = choices.filter(choice => choice.id === this.props.value.id)[0] || null;
+        if (matchingChoice) {
+          selectedChoices = createOption(matchingChoice)
+        }
       }
     }
 

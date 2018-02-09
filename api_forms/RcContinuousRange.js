@@ -11,51 +11,25 @@ class RcContinuousRange extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.min !== nextProps.min || this.props.max !== nextProps.max) {
-      this.onChange([this.state.startValue, this.state.endValue], nextProps)
-    }
-
-    if (this.props.value[0] !== nextProps.value[0] || this.props.value[1] !== nextProps.value[1]) {
-      this.onChange([nextProps.value[0], nextProps.value[1]], nextProps)
+  componentWillReceiveProps(newProps) {
+    if (this.props.value[0] !== newProps.value[0] || this.props.value[1] !== newProps.value[1]) {
+      this.setState({
+        startValue: newProps.value[0],
+        endValue: newProps.value[1]
+      })
     }
   }
 
-  onChange = (values, newProps) => {
-    const props = newProps ? newProps : this.props;
-
-    let startValue = values[0];
-    let endValue = values[1];
-
-    if (startValue <= props.min) {
-      startValue = undefined
-    }
-
-    if (endValue >= props.max) {
-      endValue = undefined
-    }
-
+  onChange = values => {
     this.setState({
-      startValue,
-      endValue
-    }, () => {
-      if (newProps) {
-        newProps.onAfterChange([startValue, endValue])
-      }
+      startValue: values[0],
+      endValue: values[1]
     })
   };
 
   render() {
-    let startValue = this.state.startValue;
-    let endValue = this.state.endValue;
-
-    if (startValue === null || typeof(startValue) === 'undefined') {
-      startValue = this.props.min
-    }
-
-    if (endValue === null || typeof(endValue) === 'undefined') {
-      endValue = this.props.max
-    }
+    const startValue = this.state.startValue || this.props.min;
+    const endValue = this.state.endValue || this.props.max;
 
     return <Range
         min={this.props.min}

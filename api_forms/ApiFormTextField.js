@@ -10,27 +10,29 @@ class ApiFormTextField extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseValueFromUrl(), nextProps)
+      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps)
     }
 
     if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseValueFromUrl())
+      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps, false)
     }
   }
 
-  parseValueFromUrl = () => {
+  parseValueFromUrl = props => {
+    props = props || this.props;
+
     const parameters = queryString.parse(window.location.search);
 
-    let value = parameters[changeCase.snake(this.props.name)];
+    let value = parameters[changeCase.snake(props.name)];
 
     if (Array.isArray(value)) {
       value = value[0]
     }
 
-    return value ? value : this.props.initial || '';
+    return value ? value : props.initial || '';
   };
 
-  notifyNewParams(value, props) {
+  notifyNewParams(value, props, allowUpdateResults=true) {
     props = props ? props : this.props;
 
     if (!props.onChange) {
@@ -54,7 +56,7 @@ class ApiFormTextField extends Component {
       }
     };
 
-    props.onChange(result, Boolean(this.props.updateResultsOnChange))
+    props.onChange(result, allowUpdateResults && Boolean(this.props.updateResultsOnChange))
   }
 
   handleValueChange = evt => {
