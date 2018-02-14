@@ -7,32 +7,24 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcDiscreteRange from "./RcDiscreteRange";
-import {areListsEqual, areValueListsEqual} from "../utils";
 
 
 class ApiFormDiscreteRangeField extends Component {
-  componentDidMount() {
-    this.notifyNewParams(this.parseIdFromUrl())
+  componentWillMount() {
+    this.componentUpdate(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseIdFromUrl(), nextProps);
-      return;
-    }
-
-    if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseIdFromUrl(nextProps), nextProps, false);
-      return;
-    }
-
-    if (!areValueListsEqual(this.props.choices, nextProps.choices)) {
-      const newValues = this.parseIdFromUrl(nextProps);
-      if (!areListsEqual(this.props.value, newValues)) {
-        this.notifyNewParams(newValues, nextProps, false);
-      }
-    }
+    this.componentUpdate(nextProps)
   }
+
+  componentUpdate = props => {
+    const newValue = this.parseIdFromUrl(props);
+
+    if (!props.value || props.value.startId !== newValue.startId || props.value.endId !== newValue.endId) {
+      this.notifyNewParams(newValue, props, false);
+    }
+  };
 
   parseIdFromUrl = props => {
     props = props || this.props;

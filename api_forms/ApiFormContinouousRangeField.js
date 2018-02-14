@@ -7,32 +7,24 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcContinuousRange from "./RcContinuousRange";
-import {areListsEqual, areValueListsEqual} from "../utils";
 
 
 class ApiFormContinuousRangeField extends Component {
-  componentDidMount() {
-    this.notifyNewParams(this.parseValueFromUrl())
+  componentWillMount() {
+    this.componentUpdate(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps);
-      return;
-    }
-
-    if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps, false);
-      return;
-    }
-
-    if (!areValueListsEqual(this.props.choices, nextProps.choices)) {
-      const newValues = this.parseValueFromUrl(nextProps);
-      if (!areListsEqual(this.props.value, newValues)) {
-        this.notifyNewParams(newValues, nextProps);
-      }
-    }
+    this.componentUpdate(nextProps)
   }
+
+  componentUpdate = props => {
+    const newValue = this.parseValueFromUrl(props);
+
+    if (!props.value || props.value.startValue !== newValue.startValue || props.value.endValue !== newValue.endValue) {
+      this.notifyNewParams(newValue, props, false);
+    }
+  };
 
   parseValueFromUrl = props => {
     props = props || this.props;

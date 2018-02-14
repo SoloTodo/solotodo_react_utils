@@ -8,7 +8,7 @@ import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcPriceRange from "./RcPriceRange";
 import {ApiResourceObject} from "../ApiResource";
-import {areValuesEqual, formatCurrency} from "../utils";
+import {formatCurrency} from "../utils";
 
 
 class ApiFormPriceRangeField extends Component {

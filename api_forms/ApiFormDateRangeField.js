@@ -6,52 +6,54 @@ import './ApiFormDateRangeField.css'
 import {parseDateToCurrentTz} from "../utils";
 
 class ApiFormDateRangeField extends Component {
-  componentDidMount() {
-    this.notifyNewParams(this.parseValueFromUrl())
+  componentWillMount() {
+    this.componentUpdate(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseValueFromUrl(), nextProps)
-    }
-
-    if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseValueFromUrl())
-    }
+    this.componentUpdate(nextProps)
   }
 
-  parseValueFromUrl = () => {
+  componentUpdate = props => {
+    const newValue = this.parseValueFromUrl(props);
+
+    if (!props.value || props.value.startDate !== newValue.startDate || props.value.endDate !== newValue.endDate) {
+      this.notifyNewParams(newValue, props, false);
+    }
+  };
+
+  parseValueFromUrl = props => {
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
     // Obtain URL params
     const parameters = queryString.parse(window.location.search);
-    const startDateStr = parameters[changeCase.snakeCase(this.props.name) + '_start'];
+    const startDateStr = parameters[changeCase.snakeCase(props.name) + '_start'];
     let startDate = null;
     if (dateRegex.test(startDateStr)) {
       startDate = parseDateToCurrentTz(startDateStr);
     }
 
-    const endDateStr = parameters[changeCase.snakeCase(this.props.name) + '_end'];
+    const endDateStr = parameters[changeCase.snakeCase(props.name) + '_end'];
     let endDate = null;
     if (dateRegex.test(endDateStr)) {
       endDate = parseDateToCurrentTz(endDateStr);
     }
 
-    let defaultStartDate = this.props.min;
+    let defaultStartDate = props.min;
     if (!defaultStartDate) {
       defaultStartDate = moment(endDate).subtract(30, 'days');
     }
 
-    const max = this.props.max ? this.props.max : moment().startOf('day');
+    const max = props.max ? props.max : moment().startOf('day');
 
-    if (!this.props.nullable) {
+    if (!props.nullable) {
       // If they are empty, replace with initial values, if given
-      if (this.props.initial) {
+      if (props.initial) {
         if (!startDate) {
-          startDate = this.props.initial[0]
+          startDate = props.initial[0]
         }
         if (!endDate) {
-          endDate = this.props.initial[1]
+          endDate = props.initial[1]
         }
       }
 
@@ -65,15 +67,15 @@ class ApiFormDateRangeField extends Component {
       }
     }
 
-    const min = this.props.min;
+    const min = props.min;
 
     if (
         (min && startDate && min.isAfter(startDate)) ||
         (startDate && endDate && startDate.isAfter(endDate)) ||
         (endDate && endDate.isAfter(max))) {
 
-      startDate = this.props.nullable ? null : min ? min : defaultStartDate;
-      endDate = this.props.nullable ? null : max
+      startDate = props.nullable ? null : min ? min : defaultStartDate;
+      endDate = props.nullable ? null : max
     }
 
     return {
@@ -82,8 +84,8 @@ class ApiFormDateRangeField extends Component {
     }
   };
 
-  notifyNewParams(value, props=null) {
-    props = props ? props : this.props;
+  notifyNewParams(value, props=null, allowUpdateResults=true) {
+    props = props || this.props;
 
     if (!props.onChange) {
       return;
@@ -104,7 +106,7 @@ class ApiFormDateRangeField extends Component {
     }
 
     const result = {
-      [this.props.name]: {
+      [props.name]: {
         apiParams,
         urlParams,
         fieldValues: {
@@ -114,7 +116,7 @@ class ApiFormDateRangeField extends Component {
       }
     };
 
-    props.onChange(result)
+    props.onChange(result, allowUpdateResults && Boolean(props.updateResultsOnChange))
   }
 
   handleDateChange = (event) => {
