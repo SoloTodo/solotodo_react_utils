@@ -67,7 +67,11 @@ class ApiFormTextField extends Component {
   };
 
   render() {
-    const value = this.props.value ? this.props.value : '';
+    if (this.props.hidden) {
+      return null
+    }
+
+    const value = this.props.value || '';
     const debounceTimeout = this.props.debounceTimeout || 0;
 
     return (
