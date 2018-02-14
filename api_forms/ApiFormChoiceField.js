@@ -8,26 +8,20 @@ import {areValuesEqual} from "../utils";
 
 class ApiFormChoiceField extends Component {
   componentWillMount() {
-    this.notifyNewParams(this.parseValueFromUrl());
+    this.componentUpdate(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
-    const newValue = this.parseValueFromUrl(nextProps);
-
-    if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(newValue, nextProps);
-      return;
-    }
-
-    if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(newValue, nextProps, false);
-      return;
-    }
-
-    if (!areValuesEqual(nextProps.value, newValue)) {
-      this.notifyNewParams(newValue, nextProps);
-    }
+    this.componentUpdate(nextProps)
   }
+
+  componentUpdate = props => {
+    const newValue = this.parseValueFromUrl(props);
+
+    if (!areValuesEqual(props.value, newValue)) {
+      this.notifyNewParams(newValue, props, false);
+    }
+  };
 
   parseValueFromUrl = props => {
     props = props || this.props;

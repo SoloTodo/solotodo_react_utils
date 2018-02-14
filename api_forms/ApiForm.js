@@ -102,6 +102,7 @@ class ApiForm extends Component {
       }
 
       isValid = this.isFormValid(newState);
+
       return newState
     }, () => {
       const formValues = {};

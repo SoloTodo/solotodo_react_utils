@@ -8,23 +8,25 @@ import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcPriceRange from "./RcPriceRange";
 import {ApiResourceObject} from "../ApiResource";
-import {formatCurrency} from "../utils";
+import {areValuesEqual, formatCurrency} from "../utils";
 
 
 class ApiFormPriceRangeField extends Component {
-  componentDidMount() {
-    this.notifyNewParams(this.parseValueFromUrl())
+  componentWillMount() {
+    this.componentUpdate(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps)
-    }
-
-    if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps, false)
-    }
+    this.componentUpdate(nextProps)
   }
+
+  componentUpdate = props => {
+    const newValue = this.parseValueFromUrl(props);
+
+    if (!props.value || props.value.startValue !== newValue.startValue || props.value.endValue !== newValue.endValue) {
+      this.notifyNewParams(newValue, props, false);
+    }
+  };
 
   parseValueFromUrl = props => {
     props = props || this.props;

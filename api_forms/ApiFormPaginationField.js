@@ -4,19 +4,21 @@ import queryString from 'query-string';
 import {connect} from "react-redux";
 
 class ApiFormPaginationField extends Component {
-  componentDidMount() {
-    this.notifyNewParams(this.parseValueFromUrl())
+  componentWillMount() {
+    this.componentUpdate(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseValueFromUrl(), nextProps)
-    }
-
-    if (typeof(nextProps.page) === 'undefined') {
-      this.notifyNewParams(this.parseValueFromUrl())
-    }
+    this.componentUpdate(nextProps)
   }
+
+  componentUpdate = props => {
+    const newValue = this.parseValueFromUrl(props);
+
+    if (!props.page || props.page.id !== newValue) {
+      this.notifyNewParams(newValue, props);
+    }
+  };
 
   parseValueFromUrl = () => {
     const parameters = queryString.parse(window.location.search);

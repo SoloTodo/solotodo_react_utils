@@ -4,19 +4,21 @@ import changeCase from 'change-case'
 import {DebounceInput} from 'react-debounce-input';
 
 class ApiFormTextField extends Component {
-  componentDidMount() {
-    this.notifyNewParams(this.parseValueFromUrl())
+  componentWillMount() {
+    this.componentUpdate(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps)
-    }
-
-    if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseValueFromUrl(nextProps), nextProps, false)
-    }
+    this.componentUpdate(nextProps)
   }
+
+  componentUpdate = props => {
+    const newValue = this.parseValueFromUrl(props);
+
+    if (props.value !== newValue) {
+      this.notifyNewParams(newValue, props, false);
+    }
+  };
 
   parseValueFromUrl = props => {
     props = props || this.props;
