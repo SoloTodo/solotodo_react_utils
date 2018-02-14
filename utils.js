@@ -239,11 +239,8 @@ export function getRedirectUrl(authToken, entity) {
   })
 }
 
-export function postLeads(authToken, websiteId, entity) {
-  let petition = {website: websiteId};
-  petition = JSON.stringify(petition);
-
-  return fetchAuth(authToken, `entities/${entity.id}/register_lead/`, {method: 'POST', body: petition});
+export function registerLead(authToken, websiteId, entity) {
+  return fetchAuth(authToken, `entities/${entity.id}/register_lead/`, {method: 'POST', body: JSON.stringify({website: websiteId})});
 }
 
 export function areListsEqual(listA, listB) {
