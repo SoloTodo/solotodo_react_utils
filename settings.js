@@ -34,4 +34,6 @@ export const apiSettings = {
     budgets: endpoint + 'budgets/',
   },
   ownUserUrl: endpoint + 'users/me/',
+  linioStoreId: 76,
+  linioAffiliateId: 2900,
 };
