@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux'
 import { toast } from 'react-toastify';
 import {
-  addApiResourceDispatchToPropsUtils,
   addApiResourceStateToPropsUtils
 } from "../ApiResource";
 import {apiSettings} from "../settings";
@@ -57,26 +56,33 @@ class ResourceObjectPermission extends Component {
       });
       return <Redirect to="/" />
     } else {
-      const propsForChild = {
-        ...this.props,
-        apiResourceObject
-      };
+      const Component = this.props.component;
 
-      return React.cloneElement(React.Children.only(this.props.children), propsForChild);
+      return <Component {...this.props} />
     }
   }
 }
 
 function mapStateToProps(state, ownProps) {
+  const utilProps = addApiResourceStateToPropsUtils()(state);
+
   const id = ownProps.match.params.id;
-  const apiResourceObjectUrl = `${apiSettings.apiResourceEndpoints[ownProps.resource]}${id}/`;
+  const resource = ownProps.resource;
+  const apiResourceObjectUrl = `${apiSettings.apiResourceEndpoints[resource]}${id}/`;
 
   return {
     apiResourceObject: state.apiResourceObjects[apiResourceObjectUrl],
+    fetchApiResourceObject : utilProps.fetchApiResourceObject,
+    ApiResourceObject : utilProps.ApiResourceObject,
   }
 }
 
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch
+  }
+}
 
 export default connect(
-    addApiResourceStateToPropsUtils(mapStateToProps),
-    addApiResourceDispatchToPropsUtils())(ResourceObjectPermission)
+    mapStateToProps,
+    mapDispatchToProps)(ResourceObjectPermission);

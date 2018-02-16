@@ -47,7 +47,8 @@ class ApiForm extends Component {
     }
 
     if (!areListsEqual(this.props.endpoints, nextProps.endpoints)) {
-      this.updateSearchResults(nextProps);
+      this.props.onResultsChange(null);
+      this.handleFieldChange(this.defaultState());
     }
 
     if (changedObjects.length) {

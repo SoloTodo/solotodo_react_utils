@@ -6,7 +6,6 @@ let endpoint = 'https://api.solotodo.com/';
 
 export const apiSettings = {
   endpoint,
-  websiteId: 1,
   apiResourceEndpoints: {
     stores: endpoint + 'stores/',
     languages: endpoint + 'languages/',

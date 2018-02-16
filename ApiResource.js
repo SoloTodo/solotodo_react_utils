@@ -42,32 +42,39 @@ export function apiResourceObjectForeignKey(rawApiResource, field, state) {
   return state.apiResourceObjects[rawApiResource[field]]
 }
 
+export function apiResourceStateToPropsUtils(state) {
+  return {
+    authToken: state.authToken,
+    ApiResourceObject: (jsonData) => {
+      return new ApiResourceObject(jsonData, state.apiResourceObjects)
+    },
+    fetchAuth: (input, init={}) => {
+      return fetchAuth(state.authToken, input, init);
+    },
+    fetchApiResource: (resource, dispatch, authToken=state.authToken) => {
+      return fetchApiResource(resource, dispatch, authToken)
+    },
+    fetchApiResourceObject: (resource, id, dispatch) => {
+      return fetchApiResourceObject(resource, id, dispatch, state.authToken)
+    },
+    filterApiResourceObjectsByType: resource => {
+      return filterApiResourceObjectsByType(state.apiResourceObjects, resource)
+    },
+  };
+}
+
 export function addApiResourceStateToPropsUtils(mapStateToProps=null) {
   return (state, ownProps) => {
-    let originalMapStateToPropsResult = {};
-    if (mapStateToProps !== null) {
-      originalMapStateToPropsResult = mapStateToProps(state, ownProps)
-    }
+    const apiResourceProps = apiResourceStateToPropsUtils(state);
 
-    return {
-      authToken: state.authToken,
-      ApiResourceObject: (jsonData) => {
-        return new ApiResourceObject(jsonData, state.apiResourceObjects)
-      },
-      fetchAuth: (input, init={}) => {
-        return fetchAuth(state.authToken, input, init);
-      },
-      fetchApiResource: (resource, dispatch, authToken=state.authToken) => {
-        return fetchApiResource(resource, dispatch, authToken)
-      },
-      fetchApiResourceObject: (resource, id, dispatch) => {
-        return fetchApiResourceObject(resource, id, dispatch, state.authToken)
-      },
-      filterApiResourceObjectsByType: resource => {
-        return filterApiResourceObjectsByType(state.apiResourceObjects, resource)
-      },
-      ...originalMapStateToPropsResult
-    };
+    if (mapStateToProps !== null) {
+      return {
+        ...apiResourceProps,
+        ...mapStateToProps(state, ownProps)
+      }
+    } else {
+      return apiResourceProps
+    }
   }
 }
 
