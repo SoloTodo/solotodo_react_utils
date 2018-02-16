@@ -3,6 +3,13 @@ import {registerLead} from "../utils";
 import {apiSettings} from "../settings";
 
 class LeadLink extends Component {
+  handleClick = () => {
+    registerLead(this.props.authToken, this.props.websiteId, this.props.entity);
+    if (this.props.callback) {
+      this.props.callback();
+    }
+  };
+
   render() {
     let url = undefined;
     let target = undefined;
@@ -26,15 +33,25 @@ class LeadLink extends Component {
 
     if(this.props.className) {
       return <a href={url} target={target} className={this.props.className} rel="noopener nofollow"
-              onClick={() => registerLead(this.props.authToken, this.props.websiteId, this.props.entity)}>
+              onClick={this.handleClick}>
       {this.props.children}
     </a>
     }
     return <a href={url} target={target} rel="noopener nofollow"
-              onClick={() => registerLead(this.props.authToken, this.props.websiteId, this.props.entity)}>
+              onClick={this.handleClick}>
       {this.props.children}
     </a>
   }
 }
 
 export default LeadLink;
+
+/*
+needed props {
+  entity: ApiResource Entity
+  websiteId: the id of the website using the component
+  authToken: (optional) authToken for the api
+  className: (optional) a className for the <a> tag
+  callback: (optional) a callback to execute on click
+}
+ */
