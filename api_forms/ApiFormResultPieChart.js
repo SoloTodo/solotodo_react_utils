@@ -3,12 +3,11 @@ import {Pie} from "react-chartjs-2";
 import {connect} from "react-redux";
 import {chartColors} from "../colors";
 import {addApiResourceStateToPropsUtils} from "../ApiResource";
-import Loading from "../components/Loading";
 
 class ApiFormResultPieChart extends Component {
   render() {
     if (!this.props.data) {
-      return this.props.loading || <Loading />
+      return this.props.loading || null
     }
 
     const field = this.props.label_field;

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-import Loading from "./Loading";
 import {
   addApiResourceDispatchToPropsUtils,
   addApiResourceStateToPropsUtils
@@ -38,16 +37,21 @@ class RequiredResources extends Component {
 
     for (let requiredResource of requiredResources) {
       if (!this.props.loadedResources.includes(requiredResource)) {
-        return <Loading />
+        return this.props.loading || null
       }
 
       additionalChildProps[requiredResource] = this.props.filterApiResourceObjectsByType(requiredResource);
     }
 
-    // May or may not be, in the worst case it wil be "undefined"
-    additionalChildProps.apiResourceObject = this.props.apiResourceObject;
+    if (this.props.render) {
+      return this.props.render(additionalChildProps);
+    } else {
+      return <div>
+        {this.props.children}
+      </div>
+    }
 
-    return React.cloneElement(React.Children.only(this.props.children), {...additionalChildProps});
+    // return React.cloneElement(React.Children.only(this.props.children), {...additionalChildProps});
   }
 }
 

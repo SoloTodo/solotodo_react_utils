@@ -5,7 +5,6 @@ import {
   addApiResourceStateToPropsUtils
 } from "../ApiResource";
 import {apiSettings} from "../settings";
-import Loading from "../components/Loading";
 import {Redirect} from "react-router-dom";
 
 class ResourceObjectPermission extends Component {
@@ -49,7 +48,7 @@ class ResourceObjectPermission extends Component {
 
     if (!apiResourceObject) {
       // Object is currently fetching or resource endpoints have not been loaded
-      return <Loading/>
+      return this.props.loading || null
     } else if (!this.hasPermission()) {
       toast.error("Este objeto no existe o no tienes permisos para acceder a el", {
         autoClose: false

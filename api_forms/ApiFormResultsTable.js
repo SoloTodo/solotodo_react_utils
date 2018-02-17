@@ -4,12 +4,11 @@ import {connect} from "react-redux";
 import './ApiFormResultsTable.css'
 import ApiFormOrderingColumn from "./ApiFormOrderingColumn";
 import {addApiResourceStateToPropsUtils} from "../ApiResource";
-import Loading from "../components/Loading";
 
 class ApiFormResultsTable extends Component {
   render() {
     if (!this.props.results) {
-      return this.props.loading || <Loading />;
+      return this.props.loading || null;
     }
 
     const results = this.props.results.map((entry, idx) => {
