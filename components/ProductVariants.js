@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
-import {addApiResourceStateToPropsUtils} from "../ApiResource";
+import {
+  apiResourceStateToPropsUtils
+} from "../ApiResource";
 import {connect} from "react-redux";
 import AxisChoices from "./AxisChoices";
 
@@ -32,10 +34,10 @@ class ProductVariants extends Component {
       }
 
       this.props.fetchAuth(pricingEntriesUrl).then(response => (
-        //TODO filtar cellMonthyPayment == null
-        this.setState({
-          pricingEntries: response.results
-        })
+          //TODO filtar cellMonthyPayment == null
+          this.setState({
+            pricingEntries: response.results
+          })
       ))
     });
 
@@ -60,17 +62,23 @@ class ProductVariants extends Component {
     return <div className={this.props.className}>
       {
         filteredAxes.map(axis => (
-          <AxisChoices axis={axis}
-                       product={this.props.product}
-                       pricingEntries={this.state.pricingEntries}
-                       otherLabelFields={allLabelFields.filter(labelField => labelField !== axis.field)}
-          />
+            <AxisChoices axis={axis}
+                         product={this.props.product}
+                         pricingEntries={this.state.pricingEntries}
+                         otherLabelFields={allLabelFields.filter(labelField => labelField !== axis.field)}
+            />
         ))
       }
     </div>
   }
 }
 
-export default connect(
-  addApiResourceStateToPropsUtils()
-)(ProductVariants);
+function mapStateToProps(state) {
+  const {fetchAuth} = apiResourceStateToPropsUtils(state);
+
+  return {
+    fetchAuth
+  }
+}
+
+export default connect(mapStateToProps)(ProductVariants);

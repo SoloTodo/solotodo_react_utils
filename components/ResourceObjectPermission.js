@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux'
 import { toast } from 'react-toastify';
 import {
-  addApiResourceStateToPropsUtils
+  apiResourceStateToPropsUtils
 } from "../ApiResource";
 import {apiSettings} from "../settings";
 import {Redirect} from "react-router-dom";
@@ -20,6 +20,7 @@ class ResourceObjectPermission extends Component {
     if (!props.apiResourceObject) {
       const id = props.match.params.id;
       props.fetchApiResourceObject(props.resource, id, props.dispatch).catch(err => {
+        console.log(err)
         toast.error("Este objeto no existe o no tienes permisos para acceder a el", {
           autoClose: false
         });
@@ -63,7 +64,7 @@ class ResourceObjectPermission extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const utilProps = addApiResourceStateToPropsUtils()(state);
+  const {ApiResourceObject, fetchApiResourceObject} = apiResourceStateToPropsUtils(state);
 
   const id = ownProps.match.params.id;
   const resource = ownProps.resource;
@@ -71,8 +72,8 @@ function mapStateToProps(state, ownProps) {
 
   return {
     apiResourceObject: state.apiResourceObjects[apiResourceObjectUrl],
-    fetchApiResourceObject : utilProps.fetchApiResourceObject,
-    ApiResourceObject : utilProps.ApiResourceObject,
+    fetchApiResourceObject,
+    ApiResourceObject,
   }
 }
 

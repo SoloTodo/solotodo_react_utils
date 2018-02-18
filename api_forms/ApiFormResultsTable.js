@@ -3,7 +3,9 @@ import {FormattedMessage} from "react-intl";
 import {connect} from "react-redux";
 import './ApiFormResultsTable.css'
 import ApiFormOrderingColumn from "./ApiFormOrderingColumn";
-import {addApiResourceStateToPropsUtils} from "../ApiResource";
+import {
+  apiResourceStateToPropsUtils
+} from "../ApiResource";
 
 class ApiFormResultsTable extends Component {
   render() {
@@ -69,5 +71,12 @@ class ApiFormResultsTable extends Component {
 }
 
 
-export default connect(
-    addApiResourceStateToPropsUtils())(ApiFormResultsTable)
+function mapStateToProps(state) {
+  const {ApiResourceObject} = apiResourceStateToPropsUtils(state);
+
+  return {
+    ApiResourceObject,
+  }
+}
+
+export default connect(mapStateToProps)(ApiFormResultsTable);

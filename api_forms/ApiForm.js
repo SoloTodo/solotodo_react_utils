@@ -3,7 +3,9 @@ import './ApiForm.css'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {areListsEqual, listToObject} from "../utils";
-import {addApiResourceStateToPropsUtils} from "../ApiResource";
+import {
+  apiResourceStateToPropsUtils
+} from "../ApiResource";
 
 class ApiForm extends Component {
   constructor(props) {
@@ -214,4 +216,12 @@ class ApiForm extends Component {
   }
 }
 
-export default withRouter(connect(addApiResourceStateToPropsUtils())(ApiForm));
+function mapStateToProps(state) {
+  const {fetchAuth} = apiResourceStateToPropsUtils(state);
+
+  return {
+    fetchAuth
+  }
+}
+
+export default withRouter(connect(mapStateToProps)(ApiForm));

@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {
-  addApiResourceDispatchToPropsUtils,
-  addApiResourceStateToPropsUtils
+  apiResourceStateToPropsUtils,
 } from "../ApiResource";
 
 class RequiredResources extends Component {
@@ -55,13 +54,24 @@ class RequiredResources extends Component {
   }
 }
 
-let mapStateToProps = (state) => {
+function mapStateToProps(state) {
+  const {authToken, fetchApiResource, filterApiResourceObjectsByType} = apiResourceStateToPropsUtils(state);
+
   return {
+    authToken,
+    fetchApiResource,
+    filterApiResourceObjectsByType,
     loadedResources: state.loadedResources,
   }
-};
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch
+  }
+}
 
 
 export default connect(
-    addApiResourceStateToPropsUtils(mapStateToProps),
-    addApiResourceDispatchToPropsUtils())(RequiredResources);
+    mapStateToProps,
+    mapDispatchToProps)(RequiredResources);

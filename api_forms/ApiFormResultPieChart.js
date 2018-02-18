@@ -2,7 +2,9 @@ import React, {Component} from 'react'
 import {Pie} from "react-chartjs-2";
 import {connect} from "react-redux";
 import {chartColors} from "../colors";
-import {addApiResourceStateToPropsUtils} from "../ApiResource";
+import {
+  apiResourceStateToPropsUtils
+} from "../ApiResource";
 
 class ApiFormResultPieChart extends Component {
   render() {
@@ -59,6 +61,12 @@ class ApiFormResultPieChart extends Component {
   }
 }
 
-export default connect(
-    addApiResourceStateToPropsUtils()
-)(ApiFormResultPieChart)
+function mapStateToProps(state) {
+  const {ApiResourceObject} = apiResourceStateToPropsUtils(state);
+
+  return {
+    ApiResourceObject,
+  }
+}
+
+export default connect(mapStateToProps)(ApiFormResultPieChart);
