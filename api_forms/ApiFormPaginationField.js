@@ -78,8 +78,8 @@ class ApiFormPaginationField extends Component {
       page = this.props.page.id
     }
 
-    const previousLabel = this.props.previousLabel || "&lsaquo;";
-    const nextLabel = this.props.nextLabel || "&rsaquo;";
+    const previousLabel = this.props.previousLabel || <span>&lsaquo;</span>;
+    const nextLabel = this.props.nextLabel || <span>&rsaquo;</span>;
 
     return <ReactPaginate
         forcePage={page - 1}

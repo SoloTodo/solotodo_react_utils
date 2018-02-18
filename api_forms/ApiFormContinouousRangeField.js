@@ -71,7 +71,7 @@ class ApiFormContinuousRangeField extends Component {
       }
     };
 
-    props.onChange(result, allowUpdateResults && Boolean(this.props.updateResultsOnChange))
+    props.onChange(result, allowUpdateResults)
   }
 
   render() {

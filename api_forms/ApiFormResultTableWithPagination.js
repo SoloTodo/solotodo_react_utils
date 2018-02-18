@@ -29,7 +29,6 @@ class ApiFormResultTableWithPagination extends Component {
                       onChange={this.props.onChange}
                       value={this.props.page_size}
                       required={true}
-                      updateResultsOnChange={true}
                       searchable={false}
                   />
                 </div>

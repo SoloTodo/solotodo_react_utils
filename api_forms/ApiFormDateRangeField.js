@@ -17,7 +17,7 @@ class ApiFormDateRangeField extends Component {
   componentUpdate = props => {
     const newValue = this.parseValueFromUrl(props);
 
-    if (!props.value || props.value.startDate !== newValue.startDate || props.value.endDate !== newValue.endDate) {
+    if (!props.value || !props.value.startDate.isSame(newValue.startDate) || !props.value.endDate.isSame(newValue.endDate)) {
       this.notifyNewParams(newValue, props, false);
     }
   };
@@ -116,7 +116,7 @@ class ApiFormDateRangeField extends Component {
       }
     };
 
-    props.onChange(result, allowUpdateResults && Boolean(props.updateResultsOnChange))
+    props.onChange(result, allowUpdateResults)
   }
 
   handleDateChange = (event) => {
