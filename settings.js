@@ -35,4 +35,5 @@ export const apiSettings = {
   ownUserUrl: endpoint + 'users/me/',
   linioStoreId: 76,
   linioAffiliateId: 2900,
+  cellPhoneCategoryId: 6,
 };
