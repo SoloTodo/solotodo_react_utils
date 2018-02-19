@@ -3,8 +3,7 @@ import {
   Button,
   Modal,
   ModalHeader,
-  ModalBody,
-  ModalFooter,
+  ModalBody
 } from "reactstrap";
 import {Link} from "react-router-dom";
 
