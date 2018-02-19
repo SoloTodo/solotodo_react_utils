@@ -31,7 +31,7 @@ class ApiFormRemoveOnlyListField extends Component {
     const newValue = this.parseValueFromUrl(props);
 
     if (!areListsEqual(props.value, newValue)) {
-      this.notifyNewParams(newValue, props, false);
+      this.notifyNewParams(newValue, props);
 
       if (newValue.length) {
         let endpoint = apiSettings.apiResourceEndpoints[props.resource] + '?';
@@ -69,7 +69,7 @@ class ApiFormRemoveOnlyListField extends Component {
   };
 
   notifyNewParams(value, props) {
-    props = props ? props : this.props;
+    props = props || this.props;
 
     if (!props.onChange) {
       return;

@@ -20,7 +20,6 @@ class ResourceObjectPermission extends Component {
     if (!props.apiResourceObject) {
       const id = props.match.params.id;
       props.fetchApiResourceObject(props.resource, id, props.dispatch).catch(err => {
-        console.log(err)
         toast.error("Este objeto no existe o no tienes permisos para acceder a el", {
           autoClose: false
         });

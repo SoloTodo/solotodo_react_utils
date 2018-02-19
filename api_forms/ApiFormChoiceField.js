@@ -19,7 +19,7 @@ class ApiFormChoiceField extends Component {
     const newValue = this.parseValueFromUrl(props);
 
     if (!areValuesEqual(props.value, newValue)) {
-      this.notifyNewParams(newValue, props, false);
+      this.notifyNewParams(newValue, props);
     }
   };
 
@@ -70,7 +70,7 @@ class ApiFormChoiceField extends Component {
     }
   };
 
-  notifyNewParams(valueOrValues, props, allowUpdateResults=true) {
+  notifyNewParams(valueOrValues, props) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -120,7 +120,7 @@ class ApiFormChoiceField extends Component {
       }
     };
 
-    props.onChange(result, allowUpdateResults)
+    props.onChange(result)
   }
 
   handleValueChange = (vals) => {

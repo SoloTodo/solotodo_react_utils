@@ -22,7 +22,7 @@ class ApiFormContinuousRangeField extends Component {
     const newValue = this.parseValueFromUrl(props);
 
     if (!props.value || props.value.startValue !== newValue.startValue || props.value.endValue !== newValue.endValue) {
-      this.notifyNewParams(newValue, props, false);
+      this.notifyNewParams(newValue, props);
     }
   };
 
@@ -39,7 +39,7 @@ class ApiFormContinuousRangeField extends Component {
     }
   };
 
-  notifyNewParams(values, props, allowUpdateResults=true) {
+  notifyNewParams(values, props) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -71,7 +71,7 @@ class ApiFormContinuousRangeField extends Component {
       }
     };
 
-    props.onChange(result, allowUpdateResults)
+    props.onChange(result)
   }
 
   render() {

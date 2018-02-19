@@ -49,6 +49,7 @@ class ApiFormResultTableWithPagination extends Component {
                 columns={this.props.columns}
                 ordering={this.props.ordering}
                 onChange={this.props.onChange}
+                loading={this.props.loading}
             />
           </div>
         </div>);

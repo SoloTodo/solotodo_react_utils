@@ -31,7 +31,7 @@ class ApiFormPaginationField extends Component {
     return value
   };
 
-  notifyNewParams(value, props, updateOnFinish=false) {
+  notifyNewParams(value, props) {
     props = props ? props : this.props;
 
     if (!props.onChange) {
@@ -52,12 +52,12 @@ class ApiFormPaginationField extends Component {
       }
     };
 
-    props.onChange(result, updateOnFinish)
+    props.onChange(result)
   }
 
 
   onPageChange = (selection) => {
-    this.notifyNewParams(selection.selected + 1, this.props, true)
+    this.notifyNewParams(selection.selected + 1, this.props)
   };
 
   render() {
