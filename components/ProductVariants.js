@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {addApiResourceStateToPropsUtils} from "../ApiResource";
 import {connect} from "react-redux";
 import AxisChoices from "./AxisChoices";
+import {areObjectsEqual, areObjectListsEqual} from "../utils";
 
 
 class ProductVariants extends Component {
@@ -12,13 +13,28 @@ class ProductVariants extends Component {
     }
   }
 
-  componentDidMount() { //TODO add willReceiveProps para las tiendas
-    const product = this.props.product;
-    let bucketUrl = `products/${product.id}/bucket/?`;
+  componentDidMount() {
+    this.componentUpdate(this.props.preferredStores, this.props.product);
+  }
 
-    for (const field of this.props.fields) {
-      bucketUrl += `fields=${field}&`
+  componentWillReceiveProps(nextProps) {
+    const oldPreferredStores = this.props.preferredStores;
+    const newPreferredStores = nextProps.preferredStores;
+
+    const oldProduct = this.props.product;
+    const newProduct = nextProps.product;
+
+    if (!areObjectListsEqual(oldPreferredStores, newPreferredStores) && !areObjectsEqual(oldProduct, newProduct)) {
+      this.setState({
+        pricingEntries: undefined
+      }, () => {
+        this.componentUpdate(newPreferredStores, newProduct);
+      });
     }
+  }
+
+  componentUpdate = (stores, product) => {
+    let bucketUrl = `products/${product.id}/bucket/?fields=${this.props.fields}`;
 
     this.props.fetchAuth(bucketUrl).then(products => {
       let pricingEntriesUrl = `products/available_entities/?`;
@@ -27,26 +43,29 @@ class ProductVariants extends Component {
         pricingEntriesUrl += `ids=${product.id}&`;
       }
 
-      for (const store of this.props.preferredStores) {
+      for (const store of stores) {
         pricingEntriesUrl += `stores=${store.id}&`
       }
 
-      this.props.fetchAuth(pricingEntriesUrl).then(response => (
-        //TODO filtar cellMonthyPayment == null
+      this.props.fetchAuth(pricingEntriesUrl).then(response => {
+        const filteredEntries = response.results.map(pricingEntry => (
+          {
+            product: pricingEntry.product,
+            entities: pricingEntry.entities.filter(entity => entity.active_registry.cell_monthly_payment === null)
+          }
+        ));
         this.setState({
-          pricingEntries: response.results
+          pricingEntries: filteredEntries
         })
-      ))
+      })
     });
+  };
 
-
-  }
 
   render() {
     if (!this.state.pricingEntries) {
       return null
     }
-
     const filteredAxes = this.props.axes.filter(axis => {
       return (new Set(this.state.pricingEntries.map(pricingEntry => pricingEntry.product.specs[axis.labelField]))).size > 1
     });
@@ -63,7 +82,8 @@ class ProductVariants extends Component {
           <AxisChoices axis={axis}
                        product={this.props.product}
                        pricingEntries={this.state.pricingEntries}
-                       otherLabelFields={allLabelFields.filter(labelField => labelField !== axis.field)}
+                       otherLabelFields={allLabelFields.filter(labelField => labelField !== axis.labelField)}
+                       key={axis.label}
           />
         ))
       }

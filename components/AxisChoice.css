@@ -1,0 +1,12 @@
+#variants-modal a {
+    color: #264c85;
+}
+
+#variants-modal a:hover {
+    text-decoration: underline;
+}
+
+
+.axis-choices > a, .axis-choices > span, .axis-choices > button, .axis-choices > div {
+    margin: 10px 10px 0 0;
+}
