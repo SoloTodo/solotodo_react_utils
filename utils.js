@@ -204,6 +204,10 @@ export function areObjectListsEqual(listA, listB, valueField='url') {
     return true;
   }
 
+  if (typeof(listA) === 'undefined' && typeof(listB) === 'undefined') {
+    return true;
+  }
+
   if (typeof(listA) !== typeof(listB)) {
     return false
   }

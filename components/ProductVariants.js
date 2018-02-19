@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
-import {addApiResourceStateToPropsUtils} from "../ApiResource";
+import {
+  apiResourceStateToPropsUtils
+} from "../ApiResource";
 import {connect} from "react-redux";
 import AxisChoices from "./AxisChoices";
 import {areObjectsEqual, areObjectListsEqual} from "../utils";
@@ -91,6 +93,12 @@ class ProductVariants extends Component {
   }
 }
 
-export default connect(
-  addApiResourceStateToPropsUtils()
-)(ProductVariants);
+function mapStateToProps(state) {
+  const {fetchAuth} = apiResourceStateToPropsUtils(state);
+
+  return {
+    fetchAuth
+  }
+}
+
+export default connect(mapStateToProps)(ProductVariants);

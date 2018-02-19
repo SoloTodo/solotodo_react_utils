@@ -2,11 +2,9 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux'
 import { toast } from 'react-toastify';
 import {
-  addApiResourceDispatchToPropsUtils,
-  addApiResourceStateToPropsUtils
+  apiResourceStateToPropsUtils
 } from "../ApiResource";
 import {apiSettings} from "../settings";
-import Loading from "../components/Loading";
 import {Redirect} from "react-router-dom";
 
 class ResourceObjectPermission extends Component {
@@ -50,33 +48,40 @@ class ResourceObjectPermission extends Component {
 
     if (!apiResourceObject) {
       // Object is currently fetching or resource endpoints have not been loaded
-      return <Loading/>
+      return this.props.loading || null
     } else if (!this.hasPermission()) {
       toast.error("Este objeto no existe o no tienes permisos para acceder a el", {
         autoClose: false
       });
       return <Redirect to="/" />
     } else {
-      const propsForChild = {
-        ...this.props,
-        apiResourceObject
-      };
+      const Component = this.props.component;
 
-      return React.cloneElement(React.Children.only(this.props.children), propsForChild);
+      return <Component {...this.props} />
     }
   }
 }
 
 function mapStateToProps(state, ownProps) {
+  const {ApiResourceObject, fetchApiResourceObject} = apiResourceStateToPropsUtils(state);
+
   const id = ownProps.match.params.id;
-  const apiResourceObjectUrl = `${apiSettings.apiResourceEndpoints[ownProps.resource]}${id}/`;
+  const resource = ownProps.resource;
+  const apiResourceObjectUrl = `${apiSettings.apiResourceEndpoints[resource]}${id}/`;
 
   return {
     apiResourceObject: state.apiResourceObjects[apiResourceObjectUrl],
+    fetchApiResourceObject,
+    ApiResourceObject,
   }
 }
 
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch
+  }
+}
 
 export default connect(
-    addApiResourceStateToPropsUtils(mapStateToProps),
-    addApiResourceDispatchToPropsUtils())(ResourceObjectPermission)
+    mapStateToProps,
+    mapDispatchToProps)(ResourceObjectPermission);

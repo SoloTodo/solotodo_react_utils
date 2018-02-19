@@ -16,7 +16,7 @@ class ApiFormTextField extends Component {
     const newValue = this.parseValueFromUrl(props);
 
     if (props.value !== newValue) {
-      this.notifyNewParams(newValue, props, false);
+      this.notifyNewParams(newValue, props);
     }
   };
 
@@ -34,7 +34,7 @@ class ApiFormTextField extends Component {
     return value ? value : props.initial || '';
   };
 
-  notifyNewParams(value, props, allowUpdateResults=true) {
+  notifyNewParams(value, props) {
     props = props ? props : this.props;
 
     if (!props.onChange) {
@@ -58,7 +58,7 @@ class ApiFormTextField extends Component {
       }
     };
 
-    props.onChange(result, allowUpdateResults && Boolean(this.props.updateResultsOnChange))
+    props.onChange(result)
   }
 
   handleValueChange = evt => {
@@ -72,7 +72,7 @@ class ApiFormTextField extends Component {
     }
 
     const value = this.props.value || '';
-    const debounceTimeout = this.props.debounceTimeout || 0;
+    const debounceTimeout = this.props.debounceTimeout || 2000;
 
     return (
         <DebounceInput

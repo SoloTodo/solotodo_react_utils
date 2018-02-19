@@ -4,6 +4,7 @@ import changeCase from 'change-case'
 import moment from "moment";
 import './ApiFormDateRangeField.css'
 import {parseDateToCurrentTz} from "../utils";
+import {areDatesEqual} from "./utils";
 
 class ApiFormDateRangeField extends Component {
   componentWillMount() {
@@ -17,8 +18,8 @@ class ApiFormDateRangeField extends Component {
   componentUpdate = props => {
     const newValue = this.parseValueFromUrl(props);
 
-    if (!props.value || props.value.startDate !== newValue.startDate || props.value.endDate !== newValue.endDate) {
-      this.notifyNewParams(newValue, props, false);
+    if (!props.value || !areDatesEqual(props.value.startDate, newValue.startDate) || !areDatesEqual(props.value.endDate, newValue.endDate)) {
+      this.notifyNewParams(newValue, props);
     }
   };
 
@@ -84,7 +85,7 @@ class ApiFormDateRangeField extends Component {
     }
   };
 
-  notifyNewParams(value, props=null, allowUpdateResults=true) {
+  notifyNewParams(value, props=null) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -116,7 +117,7 @@ class ApiFormDateRangeField extends Component {
       }
     };
 
-    props.onChange(result, allowUpdateResults && Boolean(props.updateResultsOnChange))
+    props.onChange(result)
   }
 
   handleDateChange = (event) => {

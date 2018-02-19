@@ -5,8 +5,10 @@ import {connect} from "react-redux";
 import { apiSettings } from '../settings'
 import {NavLink} from "react-router-dom";
 import './ApiFormRemoveOnlyListField.css'
-import {addApiResourceStateToPropsUtils} from "../ApiResource";
-import {listToObject} from "../utils";
+import {
+  apiResourceStateToPropsUtils
+} from "../ApiResource";
+import {areListsEqual, listToObject} from "../utils";
 
 class ApiFormRemoveOnlyListField extends Component {
   constructor(props) {
@@ -18,40 +20,42 @@ class ApiFormRemoveOnlyListField extends Component {
   }
 
   componentDidMount() {
-    const values = this.parseValueFromUrl();
-    this.notifyNewParams(values);
-
-    let endpoint = apiSettings.apiResourceEndpoints[this.props.resource] + '?';
-    for (const value of values) {
-      endpoint += `ids=${value}&`
-    }
-
-    if (values.length) {
-      this.props.fetchAuth(endpoint)
-          .then(json => {
-            const apiResourceObjects = listToObject(json.results, 'id')
-            this.setState({
-              apiResourceObjects
-            })
-          })
-    }
-
+    this.componentUpdate(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.onChange !== nextProps.onChange) {
-      this.notifyNewParams(this.parseValueFromUrl(), nextProps)
-    }
-
-    if (typeof(nextProps.value) === 'undefined') {
-      this.notifyNewParams(this.parseValueFromUrl())
-    }
+    this.componentUpdate(nextProps);
   }
 
-  parseValueFromUrl = () => {
+  componentUpdate = props => {
+    const newValue = this.parseValueFromUrl(props);
+
+    if (!areListsEqual(props.value, newValue)) {
+      this.notifyNewParams(newValue, props);
+
+      if (newValue.length) {
+        let endpoint = apiSettings.apiResourceEndpoints[props.resource] + '?';
+        for (const value of newValue) {
+          endpoint += `ids=${value}&`
+        }
+
+        props.fetchAuth(endpoint)
+            .then(json => {
+              const apiResourceObjects = listToObject(json.results, 'id');
+              this.setState({
+                apiResourceObjects
+              })
+            })
+      } else {
+        this.setState({apiResourceObjects: {}})
+      }
+    }
+  };
+
+  parseValueFromUrl = props => {
     const parameters = queryString.parse(window.location.search);
 
-    let values = parameters[changeCase.snake(this.props.name)];
+    let values = parameters[changeCase.snake(props.name)];
 
     if (typeof(values) === 'undefined') {
       values = []
@@ -65,7 +69,7 @@ class ApiFormRemoveOnlyListField extends Component {
   };
 
   notifyNewParams(value, props) {
-    props = props ? props : this.props;
+    props = props || this.props;
 
     if (!props.onChange) {
       return;
@@ -83,7 +87,7 @@ class ApiFormRemoveOnlyListField extends Component {
       }
     };
 
-    props.onChange(result, Boolean(this.props.updateResultsOnChange))
+    props.onChange(result, true)
   }
 
   handleItemRemove = (evt, value) => {
@@ -120,6 +124,12 @@ class ApiFormRemoveOnlyListField extends Component {
   }
 }
 
-export default connect(
-    addApiResourceStateToPropsUtils()
-)(ApiFormRemoveOnlyListField);
+function mapStateToProps(state) {
+  const {fetchAuth} = apiResourceStateToPropsUtils(state);
+
+  return {
+    fetchAuth,
+  }
+}
+
+export default connect(mapStateToProps)(ApiFormRemoveOnlyListField);

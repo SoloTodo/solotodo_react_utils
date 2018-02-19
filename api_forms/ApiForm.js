@@ -2,15 +2,16 @@ import React, {Component} from 'react'
 import './ApiForm.css'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {areListsEqual, listToObject} from "../utils";
-import {addApiResourceStateToPropsUtils} from "../ApiResource";
+import {areListsEqual} from "../utils";
+import {
+  apiResourceStateToPropsUtils
+} from "../ApiResource";
 
 class ApiForm extends Component {
   constructor(props) {
     super(props);
 
     this.state = this.defaultState();
-    this.handleFieldChange = this.handleFieldChange.bind(this);
   }
 
   componentWillMount() {
@@ -23,41 +24,12 @@ class ApiForm extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const currentObservedObjects = this.props.observedObjects || [];
-
-    const currentObservedObjectsDict = listToObject(currentObservedObjects, 'id');
-    const nextObservedObjectsDict = listToObject(nextProps.observedObjects || [], 'id');
-
-    const commonObservedObjectIds = currentObservedObjects
-        .filter(object => currentObservedObjectsDict[object.id] && nextObservedObjectsDict[object.id])
-        .map(object => object.id);
-
-    const changedObjects = [];
-
-    for (const commonObservedObjectId of commonObservedObjectIds) {
-      const currentObject = currentObservedObjectsDict[commonObservedObjectId];
-      const nextObject = nextObservedObjectsDict[commonObservedObjectId];
-
-      if (currentObject[this.props.observedObjectsField] !== nextObject[this.props.observedObjectsField]) {
-        changedObjects.push({
-          currentObject: currentObject,
-          nextObject: nextObject
-        });
-      }
-    }
-
     if (!areListsEqual(this.props.endpoints, nextProps.endpoints)) {
-      this.updateSearchResults(nextProps);
-    }
-
-    if (changedObjects.length) {
-      this.props.onObservedObjectChange(changedObjects);
-      this.updateSearchResults();
+      this.handleFieldChange(this.defaultState());
     }
   }
 
   handleHistoryChange = (location, action) => {
-    this.props.onResultsChange(null);
     this.handleFieldChange(this.defaultState());
   };
 
@@ -81,25 +53,14 @@ class ApiForm extends Component {
         });
   };
 
-  handleFieldChange = (updatedFieldsData={}, updateOnFinish=false) => {
+  handleFieldChange = (updatedFieldsData={}) => {
     let wasValid = undefined;
     let isValid = undefined;
 
     this.setState(state => {
       wasValid = this.isFormValid(state);
 
-      const newState = {
-        ...state,
-        ...updatedFieldsData
-      };
-
-      if (updateOnFinish && !Object.keys(updatedFieldsData).includes('page') && this.props.fields.includes('page')) {
-        newState.page = {
-          apiParams: {page: [1]},
-          urlParams: {page: [1]},
-          fieldValues: {id: 1, name: ''}
-        }
-      }
+      const newState = {...state, ...updatedFieldsData};
 
       isValid = this.isFormValid(newState);
 
@@ -113,18 +74,22 @@ class ApiForm extends Component {
 
       this.props.onFormValueChange(formValues);
 
-      const updateOnLoad = typeof(this.props.updateOnLoad) !== 'undefined' ? this.props.updateOnLoad : true;
+      if (!isValid) {
+        return;
+      }
 
-      if (!wasValid && isValid && updateOnLoad) {
-        this.updateSearchResults();
-      } else if (isValid && updateOnFinish) {
+      const allowSubmit = !this.props.requiresSubmit || formValues.submit;
+
+      if (wasValid) {
         this.pushUrl()
+      } else if (allowSubmit) {
+        this.updateSearchResults();
       }
     });
   };
 
-  pushUrl = props => {
-    props = props ? props : this.props;
+  pushUrl = (ignoreSubmit=false) => {
+    const props = this.props;
 
     let pageAndOrderingParams = '';
 
@@ -143,6 +108,10 @@ class ApiForm extends Component {
     let urlSearch = '?';
 
     for (const fieldName of Object.keys(this.state)) {
+      if (fieldName === 'submit' && ignoreSubmit) {
+        continue
+      }
+
       for (const urlParamKey of Object.keys(this.state[fieldName].urlParams)) {
         for (const urlParamValue of this.state[fieldName].urlParams[urlParamKey]) {
           urlSearch += `${urlParamKey}=${urlParamValue}&`
@@ -154,8 +123,8 @@ class ApiForm extends Component {
     props.history.push(newRoute)
   };
 
-  updateSearchResults = (props=null) => {
-    props = props ? props : this.props;
+  updateSearchResults = () => {
+    const props = this.props;
     props.onResultsChange(null);
 
     let pageAndOrderingParams = '';
@@ -204,6 +173,10 @@ class ApiForm extends Component {
 
       i++;
     }
+
+    if (props.requiresSubmit) {
+      this.pushUrl(true)
+    }
   };
 
   render() {
@@ -213,4 +186,12 @@ class ApiForm extends Component {
   }
 }
 
-export default withRouter(connect(addApiResourceStateToPropsUtils())(ApiForm));
+function mapStateToProps(state) {
+  const {fetchAuth} = apiResourceStateToPropsUtils(state);
+
+  return {
+    fetchAuth
+  }
+}
+
+export default withRouter(connect(mapStateToProps)(ApiForm));

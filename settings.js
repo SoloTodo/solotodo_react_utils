@@ -6,7 +6,6 @@ let endpoint = 'https://api.solotodo.com/';
 
 export const apiSettings = {
   endpoint,
-  websiteId: 1,
   apiResourceEndpoints: {
     stores: endpoint + 'stores/',
     languages: endpoint + 'languages/',
@@ -36,4 +35,6 @@ export const apiSettings = {
   ownUserUrl: endpoint + 'users/me/',
   linioStoreId: 76,
   linioAffiliateId: 2900,
+  cellPhoneCategoryId: 6,
+  technicalSpecificationsPurposeId: 1,
 };

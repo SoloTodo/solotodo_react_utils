@@ -3,13 +3,14 @@ import {FormattedMessage} from "react-intl";
 import {connect} from "react-redux";
 import './ApiFormResultsTable.css'
 import ApiFormOrderingColumn from "./ApiFormOrderingColumn";
-import {addApiResourceStateToPropsUtils} from "../ApiResource";
-import Loading from "../components/Loading";
+import {
+  apiResourceStateToPropsUtils
+} from "../ApiResource";
 
 class ApiFormResultsTable extends Component {
   render() {
     if (!this.props.results) {
-      return this.props.loading || <Loading />;
+      return this.props.loading || null;
     }
 
     const results = this.props.results.map((entry, idx) => {
@@ -70,5 +71,12 @@ class ApiFormResultsTable extends Component {
 }
 
 
-export default connect(
-    addApiResourceStateToPropsUtils())(ApiFormResultsTable)
+function mapStateToProps(state) {
+  const {ApiResourceObject} = apiResourceStateToPropsUtils(state);
+
+  return {
+    ApiResourceObject,
+  }
+}
+
+export default connect(mapStateToProps)(ApiFormResultsTable);

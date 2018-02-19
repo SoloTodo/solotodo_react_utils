@@ -22,3 +22,15 @@ export function createPageSizeChoices(pageSizes) {
     name: pageSize.toString()
   }))
 }
+
+export function areDatesEqual(dateA, dateB) {
+  if (dateA === null && dateB === null) {
+    return true;
+  }
+
+  if (typeof(dateA) !== typeof(dateB)) {
+    return false;
+  }
+
+  return dateA.isSame(dateB)
+}
