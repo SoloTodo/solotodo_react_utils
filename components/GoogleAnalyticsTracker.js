@@ -22,6 +22,9 @@ const withTracker = (WrappedComponent, options = {}) => {
 
       if (currentPage !== nextPage) {
         trackPage(nextPage);
+        setTimeout(function(){
+          window.scrollTo(0, 0);
+        }, 100);
       }
     }
 
