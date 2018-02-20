@@ -63,7 +63,7 @@ export function formatCurrency(value, valueCurrency, conversionCurrency, thousan
 
   let formattingCurrency = valueCurrency;
 
-  if (conversionCurrency && valueCurrency.url !== conversionCurrency.url) {
+  if (conversionCurrency && (valueCurrency.url !== conversionCurrency.url)) {
     value *= new Big(conversionCurrency.exchangeRate) / new Big(valueCurrency.exchangeRate);
     formattingCurrency = conversionCurrency
   }

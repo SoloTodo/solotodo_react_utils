@@ -111,11 +111,12 @@ class ApiFormPriceRangeField extends Component {
       }
     };
 
+    const currency = new ApiResourceObject(this.props.currency, {});
+    const conversionCurrency = this.props.conversionCurrency && new ApiResourceObject(this.props.conversionCurrency, {});
+
     const handle = (props, startValue, endValue) => {
       const { value, dragging, index, ...restProps } = props;
 
-      const currency = new ApiResourceObject(this.props.currency, {});
-      const conversionCurrency = this.props.conversionCurrency && new ApiResourceObject(this.props.conversionCurrency, {});
       const numberFormat = this.props.numberFormat;
 
       const valueForConversion = index === 0 ? startValue : endValue;
