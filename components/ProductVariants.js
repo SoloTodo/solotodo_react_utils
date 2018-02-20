@@ -16,7 +16,7 @@ class ProductVariants extends Component {
   }
 
   componentDidMount() {
-    this.componentUpdate(this.props.preferredStores, this.props.product);
+    this.componentUpdate(this.props.preferredStores, this.props.product, this.props.fields);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -26,17 +26,17 @@ class ProductVariants extends Component {
     const oldProduct = this.props.product;
     const newProduct = nextProps.product;
 
-    if (!areObjectListsEqual(oldPreferredStores, newPreferredStores) && !areObjectsEqual(oldProduct, newProduct)) {
+    if (!areObjectListsEqual(oldPreferredStores, newPreferredStores) || !areObjectsEqual(oldProduct, newProduct)) {
       this.setState({
         pricingEntries: undefined
       }, () => {
-        this.componentUpdate(newPreferredStores, newProduct);
+        this.componentUpdate(newPreferredStores, newProduct, nextProps.fields);
       });
     }
   }
 
-  componentUpdate = (stores, product) => {
-    let bucketUrl = `products/${product.id}/bucket/?fields=${this.props.fields}`;
+  componentUpdate = (stores, product, fields) => {
+    let bucketUrl = `products/${product.id}/bucket/?fields=${fields}`;
 
     this.props.fetchAuth(bucketUrl).then(products => {
       let pricingEntriesUrl = `products/available_entities/?`;
