@@ -37,4 +37,6 @@ export const apiSettings = {
   linioAffiliateId: 2900,
   cellPhoneCategoryId: 6,
   technicalSpecificationsPurposeId: 1,
+  categoryBrowseResultPurposeId: 3,
+  usdCurrencyId: 4,
 };
