@@ -39,4 +39,5 @@ export const apiSettings = {
   technicalSpecificationsPurposeId: 1,
   categoryBrowseResultPurposeId: 3,
   usdCurrencyId: 4,
+  shortDescriptionPurposeId: 2,
 };
