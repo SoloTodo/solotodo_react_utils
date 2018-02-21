@@ -212,6 +212,14 @@ export function areObjectListsEqual(listA, listB, valueField='url') {
     return false
   }
 
+  if (listA === null && listB !== null) {
+    return false
+  }
+
+  if (listA !== null && listB === null) {
+    return false
+  }
+
   if (listA.length !== listB.length) {
     return false
   }
