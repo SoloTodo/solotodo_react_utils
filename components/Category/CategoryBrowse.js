@@ -88,6 +88,11 @@ class CategoryBrowse extends Component {
     const categoryBrowseParams = this.props.categoryBrowseParams;
 
     let endpoint = `categories/${category.id}/browse/?page_size=${this.props.resultsPerPage}`;
+
+    if (this.props.categoryBrowseParams.apiEndpointSuffix) {
+      endpoint += '&' + this.props.categoryBrowseParams.apiEndpointSuffix
+    }
+
     if (categoryBrowseParams.bucketField) {
       endpoint += '&bucket_field=' + categoryBrowseParams.bucketField
     }

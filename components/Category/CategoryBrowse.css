@@ -16,10 +16,6 @@
     margin-bottom: 0;
 }
 
-.category-browse-pagination .page-item.active .page-link {
-    background-color: #264c85;
-}
-
 .category-browse-pagination .page-link {
     border: 0;
     color: inherit;
