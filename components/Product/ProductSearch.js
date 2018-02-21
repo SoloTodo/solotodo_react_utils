@@ -121,7 +121,7 @@ function mapStateToProps(state) {
   return {
     ApiResourceObject,
     currencies: filterApiResourceObjectsByType(state.apiResourceObjects, 'currencies'),
-    isExtraSmall: state.breakpoint.isExtraSmall
+    isExtraSmall: state.browser.is.extraSmall,
   }
 }
 

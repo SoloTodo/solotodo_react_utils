@@ -65,8 +65,8 @@ class ApiFormPaginationField extends Component {
       return null
     }
 
-    const pageRangeDisplayed = this.props.breakpoint.isExtraSmall ? 2 : 3;
-    const marginPagesDisplayed = this.props.breakpoint.isExtraSmall ? 1 : 2;
+    const pageRangeDisplayed = this.props.isExtraSmall ? 2 : 3;
+    const marginPagesDisplayed = this.props.isExtraSmall ? 1 : 2;
 
     let pageCount = 1;
     if (this.props.pageSize) {
@@ -105,7 +105,7 @@ class ApiFormPaginationField extends Component {
 
 function mapStateToProps(state) {
   return {
-    breakpoint: state.breakpoint,
+    isExtraSmall: state.browser.is.extraSmall,
   }
 }
 

@@ -595,7 +595,7 @@ function mapStateToProps(state) {
     ApiResourceObject,
     fetchAuth,
     currencies: filterApiResourceObjectsByType(state.apiResourceObjects, 'currencies'),
-    isExtraSmall: state.breakpoint.isExtraSmall
+    isExtraSmall: state.browser.is.extraSmall
   }
 }
 
