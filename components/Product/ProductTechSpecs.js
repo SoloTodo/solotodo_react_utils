@@ -3,6 +3,8 @@ import {connect} from "react-redux";
 import {apiResourceStateToPropsUtils} from "../../ApiResource";
 import {apiSettings} from "../../settings";
 
+import './ProductTechSpecs.css'
+
 class ProductTechSpecs extends Component {
   initialState = {
     specs: undefined

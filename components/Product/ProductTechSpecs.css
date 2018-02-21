@@ -1,0 +1,25 @@
+#technical-specifications-container {
+	font-weight: 300;
+}
+
+#technical-specifications-container dd {
+	margin-bottom: 2px;
+}
+
+#technical-specifications-container h3 {
+	font-size: 1.3rem;
+	margin-bottom: 12px;
+	font-weight: 300;
+}
+
+#technical-specifications-container dt {
+	font-weight: 700;
+	float: left;
+	padding-right: 6px;
+}
+
+#technical-specifications-container ul {
+	clear: both;
+	list-style: none;
+	padding-left: 20px;
+}
