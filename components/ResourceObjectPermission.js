@@ -8,23 +8,49 @@ import {apiSettings} from "../settings";
 import {Redirect} from "react-router-dom";
 
 class ResourceObjectPermission extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      done: Boolean(props.apiResourceObject)
+    }
+  }
+
   componentDidMount() {
-    this.componentUpdate(this.props)
+    if (this.props.apiResourceObject) {
+      return
+    }
+
+    const apiResourceObjectId = this.props.match.params.id;
+    const resource = this.props.resource;
+
+    this.componentUpdate(apiResourceObjectId, resource)
   }
 
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps);
+    if (nextProps.apiResourceObject) {
+      if (!this.state.done) {
+        this.setState({done: true})
+      }
+
+      return;
+    }
+
+    const currenctApiResourceObjectId = this.props.match.params.id;
+    const nextApiResourceObjectId = nextProps.match.params.id;
+
+    const currentResource = this.props.resource;
+    const nextResource = nextProps.resource;
+
+    if (currenctApiResourceObjectId !== nextApiResourceObjectId || currentResource !== nextResource) {
+      this.setState({done: false}, () => this.componentUpdate(nextApiResourceObjectId, nextResource));
+    }
   }
 
-  componentUpdate(props) {
-    if (!props.apiResourceObject) {
-      const id = props.match.params.id;
-      props.fetchApiResourceObject(props.resource, id, props.dispatch).catch(err => {
-        toast.error("Este objeto no existe o no tienes permisos para acceder a el", {
-          autoClose: false
-        });
-      })
-    }
+  componentUpdate(apiResourceObjectId, resource) {
+    this.props.fetchApiResourceObject(resource, apiResourceObjectId, this.props.dispatch).catch(err => {}).then(json => {
+      this.setState({done: true})
+    })
   }
 
   hasPermission = () => {
@@ -46,14 +72,12 @@ class ResourceObjectPermission extends Component {
   render = () => {
     const apiResourceObject = this.props.apiResourceObject;
 
-    if (!apiResourceObject) {
-      // Object is currently fetching or resource endpoints have not been loaded
+    if (!this.state.done) {
+      // Object is currently fetching
       return this.props.loading || null
-    } else if (!this.hasPermission()) {
-      toast.error("Este objeto no existe o no tienes permisos para acceder a el", {
-        autoClose: false
-      });
-      return <Redirect to="/" />
+    } else if (!apiResourceObject || !this.hasPermission()) {
+      const Http404 = this.props.Http404;
+      return <Http404 />
     } else {
       const Component = this.props.component;
 
