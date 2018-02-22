@@ -25,24 +25,24 @@ class AxisChoice extends Component {
 
   render() {
     if (this.props.originalProductMatches) {
-      return <span className="btn btn-old-blue active">
+      return <span className="btn btn-primary active">
         {this.props.labelValue}
         </span>
 
     } else if (this.props.redirectUrl) {
-      return <Link to={this.props.redirectUrl} className="btn btn-outline-old-blue">
+      return <Link to={this.props.redirectUrl} className="btn btn-outline-primary">
         {this.props.labelValue}
       </Link>
 
     } else if (this.props.availableAxisPricingEntries.length) {
       if (this.props.axis.directLink) {
         return <Link to={`/products/${this.props.availableAxisPricingEntries[0].product.id}`}
-                     className="btn btn-outline-old-blue">
+                     className="btn btn-outline-primary">
           {this.props.labelValue}
         </Link>
       } else {
         return <div>
-          <Button onClick={this.otherVariantsModalToggle} className="btn btn-outline-old-blue">
+          <Button onClick={this.otherVariantsModalToggle} className="btn btn-outline-primary">
             {this.props.labelValue}
           </Button>
           <Modal isOpen={this.state.otherVariantsModalIsActive} toggle={this.otherVariantsModalToggle}
