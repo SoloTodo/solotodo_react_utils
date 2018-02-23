@@ -55,7 +55,7 @@ class ProductVariants extends Component {
             product: pricingEntry.product,
             entities: pricingEntry.entities.filter(entity => entity.active_registry.cell_monthly_payment === null)
           }
-        ));
+        )).filter(pricingEntry => pricingEntry.entities.length);
         this.setState({
           pricingEntries: filteredEntries
         })
@@ -78,7 +78,8 @@ class ProductVariants extends Component {
 
     const allLabelFields = this.props.axes.map(axis => axis.labelField);
 
-    return <div className={this.props.className}>
+    return <div className={this.props.className} id={this.props.id}>
+      <div className="content-card">
       {
         filteredAxes.map(axis => (
           <AxisChoices axis={axis}
@@ -89,6 +90,7 @@ class ProductVariants extends Component {
           />
         ))
       }
+      </div>
     </div>
   }
 }

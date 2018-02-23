@@ -25,7 +25,13 @@ class ProductCellPricesTable extends Component {
     for (const group of groupedEntities) {
       tableRows.push(
           <tr key={group.store.url}>
-            <td colSpan="3">{group.store.name}</td>
+            <td colSpan="3"><span className="mr-2">{group.store.name}</span>
+              <i className="fas fa-star"></i>
+              <i className="fas fa-star"></i>
+              <i className="fas fa-star"></i>
+              <i className="fas fa-star"></i>
+              <i className="far fa-star"></i>
+            </td>
           </tr>
       );
       for (const entity of group.entities) {
@@ -42,7 +48,7 @@ class ProductCellPricesTable extends Component {
               </td>
               <td className="text-right">
                 <LeadLinkComponent entity={entity} className="price-container">
-                  {this.props.priceFormatter(entity.activeRegistry.offer_price, entity.currency)}
+                  {this.props.priceFormatter(entity.activeRegistry.normal_price, entity.currency)}
                 </LeadLinkComponent>
               </td>
             </tr>
@@ -55,16 +61,16 @@ class ProductCellPricesTable extends Component {
       <tr>
         <th scope="col">Tienda</th>
         <th scope="col" className="text-right">
-          <ReactTooltip id="normal-price" type="info" effect="solid" place="top">
-            <span>Con cualquier medio de pago</span>
-          </ReactTooltip>
-          <span data-tip data-for='normal-price' className="tooltip-span">Precio normal</span>
-        </th>
-        <th scope="col" className="text-right">
           <ReactTooltip id="offer-price" type="info" effect="solid" place="top">
             <span>Con el medio de pago preferido de la tienda</span>
           </ReactTooltip>
-          <span data-tip data-for='offer-price' className="tooltip-span">Precio oferta</span>
+          <span data-tip data-for='offer-price' className="tooltip-span">P. oferta</span>
+        </th>
+        <th scope="col" className="text-right">
+          <ReactTooltip id="normal-price" type="info" effect="solid" place="top">
+            <span>Con cualquier medio de pago</span>
+          </ReactTooltip>
+          <span data-tip data-for='normal-price' className="tooltip-span">P. normal</span>
         </th>
       </tr>
       </thead>

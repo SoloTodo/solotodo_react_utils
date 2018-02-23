@@ -19,7 +19,8 @@ class ProductStaffActions extends Component {
   };
 
   render() {
-    return <UncontrolledDropdown>
+    return <div className="mr-2">
+    <UncontrolledDropdown>
       <DropdownToggle color="success" caret>
         Opciones
       </DropdownToggle>
@@ -47,6 +48,7 @@ class ProductStaffActions extends Component {
         </a>
       </DropdownMenu>
     </UncontrolledDropdown>
+    </div>
   }
 }
 

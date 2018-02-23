@@ -9,17 +9,18 @@ class ProductNormalPricesTable extends Component {
       <thead>
       <tr>
         <th scope="col">Tienda</th>
+        <th>Rating</th>
         <th scope="col" className="text-right">
           <ReactTooltip id="offer-price" type="info" effect="solid" place="top">
             <span>Con el medio de pago preferido de la tienda</span>
           </ReactTooltip>
-          <span data-tip data-for='offer-price' className="tooltip-span">Precio oferta</span>
+          <span data-tip data-for='offer-price' className="tooltip-span">P. oferta</span>
         </th>
         <th scope="col" className="text-right">
           <ReactTooltip id="normal-price" type="info" effect="solid" place="top">
             <span>Con cualquier medio de pago</span>
           </ReactTooltip>
-          <span data-tip data-for='normal-price' className="tooltip-span">Precio normal</span>
+          <span data-tip data-for='normal-price' className="tooltip-span">P. normal</span>
         </th>
       </tr>
       </thead>
@@ -30,6 +31,13 @@ class ProductNormalPricesTable extends Component {
             <LeadLinkComponent entity={entity} className="normal-table-product-link">
               {entity.store.name}
             </LeadLinkComponent>
+          </td>
+          <td>
+            <i className="fas fa-star"></i>
+            <i className="fas fa-star"></i>
+            <i className="fas fa-star"></i>
+            <i className="fas fa-star"></i>
+            <i className="far fa-star"></i>
           </td>
           <td className="text-right">
             <LeadLinkComponent entity={entity} className="price-container">

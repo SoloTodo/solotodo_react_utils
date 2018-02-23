@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux'
-import { toast } from 'react-toastify';
 import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
 import {apiSettings} from "../settings";
-import {Redirect} from "react-router-dom";
 
 class ResourceObjectPermission extends Component {
   constructor(props) {
