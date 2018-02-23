@@ -55,6 +55,10 @@ class ProductSearch extends Component {
       endpoint += '&stores=' + store.id
     }
 
+    if (this.props.apiEndpointSuffix) {
+      endpoint += '&' + this.props.apiEndpointSuffix
+    }
+
     const products = this.state.productsPage || null;
 
     this.props.setTitle(this.state.formValues.search);
