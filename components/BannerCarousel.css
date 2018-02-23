@@ -1,0 +1,59 @@
+#banner-slider {
+    position: relative;
+}
+
+#banner-slider .slick-next, #banner-slider .slick-prev {
+    width: 25px;
+    height: 25px;
+}
+
+#banner-slider .slick-next:before, #banner-slider .slick-prev:before {
+    color: black;
+    font-size: 25px;
+}
+
+#banner-slider .custom-arrow {
+    position: absolute;
+    z-index: 500;
+    background: #D8D8D8;
+    opacity: 0.55;
+    width: 34px;
+    height: 66px;
+}
+
+#banner-slider .custom-arrow:hover {
+    opacity: 1;
+}
+
+#banner-slider .slick-prev.custom-arrow {
+    left: 0;
+}
+
+#banner-slider .slick-next.custom-arrow {
+    right: 0;
+}
+
+#banner-slider .slick-dots {
+    position: relative;
+    bottom: 30px;
+    z-index: 500;
+}
+
+#banner-slider .slick-dots button:before {
+    font-size: 15px;
+    width: 20px;
+    height: 20px;
+    color: black;
+}
+
+#banner-slider .slick-dots button:hover:before {
+    color: #A50034;
+}
+
+#banner-slider .slick-dots li.slick-active button:before {
+    font-size: 15px;
+    width: 20px;
+    height: 20px;
+    color: #A50034;
+    opacity: 1;
+}
