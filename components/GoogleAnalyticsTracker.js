@@ -1,19 +1,28 @@
 import React, { Component } from 'react';
 import GoogleAnalytics from 'react-ga';
 
-const withTracker = (WrappedComponent, options = {}) => {
-  const trackPage = page => {
-    GoogleAnalytics.set({
+const withTracker = (WrappedComponent, options = {}, mapPropsToGAField) => {
+  const trackPage = (page, props) => {
+    let setParameters = {
       page,
       ...options,
-    });
+    };
+
+    if (mapPropsToGAField) {
+      setParameters = {
+        ...setParameters,
+        ...mapPropsToGAField(props)
+      }
+    }
+
+    GoogleAnalytics.set(setParameters);
     GoogleAnalytics.pageview(page);
   };
 
-  const HOC = class extends Component {
+  return class HOC extends Component {
     componentDidMount() {
       const page = this.props.location.pathname;
-      trackPage(page);
+      trackPage(page, this.props);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -21,7 +30,7 @@ const withTracker = (WrappedComponent, options = {}) => {
       const nextPage = nextProps.location.pathname;
 
       if (currentPage !== nextPage) {
-        trackPage(nextPage);
+        trackPage(nextPage, nextProps);
         setTimeout(function(){
           window.scrollTo(0, 0);
         }, 100);
@@ -32,8 +41,6 @@ const withTracker = (WrappedComponent, options = {}) => {
       return <WrappedComponent {...this.props} />;
     }
   };
-
-  return HOC;
 };
 
 export default withTracker;
