@@ -26,11 +26,6 @@ class ProductCellPricesTable extends Component {
       tableRows.push(
           <tr key={group.store.url}>
             <td colSpan="3"><span className="mr-2">{group.store.name}</span>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="far fa-star"></i>
             </td>
           </tr>
       );
