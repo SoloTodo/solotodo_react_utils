@@ -3,8 +3,10 @@ import GoogleAnalytics from 'react-ga';
 
 const withTracker = (WrappedComponent, options = {}, mapPropsToGAField) => {
   const trackPage = (page, props) => {
+    const fullPath = page.pathname + page.search;
+    
     let setParameters = {
-      page,
+      page: fullPath,
       ...options,
     };
 
@@ -16,20 +18,20 @@ const withTracker = (WrappedComponent, options = {}, mapPropsToGAField) => {
     }
 
     GoogleAnalytics.set(setParameters);
-    GoogleAnalytics.pageview(page);
+    GoogleAnalytics.pageview(fullPath);
   };
 
   return class HOC extends Component {
     componentDidMount() {
-      const page = this.props.location.pathname;
+      const page = this.props.location;
       trackPage(page, this.props);
     }
 
     componentWillReceiveProps(nextProps) {
-      const currentPage = this.props.location.pathname;
-      const nextPage = nextProps.location.pathname;
+      const currentPage = this.props.location;
+      const nextPage = nextProps.location;
 
-      if (currentPage !== nextPage) {
+      if (currentPage.key !== nextPage.key) {
         trackPage(nextPage, nextProps);
         setTimeout(function(){
           window.scrollTo(0, 0);
