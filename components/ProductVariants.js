@@ -51,10 +51,10 @@ class ProductVariants extends Component {
 
       this.props.fetchAuth(pricingEntriesUrl).then(response => {
         const filteredEntries = response.results.map(pricingEntry => (
-          {
-            product: pricingEntry.product,
-            entities: pricingEntry.entities.filter(entity => entity.active_registry.cell_monthly_payment === null)
-          }
+            {
+              product: pricingEntry.product,
+              entities: pricingEntry.entities.filter(entity => entity.active_registry.cell_monthly_payment === null)
+            }
         )).filter(pricingEntry => pricingEntry.entities.length || pricingEntry.product.id === product.id);
         this.setState({
           pricingEntries: filteredEntries
@@ -79,17 +79,19 @@ class ProductVariants extends Component {
 
     const allLabelFields = this.props.axes.map(axis => axis.labelField);
 
-    return <div className={this.props.className}>
-      {
-        filteredAxes.map(axis => (
-          <AxisChoices axis={axis}
-                       product={this.props.product}
-                       pricingEntries={this.state.pricingEntries}
-                       otherLabelFields={allLabelFields.filter(labelField => labelField !== axis.labelField)}
-                       key={axis.label}
-          />
-        ))
-      }
+    return <div className={this.props.className} id={this.props.id}>
+      <div className="content-card">
+        {
+          filteredAxes.map(axis => (
+              <AxisChoices axis={axis}
+                           product={this.props.product}
+                           pricingEntries={this.state.pricingEntries}
+                           otherLabelFields={allLabelFields.filter(labelField => labelField !== axis.labelField)}
+                           key={axis.label}
+              />
+          ))
+        }
+      </div>
     </div>
   }
 }

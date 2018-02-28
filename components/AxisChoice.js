@@ -7,7 +7,6 @@ import {
 } from "reactstrap";
 import {Link} from "react-router-dom";
 
-import './AxisChoice.css'
 
 class AxisChoice extends Component {
   constructor(props) {
@@ -25,23 +24,23 @@ class AxisChoice extends Component {
 
   render() {
     if (this.props.originalProductMatches) {
-      return <span className="btn btn-primary active btn-sm">
+      return <span className="btn btn-secondary active btn-sm">
         {this.props.labelValue}
         </span>
 
     } else if (this.props.redirectUrl) {
-      return <Link to={this.props.redirectUrl} className="btn btn-outline-primary btn-sm">
+      return <Link to={this.props.redirectUrl} className="btn btn-outline-secondary btn-sm">
         {this.props.labelValue}
       </Link>
 
     } else if (this.props.axis.directLink) {
       return <Link to={`/products/${this.props.matchingAxisPricingEntries[0].product.id}-${this.props.matchingAxisPricingEntries[0].product.slug}`}
-                   className="btn btn-outline-primary btn-sm">
+                   className="btn btn-outline-secondary btn-sm">
         {this.props.labelValue}
       </Link>
     } else {
       return <div>
-        <Button onClick={this.otherVariantsModalToggle} className="btn btn-outline-primary btn-sm">
+        <Button onClick={this.otherVariantsModalToggle} className="btn btn-outline-secondary btn-sm">
           {this.props.labelValue}
         </Button>
         <Modal isOpen={this.state.otherVariantsModalIsActive} toggle={this.otherVariantsModalToggle}

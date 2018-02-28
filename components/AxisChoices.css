@@ -2,7 +2,6 @@
     text-decoration: underline;
 }
 
-
 .axis-choices > a, .axis-choices > span, .axis-choices > button, .axis-choices > div {
-    margin: 0 10px 10px 0;
+    margin: 5px 10px 5px 0;
 }
