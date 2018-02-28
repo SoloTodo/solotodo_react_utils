@@ -21,7 +21,7 @@ class ApiFormPriceRangeField extends Component {
     }
   }
 
-  setValue(newValue, props) {
+  setValue(newValue, props, pushUrl=false) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -33,13 +33,13 @@ class ApiFormPriceRangeField extends Component {
     if (!oldValue || oldValue.startValue !== newValue.startValue || oldValue.endValue !== newValue.endValue) {
       this.setState({
         value: newValue
-      }, () => this.notifyNewParams(newValue, props))
+      }, () => this.notifyNewParams(newValue, props, pushUrl))
     }
   }
 
   componentWillMount() {
-    this.unlisten = this.props.history.listen(this.handleHistoryChange);
-    this.componentUpdate(this.props)
+    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    this.componentUpdate();
   }
 
   componentWillUnmount() {
@@ -49,19 +49,14 @@ class ApiFormPriceRangeField extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.onChange && nextProps.onChange) {
       this.notifyNewParams(this.state.value, nextProps)
-    } else {
-      this.componentUpdate(nextProps)
     }
   }
 
-  handleHistoryChange = (location, action) => {
-    const newValue = this.parseValueFromUrl();
-    this.setValue(newValue);
-  };
-
   componentUpdate = props => {
+    props = props || this.props;
+
     const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue);
+    this.setValue(newValue, props);
   };
 
   parseValueFromUrl = props => {
@@ -77,7 +72,7 @@ class ApiFormPriceRangeField extends Component {
     }
   };
 
-  notifyNewParams(values, props=null) {
+  notifyNewParams(values, props=null, pushUrl=false) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -109,7 +104,7 @@ class ApiFormPriceRangeField extends Component {
       }
     };
 
-    props.onChange(result)
+    props.onChange(result, pushUrl)
   }
 
   render() {
@@ -143,7 +138,7 @@ class ApiFormPriceRangeField extends Component {
         this.setValue({
           startValue: newStartValue,
           endValue: newEndValue
-        })
+        }, this.props, true)
       }
     };
 

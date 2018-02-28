@@ -7,26 +7,55 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcDiscreteRange from "./RcDiscreteRange";
+import {withRouter} from "react-router-dom";
 
 
 class ApiFormDiscreteRangeField extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: this.parseValueFromUrl(props)
+    }
+  }
+
+  setValue(newValue, props, pushUrl=false) {
+    props = props || this.props;
+
+    if (!props.onChange) {
+      return
+    }
+
+    if (!this.state.value || this.state.value.startId !== newValue.startId || this.state.value.endId !== newValue.endId) {
+      this.setState({
+        value: newValue
+      }, () => this.notifyNewParams(newValue, props, pushUrl))
+    }
+  }
+
   componentWillMount() {
-    this.componentUpdate(this.props)
+    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    this.componentUpdate();
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps)
+    if (!this.props.onChange && nextProps.onChange) {
+      this.notifyNewParams(this.state.value, nextProps)
+    }
   }
 
   componentUpdate = props => {
-    const newValue = this.parseIdFromUrl(props);
+    props = props || this.props;
 
-    if (!props.value || props.value.startId !== newValue.startId || props.value.endId !== newValue.endId) {
-      this.notifyNewParams(newValue, props);
-    }
+    const newValue = this.parseValueFromUrl(props);
+    this.setValue(newValue, props);
   };
 
-  parseIdFromUrl = props => {
+  parseValueFromUrl = props => {
     props = props || this.props;
 
     // Obtain URL params
@@ -50,7 +79,7 @@ class ApiFormDiscreteRangeField extends Component {
     }
   };
 
-  notifyNewParams(ids, props=null) {
+  notifyNewParams(ids, props=null, pushUrl=false) {
     props = props ? props : this.props;
 
     if (!props.onChange) {
@@ -82,7 +111,7 @@ class ApiFormDiscreteRangeField extends Component {
       }
     };
 
-    props.onChange(result)
+    props.onChange(result, pushUrl)
   }
 
   render() {
@@ -99,8 +128,8 @@ class ApiFormDiscreteRangeField extends Component {
     const min = choices[0].value;
     const max = choices[choices.length - 1].value;
 
-    const startId = this.props.value ? this.props.value.startId : null;
-    const endId = this.props.value ? this.props.value.endId : null;
+    const startId = this.state.value ? this.state.value.startId : null;
+    const endId = this.state.value ? this.state.value.endId : null;
 
     let marks = {};
     let valueDocCountDict = {};
@@ -130,11 +159,11 @@ class ApiFormDiscreteRangeField extends Component {
       const newStartId = newStartChoice.value === min ? null : newStartChoice.id;
       const newEndId = newEndChoice.value === max ? null : newEndChoice.id;
 
-      if (this.props.value.startId !== newStartId || this.props.value.endId !== newEndId) {
-        this.notifyNewParams({
+      if (!this.state.value || this.state.value.startId !== newStartId || this.state.value.endId !== newEndId) {
+        this.setValue({
           startId: newStartId,
           endId: newEndId
-        })
+        }, this.props, true)
       }
 
     };
@@ -186,4 +215,4 @@ class ApiFormDiscreteRangeField extends Component {
   }
 }
 
-export default ApiFormDiscreteRangeField
+export default withRouter(ApiFormDiscreteRangeField)

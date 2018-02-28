@@ -42,10 +42,7 @@ class ApiFormChoiceField extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.onChange && nextProps.onChange) {
       this.notifyNewParams(this.state.value, nextProps)
-    } else {
-      this.componentUpdate(nextProps)
     }
-
   }
 
   componentUpdate = props => {
@@ -69,6 +66,8 @@ class ApiFormChoiceField extends Component {
       } else if (!Array.isArray(valueIds)) {
         valueIds = [valueIds]
       }
+
+      valueIds.sort();
 
       return choices.filter(choice => valueIds.includes(choice.id))
     } else {
@@ -155,6 +154,7 @@ class ApiFormChoiceField extends Component {
     let sanitizedValue = null;
     if (this.props.multiple) {
       sanitizedValue = vals.map(val => val.option)
+      sanitizedValue.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);});
     } else if (vals) {
       sanitizedValue = vals.option
     }

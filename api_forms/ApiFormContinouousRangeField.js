@@ -7,23 +7,52 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcContinuousRange from "./RcContinuousRange";
+import {withRouter} from "react-router-dom";
 
 
 class ApiFormContinuousRangeField extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: this.parseValueFromUrl(props)
+    }
+  }
+
+  setValue(newValue, props, pushUrl=false) {
+    props = props || this.props;
+
+    if (!props.onChange) {
+      return
+    }
+
+    if (!this.state.value || this.state.value.startValue !== newValue.startValue || this.state.value.endValue !== newValue.endValue) {
+      this.setState({
+        value: newValue
+      }, () => this.notifyNewParams(newValue, props, pushUrl))
+    }
+  }
+
   componentWillMount() {
-    this.componentUpdate(this.props)
+    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    this.componentUpdate();
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps)
+    if (!this.props.onChange && nextProps.onChange) {
+      this.notifyNewParams(this.state.value, nextProps)
+    }
   }
 
   componentUpdate = props => {
-    const newValue = this.parseValueFromUrl(props);
+    props = props || this.props;
 
-    if (!props.value || props.value.startValue !== newValue.startValue || props.value.endValue !== newValue.endValue) {
-      this.notifyNewParams(newValue, props);
-    }
+    const newValue = this.parseValueFromUrl(props);
+    this.setValue(newValue, props);
   };
 
   parseValueFromUrl = props => {
@@ -39,7 +68,7 @@ class ApiFormContinuousRangeField extends Component {
     }
   };
 
-  notifyNewParams(values, props) {
+  notifyNewParams(values, props, pushUrl=false) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -71,7 +100,7 @@ class ApiFormContinuousRangeField extends Component {
       }
     };
 
-    props.onChange(result)
+    props.onChange(result, pushUrl)
   }
 
   render() {
@@ -132,8 +161,8 @@ class ApiFormContinuousRangeField extends Component {
     const min = newChoices[0].value;
     const max = newChoices[newChoices.length - 1].value;
 
-    let startValue = this.props.value ? this.props.value.startValue : null;
-    let endValue = this.props.value ? this.props.value.endValue : null;
+    let startValue = this.state.value ? this.state.value.startValue : null;
+    let endValue = this.state.value ? this.state.value.endValue : null;
 
     if (startValue && startValue < min) {
       startValue = null
@@ -165,11 +194,11 @@ class ApiFormContinuousRangeField extends Component {
         newEndValue = null
       }
 
-      if (!this.props.value || this.props.value.startValue !== newStartValue || this.props.value.endValue !== newEndValue) {
-        this.notifyNewParams({
+      if (!this.state.value || this.state.value.startValue !== newStartValue || this.state.value.endValue !== newEndValue) {
+        this.setValue({
           startValue: newStartValue,
           endValue: newEndValue
-        })
+        }, this.props, true)
       }
     };
 
@@ -227,4 +256,4 @@ class ApiFormContinuousRangeField extends Component {
   }
 }
 
-export default ApiFormContinuousRangeField
+export default withRouter(ApiFormContinuousRangeField)

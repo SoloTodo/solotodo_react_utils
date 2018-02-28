@@ -4,6 +4,7 @@ import changeCase from 'change-case'
 import {DebounceInput} from 'react-debounce-input';
 import {withRouter} from "react-router-dom";
 
+
 class ApiFormTextField extends Component {
   constructor(props) {
     super(props);
@@ -13,7 +14,7 @@ class ApiFormTextField extends Component {
     }
   }
 
-  setValue(newValue, props) {
+  setValue(newValue, props, pushUrl=false) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -23,13 +24,13 @@ class ApiFormTextField extends Component {
     if (this.state.value !== newValue) {
       this.setState({
         value: newValue
-      }, () => this.notifyNewParams(newValue, props))
+      }, () => this.notifyNewParams(newValue, props, pushUrl))
     }
   }
 
   componentWillMount() {
-    this.unlisten = this.props.history.listen(this.handleHistoryChange);
-    this.componentUpdate(this.props)
+    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    this.componentUpdate();
   }
 
   componentWillUnmount() {
@@ -39,19 +40,14 @@ class ApiFormTextField extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.onChange && nextProps.onChange) {
       this.notifyNewParams(this.state.value, nextProps)
-    } else {
-      this.componentUpdate(nextProps)
     }
   }
 
   componentUpdate = props => {
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue);
-  };
+    props = props || this.props;
 
-  handleHistoryChange = (location, action) => {
-    const newValue = this.parseValueFromUrl();
-    this.setValue(newValue);
+    const newValue = this.parseValueFromUrl(props);
+    this.setValue(newValue, props);
   };
 
   parseValueFromUrl = props => {
@@ -97,7 +93,7 @@ class ApiFormTextField extends Component {
 
   handleValueChange = evt => {
     evt.preventDefault();
-    this.setValue(evt.target.value)
+    this.setValue(evt.target.value, this.props, true)
   };
 
   render() {

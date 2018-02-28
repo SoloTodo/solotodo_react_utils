@@ -39,10 +39,7 @@ class ApiFormPaginationField extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.onChange && nextProps.onChange) {
       this.notifyNewParams(this.state.value, nextProps)
-    } else {
-      this.componentUpdate(nextProps)
     }
-
   }
 
   componentUpdate = props => {
@@ -72,7 +69,7 @@ class ApiFormPaginationField extends Component {
 
     const params = {};
 
-    if (value) {
+    if (value && value !== 1) {
       params['page'] = [value]
     }
 

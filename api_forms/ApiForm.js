@@ -26,7 +26,7 @@ class ApiForm extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!areListsEqual(this.props.endpoints, nextProps.endpoints)) {
-      this.updateSearchResults()
+      this.updateSearchResults(nextProps)
     }
   }
 
@@ -38,10 +38,28 @@ class ApiForm extends Component {
   };
 
   handleFieldChange = (updatedFieldsData={}, pushUrl) => {
+    // If the page was reset by a previous call from another field, do nothing
+    if (updatedFieldsData.page && !pushUrl) {
+      if (this.fieldsData.page && this.fieldsData.page.fieldValues.id === updatedFieldsData.page.fieldValues.id) {
+        return
+      }
+    }
+
     this.fieldsData = {
       ...this.fieldsData,
       ...updatedFieldsData
     };
+
+
+    if (!updatedFieldsData.page && pushUrl) {
+      this.fieldsData.page = {
+        apiParams: {},
+        urlParams: {},
+        fieldValues: {
+          id: 1,
+          name: ""}
+      }
+    }
 
     const formValues = {};
 
@@ -105,8 +123,9 @@ class ApiForm extends Component {
     props.history.push(newRoute)
   };
 
-  updateSearchResults = () => {
-    const props = this.props;
+  updateSearchResults = props => {
+    props = props || this.props;
+
     props.onResultsChange(null);
 
     let apiSearch = '';
