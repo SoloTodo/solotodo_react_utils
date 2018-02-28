@@ -202,7 +202,6 @@ class CategoryBrowse extends Component {
                 min={this.state.priceRange.min || null}
                 max={this.state.priceRange.max || null}
                 p80th={this.state.priceRange.p80th || null}
-                value={this.state.formValues.offer_price_usd}
                 currency={usdCurrency}
                 conversionCurrency={conversionCurrency}
                 numberFormat={numberFormat}
@@ -221,7 +220,6 @@ class CategoryBrowse extends Component {
               name="search"
               placeholder="Palabras clave"
               onChange={this.state.apiFormFieldChangeHandler}
-              value={this.state.formValues.search}
               debounceTimeout={this.props.isExtraSmall ? 2000 : 500}
           />
         }]
@@ -280,7 +278,6 @@ class CategoryBrowse extends Component {
               placeholder={filter.label}
               searchable={!this.props.isExtraSmall}
               onChange={this.state.apiFormFieldChangeHandler}
-              value={value}
               multiple={true}
           />
         } else if (filter.type === 'lte') {
@@ -315,7 +312,6 @@ class CategoryBrowse extends Component {
               placeholder={filter.label}
               searchable={!this.props.isExtraSmall}
               onChange={this.state.apiFormFieldChangeHandler}
-              value={value}
           />
         } else if (filter.type === 'gte') {
           let filterChoices = undefined;
@@ -351,7 +347,6 @@ class CategoryBrowse extends Component {
               placeholder={filter.label}
               searchable={!this.props.isExtraSmall}
               onChange={this.state.apiFormFieldChangeHandler}
-              value={value}
           />
         } else if (filter.type === 'range') {
           if (filter.continuous_range_step) {
@@ -373,7 +368,6 @@ class CategoryBrowse extends Component {
                   label={filter.label}
                   onChange={this.state.apiFormFieldChangeHandler}
                   choices={filterChoices}
-                  value={value}
                   step={filter.continuous_range_step}
                   unit={filter.continuous_range_unit}
                   resultCountSuffix="resultados"
@@ -407,7 +401,6 @@ class CategoryBrowse extends Component {
                   label={filter.label}
                   onChange={this.state.apiFormFieldChangeHandler}
                   choices={filterChoices}
-                  value={value}
                   resultCountSuffix="resultados"
               />
             </div>
@@ -480,12 +473,12 @@ class CategoryBrowse extends Component {
     </Accordion>;
 
     const orderingComponent = <ApiFormChoiceField
+        key="ordering"
         name="ordering"
         id="ordering"
         searchable={false}
         choices={orderingChoices}
         onChange={this.state.apiFormFieldChangeHandler}
-        value={this.state.formValues.ordering}
         required={true}
     />;
 
@@ -500,7 +493,8 @@ class CategoryBrowse extends Component {
             <Menu pageWrapId="page-wrap"
                   outerContainerId="outer-container"
                   isOpen={this.state.isMobileMenuOpen}
-                  onStateChange={(state) => this.handleMenuStateChange(state)}>
+                  onStateChange={(state) => this.handleMenuStateChange(state)}
+            >
               <div id="category-browse-filters-mobile">
                 {filtersComponent}
               </div>
@@ -570,7 +564,6 @@ class CategoryBrowse extends Component {
 
                     <div className="d-flex category-browse-pagination justify-content-around mt-2 mb-3">
                       <ApiFormPaginationField
-                          page={this.state.formValues.page}
                           pageSize={{id: this.props.resultsPerPage}}
                           resultCount={this.state.productsPage && this.state.productsPage.count}
                           onChange={this.state.apiFormFieldChangeHandler}

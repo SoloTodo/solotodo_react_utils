@@ -11,81 +11,63 @@ class ApiForm extends Component {
   constructor(props) {
     super(props);
 
-    this.state = this.defaultState();
+    let fieldsData = {};
+
+    for (const field of this.props.fields) {
+      fieldsData[field] = undefined
+    }
+
+    this.fieldsData = fieldsData;
   }
 
   componentWillMount() {
     this.props.setFieldChangeHandler(this.handleFieldChange);
-    this.unlisten = this.props.history.listen(this.handleHistoryChange);
-  }
-
-  componentWillUnmount() {
-    this.unlisten();
   }
 
   componentWillReceiveProps(nextProps) {
     if (!areListsEqual(this.props.endpoints, nextProps.endpoints)) {
-      this.handleFieldChange(this.defaultState());
+      this.updateSearchResults()
     }
   }
 
-  handleHistoryChange = (location, action) => {
-    this.handleFieldChange(this.defaultState());
-  };
-
-
-  defaultState = () => {
-    let params = {};
-
-    for (const field of this.props.fields) {
-      params[field] = null
-    }
-
-    return params;
-  };
-
-  isFormValid = (state=null) => {
-    state = state ? state : this.state;
-
-    return Object.values(state).every(
+  isFormValid = () => {
+    return Object.values(this.fieldsData).every(
         param => {
           return Boolean(param)
         });
   };
 
-  handleFieldChange = (updatedFieldsData={}) => {
-    let wasValid = undefined;
-    let isValid = undefined;
+  handleFieldChange = (updatedFieldsData={}, pushUrl) => {
+    this.fieldsData = {
+      ...this.fieldsData,
+      ...updatedFieldsData
+    };
 
-    this.setState(state => {
-      wasValid = this.isFormValid(state);
+    const formValues = {};
 
-      const newState = {...state, ...updatedFieldsData};
+    for (const field of this.props.fields) {
+      formValues[field] = this.fieldsData[field] ? this.fieldsData[field].fieldValues : undefined
+    }
 
-      isValid = this.isFormValid(newState);
+    this.props.onFormValueChange(formValues);
 
-      return newState
-    }, () => {
-      const formValues = {};
+    if (!this.isFormValid()) {
+      return;
+    }
 
-      for (const field of this.props.fields) {
-        formValues[field] = this.state[field] ? this.state[field].fieldValues : undefined
-      }
+    this.updateSearchResults();
 
-      this.props.onFormValueChange(formValues);
+    if (pushUrl) {
+      this.pushUrl()
+    }
 
-      if (!isValid) {
-        return;
-      }
+    // const allowSubmit = !this.props.requiresSubmit || formValues.submit;
 
-      const allowSubmit = !this.props.requiresSubmit || formValues.submit;
-
-      if (wasValid) {
-        this.pushUrl()
-      } else if (allowSubmit) {
-        this.updateSearchResults();
-      }
-    });
+    // if (wasValid) {
+    //   this.pushUrl()
+    // } else if (allowSubmit) {
+    //   this.updateSearchResults();
+    // }
   };
 
   pushUrl = (ignoreSubmit=false) => {
@@ -107,13 +89,13 @@ class ApiForm extends Component {
 
     let urlSearch = '?';
 
-    for (const fieldName of Object.keys(this.state)) {
+    for (const fieldName of Object.keys(this.fieldsData)) {
       if (fieldName === 'submit' && ignoreSubmit) {
         continue
       }
 
-      for (const urlParamKey of Object.keys(this.state[fieldName].urlParams)) {
-        for (const urlParamValue of this.state[fieldName].urlParams[urlParamKey]) {
+      for (const urlParamKey of Object.keys(this.fieldsData[fieldName].urlParams)) {
+        for (const urlParamValue of this.fieldsData[fieldName].urlParams[urlParamKey]) {
           urlSearch += `${urlParamKey}=${urlParamValue}&`
         }
       }
@@ -127,25 +109,11 @@ class ApiForm extends Component {
     const props = this.props;
     props.onResultsChange(null);
 
-    let pageAndOrderingParams = '';
-
-    if (props.page) {
-      pageAndOrderingParams += `page=${props.page}&`
-    }
-
-    if (props.pageSize) {
-      pageAndOrderingParams += `page_size=${props.pageSize}&`;
-    }
-
-    if (props.ordering) {
-      pageAndOrderingParams += `ordering=${props.ordering}&`;
-    }
-
     let apiSearch = '';
 
-    for (const fieldName of Object.keys(this.state)) {
-      for (const apiParamKey of Object.keys(this.state[fieldName].apiParams)) {
-        for (const apiParamValue of this.state[fieldName].apiParams[apiParamKey]) {
+    for (const fieldName of Object.keys(this.fieldsData)) {
+      for (const apiParamKey of Object.keys(this.fieldsData[fieldName].apiParams)) {
+        for (const apiParamValue of this.fieldsData[fieldName].apiParams[apiParamKey]) {
           apiSearch += `${apiParamKey}=${apiParamValue}&`
         }
       }
@@ -156,12 +124,12 @@ class ApiForm extends Component {
       const separator = endpoint.indexOf('?') === -1 ? '?' : '&';
       const loopIndex = i;
 
-      const finalEndpoint = endpoint + separator + apiSearch + pageAndOrderingParams;
+      const finalEndpoint = endpoint + separator + apiSearch;
 
       props.fetchAuth(finalEndpoint).then(json => {
         const fieldValues = {};
-        for (const fieldName of Object.keys(this.state)) {
-          fieldValues[fieldName] = this.state[fieldName].fieldValues
+        for (const fieldName of Object.keys(this.fieldsData)) {
+          fieldValues[fieldName] = this.fieldsData[fieldName].fieldValues
         }
 
         props.onResultsChange({

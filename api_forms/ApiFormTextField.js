@@ -2,22 +2,56 @@ import React, {Component} from 'react'
 import queryString from 'query-string';
 import changeCase from 'change-case'
 import {DebounceInput} from 'react-debounce-input';
+import {withRouter} from "react-router-dom";
 
 class ApiFormTextField extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: this.parseValueFromUrl(props)
+    }
+  }
+
+  setValue(newValue, props) {
+    props = props || this.props;
+
+    if (!props.onChange) {
+      return
+    }
+
+    if (this.state.value !== newValue) {
+      this.setState({
+        value: newValue
+      }, () => this.notifyNewParams(newValue, props))
+    }
+  }
+
   componentWillMount() {
+    this.unlisten = this.props.history.listen(this.handleHistoryChange);
     this.componentUpdate(this.props)
   }
 
+  componentWillUnmount() {
+    this.unlisten();
+  }
+
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps)
+    if (!this.props.onChange && nextProps.onChange) {
+      this.notifyNewParams(this.state.value, nextProps)
+    } else {
+      this.componentUpdate(nextProps)
+    }
   }
 
   componentUpdate = props => {
     const newValue = this.parseValueFromUrl(props);
+    this.setValue(newValue);
+  };
 
-    if (props.value !== newValue) {
-      this.notifyNewParams(newValue, props);
-    }
+  handleHistoryChange = (location, action) => {
+    const newValue = this.parseValueFromUrl();
+    this.setValue(newValue);
   };
 
   parseValueFromUrl = props => {
@@ -63,7 +97,7 @@ class ApiFormTextField extends Component {
 
   handleValueChange = evt => {
     evt.preventDefault();
-    this.notifyNewParams(evt.target.value)
+    this.setValue(evt.target.value)
   };
 
   render() {
@@ -71,7 +105,7 @@ class ApiFormTextField extends Component {
       return null
     }
 
-    const value = this.props.value || '';
+    const value = this.state.value || '';
     const debounceTimeout = this.props.debounceTimeout || 2000;
 
     return (
@@ -88,4 +122,4 @@ class ApiFormTextField extends Component {
   }
 }
 
-export default ApiFormTextField
+export default withRouter(ApiFormTextField)

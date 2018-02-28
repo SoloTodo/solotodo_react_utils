@@ -4,23 +4,55 @@ import queryString from 'query-string';
 import {createOption, createOptions} from "../form_utils";
 import changeCase from 'change-case'
 import {areValuesEqual} from "../utils";
+import {withRouter} from "react-router-dom";
 
 
 class ApiFormChoiceField extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: this.parseValueFromUrl(props)
+    }
+  }
+
+  setValue(newValue, props, pushUrl=false) {
+    props = props || this.props;
+
+    if (!props.onChange) {
+      return
+    }
+
+    if (!areValuesEqual(this.state.value, newValue, 'id')) {
+      this.setState({
+        value: newValue
+      }, () => this.notifyNewParams(newValue, props, pushUrl))
+    }
+  }
+
   componentWillMount() {
-    this.componentUpdate(this.props)
+    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    this.componentUpdate();
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps)
+    if (!this.props.onChange && nextProps.onChange) {
+      this.notifyNewParams(this.state.value, nextProps)
+    } else {
+      this.componentUpdate(nextProps)
+    }
+
   }
 
   componentUpdate = props => {
-    const newValue = this.parseValueFromUrl(props);
+    props = props || this.props;
 
-    if (!areValuesEqual(props.value, newValue)) {
-      this.notifyNewParams(newValue, props);
-    }
+    const newValue = this.parseValueFromUrl(props);
+    this.setValue(newValue, props);
   };
 
   parseValueFromUrl = props => {
@@ -70,12 +102,8 @@ class ApiFormChoiceField extends Component {
     }
   };
 
-  notifyNewParams(valueOrValues, props) {
+  notifyNewParams(valueOrValues, props, pushUrl) {
     props = props || this.props;
-
-    if (!props.onChange) {
-      return;
-    }
 
     let values = undefined;
 
@@ -120,7 +148,7 @@ class ApiFormChoiceField extends Component {
       }
     };
 
-    props.onChange(result)
+    props.onChange(result, pushUrl)
   }
 
   handleValueChange = (vals) => {
@@ -131,7 +159,7 @@ class ApiFormChoiceField extends Component {
       sanitizedValue = vals.option
     }
 
-    this.notifyNewParams(sanitizedValue)
+    this.setValue(sanitizedValue, this.props, true)
   };
 
   sanitizeChoices(props) {
@@ -144,16 +172,16 @@ class ApiFormChoiceField extends Component {
     const choices = this.sanitizeChoices(this.props);
 
     if (this.props.multiple) {
-      if (this.props.value) {
-        const valueIds = this.props.value.map(value => value.id);
+      if (this.state.value) {
+        const valueIds = this.state.value.map(value => value.id);
         selectedChoices = choices.filter(choice => valueIds.includes(choice.id))
       } else {
         selectedChoices = []
       }
       selectedChoices = createOptions(selectedChoices);
     } else {
-      if (this.props.value) {
-        const matchingChoice = choices.filter(choice => choice.id === this.props.value.id)[0] || null;
+      if (this.state.value) {
+        const matchingChoice = choices.filter(choice => choice.id === this.state.value.id)[0] || null;
         if (matchingChoice) {
           selectedChoices = createOption(matchingChoice)
         }
@@ -179,4 +207,4 @@ class ApiFormChoiceField extends Component {
   }
 }
 
-export default ApiFormChoiceField
+export default withRouter(ApiFormChoiceField)

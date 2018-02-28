@@ -2,22 +2,54 @@ import React, {Component} from 'react'
 import ReactPaginate from 'react-paginate';
 import queryString from 'query-string';
 import {connect} from "react-redux";
+import {withRouter} from "react-router-dom";
 
 class ApiFormPaginationField extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: this.parseValueFromUrl(props)
+    }
+  }
+
+  setValue(newValue, props, pushUrl=false) {
+    props = props || this.props;
+
+    if (!props.onChange) {
+      return
+    }
+
+    if (this.state.value !== newValue) {
+      this.setState({
+        value: newValue
+      }, () => this.notifyNewParams(newValue, props, pushUrl))
+    }
+  }
+
   componentWillMount() {
-    this.componentUpdate(this.props)
+    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    this.componentUpdate();
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps)
+    if (!this.props.onChange && nextProps.onChange) {
+      this.notifyNewParams(this.state.value, nextProps)
+    } else {
+      this.componentUpdate(nextProps)
+    }
+
   }
 
   componentUpdate = props => {
-    const newValue = this.parseValueFromUrl(props);
+    props = props || this.props;
 
-    if (!props.page || props.page.id !== newValue) {
-      this.notifyNewParams(newValue, props);
-    }
+    const newValue = this.parseValueFromUrl(props);
+    this.setValue(newValue, props);
   };
 
   parseValueFromUrl = () => {
@@ -31,7 +63,7 @@ class ApiFormPaginationField extends Component {
     return value
   };
 
-  notifyNewParams(value, props) {
+  notifyNewParams(value, props, pushUrl) {
     props = props ? props : this.props;
 
     if (!props.onChange) {
@@ -52,12 +84,11 @@ class ApiFormPaginationField extends Component {
       }
     };
 
-    props.onChange(result)
+    props.onChange(result, pushUrl)
   }
 
-
   onPageChange = (selection) => {
-    this.notifyNewParams(selection.selected + 1, this.props)
+    this.setValue(selection.selected + 1, this.props, true)
   };
 
   render() {
@@ -73,10 +104,7 @@ class ApiFormPaginationField extends Component {
       pageCount = Math.ceil(this.props.resultCount / this.props.pageSize.id);
     }
 
-    let page = 1;
-    if (this.props.page) {
-      page = this.props.page.id
-    }
+    const page = this.state.value || 1;
 
     const previousLabel = this.props.previousLabel || <span>&lsaquo;</span>;
     const nextLabel = this.props.nextLabel || <span>&rsaquo;</span>;
@@ -109,4 +137,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(ApiFormPaginationField)
+export default withRouter(connect(mapStateToProps)(ApiFormPaginationField))

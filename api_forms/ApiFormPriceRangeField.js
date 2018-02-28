@@ -9,23 +9,59 @@ import 'rc-tooltip/assets/bootstrap.css';
 import RcPriceRange from "./RcPriceRange";
 import {ApiResourceObject} from "../ApiResource";
 import {formatCurrency} from "../utils";
+import {withRouter} from "react-router-dom";
 
 
 class ApiFormPriceRangeField extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: this.parseValueFromUrl(props)
+    }
+  }
+
+  setValue(newValue, props) {
+    props = props || this.props;
+
+    if (!props.onChange) {
+      return
+    }
+
+    const oldValue = this.state.value;
+
+    if (!oldValue || oldValue.startValue !== newValue.startValue || oldValue.endValue !== newValue.endValue) {
+      this.setState({
+        value: newValue
+      }, () => this.notifyNewParams(newValue, props))
+    }
+  }
+
   componentWillMount() {
+    this.unlisten = this.props.history.listen(this.handleHistoryChange);
     this.componentUpdate(this.props)
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps)
+  componentWillUnmount() {
+    this.unlisten();
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.onChange && nextProps.onChange) {
+      this.notifyNewParams(this.state.value, nextProps)
+    } else {
+      this.componentUpdate(nextProps)
+    }
+  }
+
+  handleHistoryChange = (location, action) => {
+    const newValue = this.parseValueFromUrl();
+    this.setValue(newValue);
+  };
 
   componentUpdate = props => {
     const newValue = this.parseValueFromUrl(props);
-
-    if (!props.value || props.value.startValue !== newValue.startValue || props.value.endValue !== newValue.endValue) {
-      this.notifyNewParams(newValue, props);
-    }
+    this.setValue(newValue);
   };
 
   parseValueFromUrl = props => {
@@ -80,8 +116,8 @@ class ApiFormPriceRangeField extends Component {
     const min = this.props.min;
     const max = this.props.max;
 
-    let startValue = this.props.value ? this.props.value.startValue : min;
-    let endValue = this.props.value ? this.props.value.endValue : max;
+    let startValue = this.state.value ? this.state.value.startValue : min;
+    let endValue = this.state.value ? this.state.value.endValue : max;
 
     if (startValue <= min) {
       startValue = null
@@ -103,8 +139,8 @@ class ApiFormPriceRangeField extends Component {
         newEndValue = null
       }
 
-      if (!this.props.value || this.props.value.startValue !== newStartValue || this.props.value.endValue !== newEndValue) {
-        this.notifyNewParams({
+      if (!this.state.value || this.state.value.startValue !== newStartValue || this.state.value.endValue !== newEndValue) {
+        this.setValue({
           startValue: newStartValue,
           endValue: newEndValue
         })
@@ -155,4 +191,4 @@ class ApiFormPriceRangeField extends Component {
   }
 }
 
-export default ApiFormPriceRangeField
+export default withRouter(ApiFormPriceRangeField)
