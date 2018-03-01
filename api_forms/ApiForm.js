@@ -73,10 +73,16 @@ class ApiForm extends Component {
       return;
     }
 
+    const allowSubmit = !this.props.requiresSubmit || formValues.submit;
+
+    if (!allowSubmit) {
+      return
+    }
+
     this.updateSearchResults();
 
     if (pushUrl) {
-      this.pushUrl()
+      this.pushUrl(true)
     }
 
     // const allowSubmit = !this.props.requiresSubmit || formValues.submit;
@@ -159,10 +165,6 @@ class ApiForm extends Component {
       });
 
       i++;
-    }
-
-    if (props.requiresSubmit) {
-      this.pushUrl(true)
     }
   };
 

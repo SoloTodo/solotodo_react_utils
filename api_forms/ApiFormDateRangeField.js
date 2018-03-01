@@ -5,22 +5,51 @@ import moment from "moment";
 import './ApiFormDateRangeField.css'
 import {parseDateToCurrentTz} from "../utils";
 import {areDatesEqual} from "./utils";
+import {withRouter} from "react-router-dom";
 
 class ApiFormDateRangeField extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: this.parseValueFromUrl(props)
+    }
+  }
+
+  setValue(newValue, props, pushUrl=false) {
+    props = props || this.props;
+
+    if (!props.onChange) {
+      return
+    }
+
+    if (!this.state.value || !areDatesEqual(this.state.value.startDate, newValue.startDate) || !areDatesEqual(this.state.value.endDate, newValue.endDate)) {
+      this.setState({
+        value: newValue
+      }, () => this.notifyNewParams(newValue, props, pushUrl))
+    }
+  }
+
   componentWillMount() {
-    this.componentUpdate(this.props)
+    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    this.componentUpdate();
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps)
+    if (!this.props.onChange && nextProps.onChange) {
+      this.notifyNewParams(this.state.value, nextProps)
+    }
   }
 
   componentUpdate = props => {
-    const newValue = this.parseValueFromUrl(props);
+    props = props || this.props;
 
-    if (!props.value || !areDatesEqual(props.value.startDate, newValue.startDate) || !areDatesEqual(props.value.endDate, newValue.endDate)) {
-      this.notifyNewParams(newValue, props);
-    }
+    const newValue = this.parseValueFromUrl(props);
+    this.setValue(newValue, props);
   };
 
   parseValueFromUrl = props => {
@@ -85,7 +114,7 @@ class ApiFormDateRangeField extends Component {
     }
   };
 
-  notifyNewParams(value, props=null) {
+  notifyNewParams(value, props=null, pushUrl=false) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -117,7 +146,7 @@ class ApiFormDateRangeField extends Component {
       }
     };
 
-    props.onChange(result)
+    props.onChange(result, pushUrl)
   }
 
   handleDateChange = (event) => {
@@ -127,10 +156,10 @@ class ApiFormDateRangeField extends Component {
     const startDate = startDateValue ? parseDateToCurrentTz(startDateValue) : null;
     const endDate = endDateValue ? parseDateToCurrentTz(endDateValue) : null;
 
-    this.notifyNewParams({
+    this.setValue({
       startDate,
       endDate
-    })
+    }, this.props, true)
   };
 
   render() {
@@ -139,9 +168,9 @@ class ApiFormDateRangeField extends Component {
     let startDate = null;
     let endDate = null;
 
-    if (this.props.value) {
-      startDate = this.props.value.startDate;
-      endDate = this.props.value.endDate
+    if (this.state.value) {
+      startDate = this.state.value.startDate;
+      endDate = this.state.value.endDate
     }
 
     return (
@@ -175,4 +204,4 @@ class ApiFormDateRangeField extends Component {
   }
 }
 
-export default ApiFormDateRangeField
+export default withRouter(ApiFormDateRangeField)
