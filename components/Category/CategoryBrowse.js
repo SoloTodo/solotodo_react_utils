@@ -234,7 +234,16 @@ class CategoryBrowse extends Component {
         apiFormFields.push(filter.name);
 
         const filterChoiceIdToNameDict = {};
-        for (const choice of (filter.choices || [])) {
+
+        let originalFilterChoices = undefined;
+
+        if (filter.type === 'exact') {
+          originalFilterChoices = filter.choices || [{id: 0, name: 'No'}, {id: 1, name: 'Sí'}]
+        } else {
+          originalFilterChoices = filter.choices || []
+        }
+
+        for (const choice of originalFilterChoices) {
           filterChoiceIdToNameDict[choice.id] = choice.name
         }
 
@@ -244,9 +253,18 @@ class CategoryBrowse extends Component {
         const value = this.state.formValues[filter.name];
 
         if (filter.type === 'exact') {
+          let arrayValue = [];
+          if (Array.isArray(value)) {
+            arrayValue = value
+          } else if (value) {
+            arrayValue = [value]
+          } else {
+            arrayValue = null
+          }
+          
           let filterChoices = undefined;
 
-          if (value && value.length) {
+          if (arrayValue && arrayValue.length) {
             fieldsetExpanded = true
           }
 
@@ -256,8 +274,8 @@ class CategoryBrowse extends Component {
               name: filterChoiceIdToNameDict[choice.id],
             }));
 
-            if (value) {
-              for (const selectedValue of value) {
+            if (arrayValue) {
+              for (const selectedValue of arrayValue) {
                 let valueInChoices = Boolean(filterChoices.filter(choice => choice.id.toString() === selectedValue.id.toString()).length);
                 if (!valueInChoices) {
                   filterChoices.push({
@@ -268,7 +286,7 @@ class CategoryBrowse extends Component {
               }
             }
           } else {
-            filterChoices = filter.choices
+            filterChoices = originalFilterChoices
           }
 
           filterComponent = <ApiFormChoiceField
@@ -278,7 +296,7 @@ class CategoryBrowse extends Component {
               placeholder={filter.label}
               searchable={!this.props.isExtraSmall}
               onChange={this.state.apiFormFieldChangeHandler}
-              multiple={true}
+              multiple={Boolean(filter.choices)}
           />
         } else if (filter.type === 'lte') {
           let filterChoices = undefined;
@@ -300,7 +318,7 @@ class CategoryBrowse extends Component {
               };
             });
           } else {
-            filterChoices = filter.choices
+            filterChoices = originalFilterChoices
           }
 
           filterComponent = <ApiFormChoiceField
@@ -335,7 +353,7 @@ class CategoryBrowse extends Component {
               return result
             });
           } else {
-            filterChoices = filter.choices
+            filterChoices = originalFilterChoices
           }
 
           filterComponent = <ApiFormChoiceField
@@ -387,7 +405,7 @@ class CategoryBrowse extends Component {
                 label: `${filterChoiceIdToNameDict[choice.id]}`,
               }));
             } else {
-              filterChoices = filter.choices.map(choice => ({
+              filterChoices = originalFilterChoices.map(choice => ({
                 ...choice,
                 label: choice.name,
                 value: parseFloat(choice.value)
