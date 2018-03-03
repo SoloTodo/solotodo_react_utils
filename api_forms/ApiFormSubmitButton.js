@@ -1,22 +1,52 @@
 import React, {Component} from 'react';
 import LaddaButton from "react-ladda";
 import queryString from "query-string";
+import {areValuesEqual} from "../utils";
+import {withRouter} from "react-router-dom";
 
 class ApiFormSubmitButton extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: this.parseValueFromUrl(props)
+    }
+  }
+
+  setValue(newValue, props, pushUrl=false) {
+    props = props || this.props;
+
+    if (!props.onChange) {
+      return
+    }
+
+    if (!areValuesEqual(this.state.value, newValue, 'id')) {
+      this.setState({
+        value: newValue
+      }, () => this.notifyNewParams(newValue, props, pushUrl))
+    }
+  }
+
   componentWillMount() {
-    this.componentUpdate(this.props)
+    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    this.componentUpdate();
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps)
+    if (!this.props.onChange && nextProps.onChange) {
+      this.notifyNewParams(this.state.value, nextProps)
+    }
   }
 
   componentUpdate = props => {
-    const newValue = this.parseValueFromUrl();
+    props = props || this.props;
 
-    if (props.value !== newValue) {
-      this.notifyNewParams(newValue, props);
-    }
+    const newValue = this.parseValueFromUrl(props);
+    this.setValue(newValue, props);
   };
 
   parseValueFromUrl = () => {
@@ -24,7 +54,7 @@ class ApiFormSubmitButton extends Component {
     return Boolean(parameters.submit);
   };
 
-  notifyNewParams(value, props) {
+  notifyNewParams(value, props, pushUrl=false) {
     props = props || this.props;
 
     if (!props.onChange) {
@@ -39,21 +69,20 @@ class ApiFormSubmitButton extends Component {
       }
     };
 
-    props.onChange(result)
+    props.onChange(result, pushUrl)
   }
 
   handleValueChange = (evt) => {
     evt.preventDefault();
-
-    this.notifyNewParams(true, this.props)
+    this.notifyNewParams(true, this.props, true)
   };
 
   render() {
     return <LaddaButton
-        loading={this.props.loading}
+        loading={this.props.value}
         onClick={this.handleValueChange}
         className="btn btn-primary">
-      {this.props.loading ?
+      {this.props.value ?
           this.props.loadingLabel :
           this.props.label
       }
@@ -61,4 +90,4 @@ class ApiFormSubmitButton extends Component {
   }
 }
 
-export default ApiFormSubmitButton
+export default withRouter(ApiFormSubmitButton)
