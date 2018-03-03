@@ -1,60 +1,48 @@
 import React, {Component} from 'react'
 import {connect} from "react-redux";
-import {apiResourceStateToPropsUtils} from "../../ApiResource";
+import {
+  apiResourceStateToPropsUtils,
+  filterApiResourceObjectsByType
+} from "../../ApiResource";
 import {apiSettings} from "../../settings";
 
 import './ProductTechSpecs.css'
+import Handlebars from "handlebars/dist/handlebars.min";
 
 class ProductTechSpecs extends Component {
-  initialState = {
-    specs: undefined
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {...this.initialState}
-  }
-
-  componentDidMount() {
-    this.componentUpdate(this.props.product);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const currentProduct = this.props.product;
-    const nextProduct = nextProps.product;
-
-    if (currentProduct.id !== nextProduct.id) {
-      this.setState(this.initialState, () => this.componentUpdate(nextProduct));
-    }
-  }
-
-  componentUpdate(product) {
-    this.props.fetchAuth(`products/${product.id}/render/?purpose=${apiSettings.technicalSpecificationsPurposeId}&website=${this.props.websiteId}`).then(htmlResult => {
-      this.setState({
-        specs: htmlResult.result
-      })
-    }).catch(() => {
-    })
-  }
-
   formatSpecs = () => {
-    return {__html: this.state.specs}
+    let html = '';
+    if (this.props.template) {
+      html = this.props.template(this.props.product.specs)
+    }
+
+    return {__html: html}
   };
 
   render() {
-    if (!this.state.specs) {
-      return this.props.loading || null;
-    }
-
     return <div className="row" dangerouslySetInnerHTML={this.formatSpecs()}></div>
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   const {fetchAuth} = apiResourceStateToPropsUtils(state);
 
+  const categoryTemplates = filterApiResourceObjectsByType(state.apiResourceObjects, 'category_templates');
+  const templateWebsiteUrl = apiSettings.apiResourceEndpoints.websites + ownProps.websiteId + '/';
+
+  let template = categoryTemplates.filter(categoryTemplate => {
+    return categoryTemplate.category === ownProps.product.categoryUrl &&
+        categoryTemplate.purpose === apiSettings.detailPurposeUrl &&
+        categoryTemplate.website === templateWebsiteUrl
+  })[0] || null;
+
+  if (template) {
+    template = Handlebars.compile(template.body);
+  }
+
   return {
-    fetchAuth
+    fetchAuth,
+    template
   }
 }
 

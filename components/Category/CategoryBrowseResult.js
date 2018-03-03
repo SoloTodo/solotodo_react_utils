@@ -11,6 +11,7 @@ import {Link} from "react-router-dom";
 import Select from 'react-select';
 import Img from 'react-image'
 import Spinner from 'react-spinkit';
+import Handlebars from 'handlebars/dist/handlebars.min'
 
 
 class CategoryBrowseResult extends Component {
@@ -18,31 +19,8 @@ class CategoryBrowseResult extends Component {
     super(props);
     this.state = {
       selectedProductEntry: props.bucket.product_entries[0],
-      techSpecsHtml: undefined
     }
   }
-
-  componentDidMount() {
-    this.updateSelectedProductEntryTechSpecs();
-  }
-
-  updateSelectedProductEntryTechSpecs = () => {
-    const product = this.state.selectedProductEntry.product;
-
-    this.props.fetchAuth(`${product.url}render/?purpose=${apiSettings.categoryBrowseResultPurposeId}&website=${this.props.websiteId}`).then(htmlResult => {
-      this.setState({
-        techSpecsHtml: htmlResult.result
-      })
-    }).catch(() => {})
-  };
-
-  formatTechSpecs = () => {
-    if (this.state.techSpecsHtml) {
-      return {__html: this.state.techSpecsHtml}
-    } else {
-      return {__html: ''}
-    }
-  };
 
   handleVariantChange = evt => {
     const newSelectedProductEntry = this.props.bucket.product_entries.filter(entry => entry.product.url === evt.value)[0];
@@ -50,6 +28,17 @@ class CategoryBrowseResult extends Component {
       selectedProductEntry: newSelectedProductEntry,
     });
   };
+
+  createMarkup = () => {
+    let html = '';
+
+    if (this.props.template) {
+      html = this.props.template(this.state.selectedProductEntry.product.specs);
+    }
+
+    return {__html: html};
+  };
+
 
   render() {
     const productEntries = this.props.bucket.product_entries;
@@ -68,7 +57,6 @@ class CategoryBrowseResult extends Component {
     const params = this.props.categoryBrowseParams || {};
     const bucketProductLabelField = params.bucketProductLabelField || 'unicode';
 
-
     return <div className="d-flex flex-column category-browse-result">
       <h3><Link to={productUrl}>{product.name}</Link></h3>
       <div className="image-container d-flex flex-column justify-content-center">
@@ -80,7 +68,8 @@ class CategoryBrowseResult extends Component {
         </Link>
       </div>
 
-      <div className="description-container" dangerouslySetInnerHTML={this.formatTechSpecs()}></div>
+      <div className="description-container" dangerouslySetInnerHTML={this.createMarkup()}>
+      </div>
 
       <div className="d-flex flex-row justify-content-between align-items-center mt-auto pt-2">
         <div className="price flex-grow">
@@ -89,11 +78,11 @@ class CategoryBrowseResult extends Component {
 
         {productEntries.length > 1 && <div className="variant-selector flex-grow">
           <Select
-            value={product.url}
-            onChange={this.handleVariantChange}
-            options={productEntries.map(entry => ({value: entry.product.url, label: entry.product.specs[bucketProductLabelField] }))}
-            searchable={false}
-            clearable={false}
+              value={product.url}
+              onChange={this.handleVariantChange}
+              options={productEntries.map(entry => ({value: entry.product.url, label: entry.product.specs[bucketProductLabelField] }))}
+              searchable={false}
+              clearable={false}
           />
         </div>
         }
@@ -103,8 +92,24 @@ class CategoryBrowseResult extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
+  const category = state.apiResourceObjects[ownProps.bucket.product_entries[0].product.category];
+  const category_templates = filterApiResourceObjectsByType(state.apiResourceObjects, 'category_templates');
+
+  const templateWebsiteUrl = apiSettings.apiResourceEndpoints.websites + ownProps.websiteId + '/';
+
+  let template = category_templates.filter(categoryTemplate => {
+    return categoryTemplate.category === category.url &&
+        categoryTemplate.purpose === apiSettings.categoryBrowseResultPurposeUrl &&
+        categoryTemplate.website === templateWebsiteUrl
+  })[0] || null;
+
+  if (template) {
+    template = Handlebars.compile(template.body);
+  }
+
   return {
-    category: state.apiResourceObjects[ownProps.bucket.product_entries[0].product.category],
+    category,
+    template,
     currencies: filterApiResourceObjectsByType(state.apiResourceObjects, 'currencies'),
   }
 }

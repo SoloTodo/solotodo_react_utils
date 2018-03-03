@@ -1,46 +1,24 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-import {apiResourceStateToPropsUtils} from "../../ApiResource";
+import {
+  apiResourceStateToPropsUtils,
+  filterApiResourceObjectsByType
+} from "../../ApiResource";
 import {apiSettings} from "../../settings";
 import {formatCurrency} from '../../utils';
 import {Link} from 'react-router-dom';
 
 import './ShortDescriptionProduct.css';
+import Handlebars from "handlebars/dist/handlebars.min";
 
 class ShortDescriptionProduct extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      shortDescriptionHtml: undefined
-    }
-  }
-
-  componentDidMount() {
-    this.componentUpdate(this.props.productEntry.product)
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const currentProductEntry = this.props.productEntry;
-    const nextProductEntry = nextProps.productEntry;
-
-    if (currentProductEntry.product.id !== nextProductEntry.product.id) {
-      this.setState({shortDescriptionHtml: undefined}, () => {
-        this.componentUpdate(nextProductEntry.product)
-      });
-    }
-  }
-
-  componentUpdate(product) {
-    this.props.fetchAuth(`products/${product.id}/render/?purpose=${apiSettings.shortDescriptionPurposeId}&website=${this.props.websiteId}`).then(htmlResult => {
-      this.setState({
-        shortDescriptionHtml: htmlResult.result
-      })
-    }).catch(() => {
-    })
-  }
-
   formatShortDescription = () => {
-    return {__html: this.state.shortDescriptionHtml}
+    let html = '';
+    if (this.props.template) {
+      html = this.props.template(this.props.productEntry.product.specs)
+    }
+
+    return {__html: html}
   };
 
   render() {
@@ -64,9 +42,7 @@ class ShortDescriptionProduct extends Component {
       <div className="name-container">
         {product.name}
       </div>
-      {this.state.shortDescriptionHtml &&
-      <div className="description-container" dangerouslySetInnerHTML={this.formatShortDescription()}></div>}
-
+      <div className="description-container" dangerouslySetInnerHTML={this.formatShortDescription()}></div>
       <div className="price-container mt-auto">
         {formattedPrice}
       </div>
@@ -75,12 +51,26 @@ class ShortDescriptionProduct extends Component {
 }
 
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   const {ApiResourceObject, fetchAuth} = apiResourceStateToPropsUtils(state);
+
+  const category_templates = filterApiResourceObjectsByType(state.apiResourceObjects, 'category_templates');
+  const templateWebsiteUrl = apiSettings.apiResourceEndpoints.websites + ownProps.websiteId + '/';
+
+  let template = category_templates.filter(categoryTemplate => {
+    return categoryTemplate.category === ownProps.productEntry.product.category &&
+        categoryTemplate.purpose === apiSettings.shortDescriptionPurposeUrl &&
+        categoryTemplate.website === templateWebsiteUrl
+  })[0] || null;
+
+  if (template) {
+    template = Handlebars.compile(template.body);
+  }
 
   return {
     ApiResourceObject,
     fetchAuth,
+    template
   }
 }
 

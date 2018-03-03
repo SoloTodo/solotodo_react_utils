@@ -37,8 +37,9 @@ export const apiSettings = {
   linioAffiliateId: 2900,
   cellPhoneCategoryId: 6,
   technicalSpecificationsPurposeId: 1,
-  categoryBrowseResultPurposeId: 3,
+  categoryBrowseResultPurposeUrl: endpoint + 'category_template_purposes/3/',
+  shortDescriptionPurposeUrl: endpoint + 'category_template_purposes/2/',
+  detailPurposeUrl: endpoint + 'category_template_purposes/1/',
   usdCurrencyId: 4,
-  shortDescriptionPurposeId: 2,
   backendUrl: 'https://backend.solotodo.com/',
 };
