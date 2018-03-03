@@ -40,5 +40,5 @@ export const apiSettings = {
   categoryBrowseResultPurposeId: 3,
   usdCurrencyId: 4,
   shortDescriptionPurposeId: 2,
-  backendUrl: 'https://try.backend.solotodo.com/',
+  backendUrl: 'https://backend.solotodo.com/',
 };
