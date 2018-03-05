@@ -26,9 +26,7 @@ class RequiredBundle extends Component {
     for (const requiredResource of requiredResources) {
       url += `names=${requiredResource}&`;
     }
-
-    console.log(authToken)
-
+    
     fetchAuth(authToken, url).then(bundle => {
       this.props.addBundleToStore(bundle)
     })
