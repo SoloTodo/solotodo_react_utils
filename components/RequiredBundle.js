@@ -4,17 +4,19 @@ import {
   apiResourceStateToPropsUtils,
 } from "../ApiResource";
 import {apiSettings} from "../settings";
+import {fetchAuth} from '../utils';
+
 
 class RequiredBundle extends Component {
   componentDidMount() {
-    this.componentUpdate(this.props.resources, this.props.loadedBundle)
+    this.componentUpdate(this.props.resources, this.props.loadedBundle, this.props.authToken)
   }
 
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps.resources, nextProps.loadedBundle);
+    this.componentUpdate(nextProps.resources, nextProps.loadedBundle, nextProps.authToken);
   }
 
-  componentUpdate(requiredResources, loadedBundle) {
+  componentUpdate(requiredResources, loadedBundle, authToken) {
     if (loadedBundle) {
       return
     }
@@ -25,7 +27,9 @@ class RequiredBundle extends Component {
       url += `names=${requiredResource}&`;
     }
 
-    this.props.fetchAuth(url).then(bundle => {
+    console.log(authToken)
+
+    fetchAuth(authToken, url).then(bundle => {
       this.props.addBundleToStore(bundle)
     })
   }
@@ -46,10 +50,10 @@ class RequiredBundle extends Component {
 }
 
 function mapStateToProps(state) {
-  const {fetchAuth} = apiResourceStateToPropsUtils(state);
+  const {authToken} = apiResourceStateToPropsUtils(state);
 
   return {
-    fetchAuth,
+    authToken,
     loadedBundle: state.loadedBundle,
   }
 }
