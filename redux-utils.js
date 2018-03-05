@@ -20,7 +20,7 @@ export function authTokenReducer(state, action) {
 }
 
 export function apiResourceObjectsReducer(state={}, action) {
-  if (action.type === 'addApiResourceObjects' || action.type === 'addApiResource') {
+  if (action.type === 'addApiResourceObjects' || action.type === 'addApiResource' || action.type === 'addBundle') {
     let newApiResourceObjects = {};
     for (const newApiResourceObject of action.apiResourceObjects) {
       newApiResourceObjects[newApiResourceObject.url] = newApiResourceObject
@@ -68,6 +68,19 @@ export function loadedResourcesReducer(state=[], action) {
   if (action.type === 'setAuthToken') {
     // If the user changes, invalidate the resources we may have fetched
     return []
+  }
+
+  return state
+}
+
+export function loadedBundleReducer(state=false, action) {
+  if (action.type === 'addBundle') {
+    return true
+  }
+
+  if (action.type === 'setAuthToken') {
+    // If the user changes, invalidate the resources we may have fetched
+    return false
   }
 
   return state
