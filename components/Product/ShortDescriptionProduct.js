@@ -37,7 +37,7 @@ class ShortDescriptionProduct extends Component {
 
     return <Link to={productUrl} className="short-description-product d-flex flex-column ">
       <div className="image-container">
-        <img src={`https://api.solotodo.com/products/${product.id}/picture/?width=300&height=200`} alt={product.name}/>
+        <img src={product.thumbnail_300_200} alt={product.name}/>
       </div>
       <div className="name-container">
         {product.name}
