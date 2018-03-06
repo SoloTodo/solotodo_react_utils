@@ -37,10 +37,13 @@ class UserLoader extends Component {
           }
         }
     ).catch(err => {
-      this.props.dispatch({
-        type: 'setAuthToken',
-        authToken: null
-      });
+      if (err.status === 401) {
+        // Unauthorized
+        this.props.dispatch({
+          type: 'setAuthToken',
+          authToken: null
+        });
+      }
     })
   }
 
