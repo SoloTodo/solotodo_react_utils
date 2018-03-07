@@ -174,7 +174,7 @@ class CategoryBrowse extends Component {
     const formLayout = this.state.formLayout;
     const Loading = this.props.loading;
 
-    if (typeof(formLayout) === 'undefined' || typeof(this.state.priceRange) === 'undefined') {
+    if (typeof(formLayout) === 'undefined') {
       return <Loading />
     }
 
@@ -199,9 +199,9 @@ class CategoryBrowse extends Component {
                 key="offer_price_usd"
                 name="offer_price_usd"
                 onChange={this.state.apiFormFieldChangeHandler}
-                min={this.state.priceRange.min || null}
-                max={this.state.priceRange.max || null}
-                p80th={this.state.priceRange.p80th || null}
+                min={this.state.priceRange && this.state.priceRange.min}
+                max={this.state.priceRange && this.state.priceRange.max}
+                p80th={this.state.priceRange && this.state.priceRange.p80th}
                 currency={usdCurrency}
                 conversionCurrency={conversionCurrency}
                 numberFormat={numberFormat}
