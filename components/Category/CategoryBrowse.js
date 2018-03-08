@@ -442,8 +442,12 @@ class CategoryBrowse extends Component {
     const orderingChoices = [
       {
         id: 'offer_price_usd',
-        name: "Precio"
+        name: 'Precio'
       },
+      {
+        id: 'leads',
+        name: 'Popularidad'
+      }
     ];
 
     for (const orderingChoice of formLayout.orders) {
