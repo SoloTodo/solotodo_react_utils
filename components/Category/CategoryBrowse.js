@@ -135,9 +135,10 @@ class CategoryBrowse extends Component {
           if (!formLayout) {
             toast.warn('No hay formulario de búsqueda definido para esta categoría');
           } else {
-            formLayout.fieldsets = formLayout.fieldsets.map(fieldset => ({
+            formLayout.fieldsets = formLayout.fieldsets.map((fieldset, idx) => ({
               id: fieldset.id,
               label: fieldset.label,
+              expanded: idx === 0 ? true : undefined,
               filters: fieldset.filters.filter(filter =>
                   !filter.country || filter.country === country.url
               )
@@ -163,6 +164,24 @@ class CategoryBrowse extends Component {
           });
         });
   }
+
+  handleFieldsetChange = (fieldset, expanded) => {
+    const newFieldsets = this.state.formLayout.fieldsets.map(stateFieldset => {
+      const newExpanded = stateFieldset.id === fieldset.id ? expanded : stateFieldset.expanded;
+
+      return {
+        ...stateFieldset,
+        expanded: newExpanded
+      }
+    });
+
+    this.setState({
+      formLayout: {
+        ...this.state.formLayout,
+        fieldsets: newFieldsets
+      }
+    })
+  };
 
   render() {
     const country = this.props.ApiResourceObject(this.props.country);
@@ -261,7 +280,7 @@ class CategoryBrowse extends Component {
           } else {
             arrayValue = null
           }
-          
+
           let filterChoices = undefined;
 
           if (arrayValue && arrayValue.length) {
@@ -434,7 +453,7 @@ class CategoryBrowse extends Component {
       processedFormLayout.push({
         id: fieldset.id,
         label: fieldset.label,
-        expanded: fieldsetExpanded,
+        expanded: fieldset.expanded || fieldsetExpanded,
         filters: fieldSetFilters
       })
     }
@@ -484,7 +503,14 @@ class CategoryBrowse extends Component {
 
     const filtersComponent = <Accordion allowMultiple={true}>
       {processedFormLayout.map(fieldset => (
-          <AccordionItem key={fieldset.id} title={fieldset.label} expanded={fieldset.expanded} titleTag={'legend'}>
+          <AccordionItem
+              key={fieldset.id}
+              title={fieldset.label}
+              expanded={fieldset.expanded}
+              titleTag={'legend'}
+              onExpand={() => this.handleFieldsetChange(fieldset, true)}
+              onClose={() => this.handleFieldsetChange(fieldset, false)}
+          >
             {fieldset.filters.map(filter => (
                 <div key={filter.name} className="pt-2">
                   {filter.component}
