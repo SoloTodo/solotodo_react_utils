@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import LaddaButton from "react-ladda";
 import queryString from "query-string";
-import {areValuesEqual} from "../utils";
 import {withRouter} from "react-router-dom";
 
 class ApiFormSubmitButton extends Component {
@@ -20,10 +19,14 @@ class ApiFormSubmitButton extends Component {
       return
     }
 
-    if (!areValuesEqual(this.state.value, newValue, 'id')) {
+    if (newValue !== this.state.value) {
       this.setState({
         value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl))
+      }, () => {
+        if (newValue && !this.state.value) {
+          this.notifyNewParams(newValue, props, pushUrl)
+        }
+      })
     }
   }
 
@@ -79,10 +82,10 @@ class ApiFormSubmitButton extends Component {
 
   render() {
     return <LaddaButton
-        loading={this.props.value}
+        loading={this.state.value}
         onClick={this.handleValueChange}
         className="btn btn-primary">
-      {this.props.value ?
+      {this.state.value ?
           this.props.loadingLabel :
           this.props.label
       }

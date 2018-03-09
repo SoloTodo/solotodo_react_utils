@@ -26,7 +26,7 @@ class ApiForm extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!areListsEqual(this.props.endpoints, nextProps.endpoints)) {
-      this.updateSearchResults(nextProps)
+      this.updateSearchResults(nextProps, false)
     }
   }
 
@@ -73,25 +73,15 @@ class ApiForm extends Component {
       return;
     }
 
-    const allowSubmit = !this.props.requiresSubmit || formValues.submit;
-
-    if (!allowSubmit) {
+    if (this.props.requiresSubmit !== formValues.submit) {
       return
     }
 
-    this.updateSearchResults();
-
-    if (pushUrl) {
-      this.pushUrl(true)
+    if (pushUrl || formValues.submit) {
+      this.pushUrl(false)
     }
 
-    // const allowSubmit = !this.props.requiresSubmit || formValues.submit;
-
-    // if (wasValid) {
-    //   this.pushUrl()
-    // } else if (allowSubmit) {
-    //   this.updateSearchResults();
-    // }
+    this.updateSearchResults(this.props, formValues.submit);
   };
 
   pushUrl = (ignoreSubmit=false) => {
@@ -129,7 +119,7 @@ class ApiForm extends Component {
     props.history.push(newRoute)
   };
 
-  updateSearchResults = props => {
+  updateSearchResults = (props, pushUrlOnFinish) => {
     props = props || this.props;
 
     props.onResultsChange(null);
@@ -162,6 +152,10 @@ class ApiForm extends Component {
           payload: json,
           fieldValues
         });
+
+        if (pushUrlOnFinish) {
+          this.pushUrl(true)
+        }
       });
 
       i++;

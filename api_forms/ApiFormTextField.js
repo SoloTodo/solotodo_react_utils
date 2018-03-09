@@ -64,7 +64,7 @@ class ApiFormTextField extends Component {
     return value ? value : props.initial || '';
   };
 
-  notifyNewParams(value, props) {
+  notifyNewParams(value, props, pushUrl=false) {
     props = props ? props : this.props;
 
     if (!props.onChange) {
@@ -88,7 +88,7 @@ class ApiFormTextField extends Component {
       }
     };
 
-    props.onChange(result)
+    props.onChange(result, pushUrl)
   }
 
   handleValueChange = evt => {
