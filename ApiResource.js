@@ -78,20 +78,6 @@ export function addApiResourceStateToPropsUtils(mapStateToProps=null) {
   }
 }
 
-export function addApiResourceDispatchToPropsUtils(mapDispatchToProps=null) {
-  return (dispatch) => {
-    let originalMapDispatchToPropsResult = {};
-    if (mapDispatchToProps !== null) {
-      originalMapDispatchToPropsResult = mapDispatchToProps(dispatch)
-    }
-
-    return {
-      dispatch,
-      ...originalMapDispatchToPropsResult
-    }
-  }
-}
-
 export class ApiResourceObject {
   constructor(jsonData, apiResourceObjects) {
     this.apiResourceObjects = apiResourceObjects;

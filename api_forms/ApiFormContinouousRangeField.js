@@ -164,11 +164,11 @@ class ApiFormContinuousRangeField extends Component {
     let startValue = this.state.value ? this.state.value.startValue : null;
     let endValue = this.state.value ? this.state.value.endValue : null;
 
-    if (startValue && startValue < min) {
+    if (startValue && (startValue < min || startValue > max)) {
       startValue = null
     }
 
-    if (endValue && endValue > max) {
+    if (endValue && (endValue < min || endValue > max)) {
       endValue = null
     }
 
