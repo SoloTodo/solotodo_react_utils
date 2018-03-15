@@ -23,9 +23,7 @@ class ApiFormSubmitButton extends Component {
       this.setState({
         value: newValue
       }, () => {
-        if (newValue && !this.state.value) {
-          this.notifyNewParams(newValue, props, pushUrl)
-        }
+        this.notifyNewParams(newValue, props, pushUrl)
       })
     }
   }
@@ -77,7 +75,7 @@ class ApiFormSubmitButton extends Component {
 
   handleValueChange = (evt) => {
     evt.preventDefault();
-    this.notifyNewParams(true, this.props, true)
+    this.setValue(true, this.props, true);
   };
 
   render() {
