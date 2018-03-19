@@ -31,6 +31,7 @@ export const apiSettings = {
     wtb_entities: endpoint + 'wtb/entities/',
     category_columns: endpoint + 'category_columns/',
     budgets: endpoint + 'budgets/',
+    ratings: endpoint + 'ratings/',
   },
   ownUserUrl: endpoint + 'users/me/',
   linioStoreId: 76,
