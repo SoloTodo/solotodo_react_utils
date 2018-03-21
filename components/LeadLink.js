@@ -33,12 +33,12 @@ class LeadLink extends Component {
 
     if(this.props.className) {
       return <a href={url} target={target} className={this.props.className} rel="noopener nofollow"
-              onClick={this.handleClick}>
+              onMouseDown={this.handleClick}>
       {this.props.children}
     </a>
     }
     return <a href={url} target={target} rel="noopener nofollow"
-              onClick={this.handleClick}>
+              onMouseDown={this.handleClick}>
       {this.props.children}
     </a>
   }
