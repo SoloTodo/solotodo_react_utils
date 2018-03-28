@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ReactTooltip from 'react-tooltip'
+import RatingStars from "../RatingStars";
 
 class ProductCellPricesTable extends Component {
   render() {
@@ -25,7 +26,14 @@ class ProductCellPricesTable extends Component {
     for (const group of groupedEntities) {
       tableRows.push(
           <tr key={group.store.url}>
-            <td colSpan="3"><span className="mr-2">{group.store.name}</span>
+            <td colSpan="3">
+              <div className="d-flex flex-row">
+                <span className="mr-2">{group.store.name}</span>
+                <RatingStars
+                    value={this.props.storeRatings[group.store.url] || 0}
+                    linkUrl={`/stores/${group.store.id}/ratings`}
+                />
+              </div>
             </td>
           </tr>
       );

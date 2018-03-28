@@ -13,7 +13,8 @@ class ProductPricesTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      entities: undefined
+      entities: undefined,
+      storeRatingsDict: {}
     }
   }
 
@@ -57,7 +58,24 @@ class ProductPricesTable extends Component {
       this.setState({
         entities
       });
-    })
+    });
+
+    if (this.props.displayStoreRatings) {
+      let storesRatingsUrl = '';
+      for (let store of stores) {
+        storesRatingsUrl += 'ids=' + store.id + '&';
+      }
+
+      fetch(`${apiSettings.endpoint}stores/average_ratings?${storesRatingsUrl}`).then(res => res.json()).then(storeRatings => {
+        const storeRatingsDict = {};
+
+        for (const storeRating of storeRatings) {
+          storeRatingsDict[storeRating.store] = storeRating.rating
+        }
+
+        this.setState({storeRatingsDict})
+      })
+    }
   };
 
   render() {
@@ -77,7 +95,7 @@ class ProductPricesTable extends Component {
       return formatCurrency(value, currency, conversionCurrency, numberFormat.thousandsSeparator, numberFormat.decimalSeparator)
     };
 
-    return <PricesTableComponent entities={this.state.entities} countryLocale={this.props.countryLocale} leadLinkComponent={this.props.leadLinkComponent} priceFormatter={priceFormatter}/>
+    return <PricesTableComponent entities={this.state.entities} countryLocale={this.props.countryLocale} leadLinkComponent={this.props.leadLinkComponent} priceFormatter={priceFormatter} storeRatings={this.state.storeRatingsDict} />
   }
 }
 

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ReactTooltip from 'react-tooltip'
+import RatingStars from "../RatingStars";
 
 class ProductNormalPricesTable extends Component {
   render() {
@@ -9,6 +10,7 @@ class ProductNormalPricesTable extends Component {
       <thead>
       <tr>
         <th scope="col">Tienda</th>
+        <th scope="col">Rating</th>
         <th scope="col" className="text-right">
           <ReactTooltip id="offer-price" type="info" effect="solid" place="top">
             <span>Con el medio de pago preferido de la tienda</span>
@@ -25,23 +27,29 @@ class ProductNormalPricesTable extends Component {
       </thead>
       <tbody>
       {this.props.entities.length ? this.props.entities.map(entity => (
-        <tr key={entity.id}>
-          <td>
-            <LeadLinkComponent entity={entity} className="normal-table-product-link">
-              {entity.store.name}
-            </LeadLinkComponent>
-          </td>
-          <td className="text-right">
-            <LeadLinkComponent entity={entity} className="price-container">
-              {this.props.priceFormatter(entity.activeRegistry.offer_price, entity.currency)}
-            </LeadLinkComponent>
-          </td>
-          <td className="text-right">
-            <LeadLinkComponent entity={entity} className="price-container">
-              {this.props.priceFormatter(entity.activeRegistry.normal_price, entity.currency)}
-            </LeadLinkComponent>
-          </td>
-        </tr>
+          <tr key={entity.id}>
+            <td>
+              <LeadLinkComponent entity={entity} className="normal-table-product-link">
+                {entity.store.name}
+              </LeadLinkComponent>
+            </td>
+            <td>
+              <RatingStars
+                  value={this.props.storeRatings[entity.storeUrl] || 0}
+                  linkUrl={`/stores/${entity.store.id}/ratings`}
+              />
+            </td>
+            <td className="text-right">
+              <LeadLinkComponent entity={entity} className="price-container">
+                {this.props.priceFormatter(entity.activeRegistry.offer_price, entity.currency)}
+              </LeadLinkComponent>
+            </td>
+            <td className="text-right">
+              <LeadLinkComponent entity={entity} className="price-container">
+                {this.props.priceFormatter(entity.activeRegistry.normal_price, entity.currency)}
+              </LeadLinkComponent>
+            </td>
+          </tr>
       )) : <tr>
         <td colSpan="4">Este producto no está disponible actualmente</td>
       </tr>}

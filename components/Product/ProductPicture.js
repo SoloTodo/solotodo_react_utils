@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 import ImageGallery from 'react-image-gallery';
+import {connect} from "react-redux";
 
 
-export default class ProductPicture extends Component {
+class ProductPicture extends Component {
   render() {
     const images = [
       {
@@ -10,6 +11,21 @@ export default class ProductPicture extends Component {
         thumbnail: this.props.product.pictureUrl
       }
     ];
-    return <ImageGallery showPlayButton={false} items={images}/>
+
+    const position = this.props.isMediumOrSmaller ? 'bottom' : 'left';
+
+    return <ImageGallery
+        showPlayButton={false}
+        items={images}
+        thumbnailPosition={position}
+    />
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    isMediumOrSmaller: state.browser.lessThan.medium
+  }
+}
+
+export default connect(mapStateToProps)(ProductPicture)
