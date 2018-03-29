@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import ReactTooltip from 'react-tooltip'
 import RatingStars from "../RatingStars";
+import EntityRefurbishedWarning from "../Entity/EntityRefurbishedWarning";
 
 class ProductNormalPricesTable extends Component {
   render() {
@@ -32,6 +33,8 @@ class ProductNormalPricesTable extends Component {
               <LeadLinkComponent entity={entity} className="normal-table-product-link">
                 {entity.store.name}
               </LeadLinkComponent>
+
+              <EntityRefurbishedWarning entity={entity} />
             </td>
             <td>
               <RatingStars

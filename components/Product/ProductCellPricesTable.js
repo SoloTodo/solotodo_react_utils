@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import ReactTooltip from 'react-tooltip'
 import RatingStars from "../RatingStars";
+import EntityRefurbishedWarning from "../Entity/EntityRefurbishedWarning";
 
 class ProductCellPricesTable extends Component {
   render() {
@@ -43,6 +44,8 @@ class ProductCellPricesTable extends Component {
                 <LeadLinkComponent entity={entity} className="cellphone-table-product-link pl-2">
                   {entity.cellPlan ? entity.cellPlan.name : "Liberado"}
                 </LeadLinkComponent>
+
+                <EntityRefurbishedWarning entity={entity} />
               </td>
               <td className="text-right">
                 <LeadLinkComponent entity={entity} className="price-container">
