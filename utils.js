@@ -23,7 +23,12 @@ export function fetchAuth(authToken, input, init = {}) {
     init.headers.Authorization = `Token ${authToken}`;
   }
 
-  init.headers['Content-Type'] = 'application/json';
+  if (init.headers['Content-Type'] === null) {
+    delete init.headers['Content-Type']
+  } else if (typeof(init.headers['Content-Type'] === 'undefined')) {
+    init.headers['Content-Type'] = 'application/json';
+  }
+
   init.headers['Accept'] = 'application/json';
 
   return fetch(input, init).then(res => {
