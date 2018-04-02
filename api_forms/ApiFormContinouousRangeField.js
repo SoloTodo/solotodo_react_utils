@@ -104,15 +104,20 @@ class ApiFormContinuousRangeField extends Component {
   }
 
   render() {
-    const originalChoices = this.props.choices;
-
-    if (!originalChoices || !originalChoices.length) {
+    if (!this.props.choices || !this.props.choices.length) {
       return (
           <div>
             <label>{this.props.label}</label>
             <Range />
           </div>)
     }
+
+    const originalChoices = this.props.choices.map(choice => ({
+      ...choice,
+      value: parseFloat(choice.id)
+    }));
+
+    originalChoices.sort((a, b) => a.id - b.id);
 
     const step = this.props.step;
     const bucketDocCountDict = {};
@@ -158,8 +163,8 @@ class ApiFormContinuousRangeField extends Component {
       ongoingDocCount += choice.bucketDocCount;
     }
 
-    const min = newChoices[0].value;
-    const max = newChoices[newChoices.length - 1].value;
+    const min = newChoices.length ? newChoices[0].value : null;
+    const max = newChoices.length ? newChoices[newChoices.length - 1].value : null;
 
     let startValue = this.state.value ? this.state.value.startValue : null;
     let endValue = this.state.value ? this.state.value.endValue : null;

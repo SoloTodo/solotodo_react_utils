@@ -115,7 +115,10 @@ class ApiFormDiscreteRangeField extends Component {
   }
 
   render() {
-    const choices = this.props.choices;
+    const choices = this.props.choices.map(choice => ({
+      ...choice,
+      value: parseFloat(choice.value)
+    }));
 
     if (!choices || !choices.length) {
       return (
@@ -145,11 +148,11 @@ class ApiFormDiscreteRangeField extends Component {
       marks[choice.value] = choice.label;
 
       valueDocCountDict[choice.value] = {
-        ownDocCount: choice.doc_count,
+        ownDocCount: choice.doc_count || 0,
         aggregatedDocCount: ongoingDocCount
       };
 
-      ongoingDocCount += choice.doc_count;
+      ongoingDocCount += choice.doc_count || 0;
     }
 
     const handleValueChange = newValues => {

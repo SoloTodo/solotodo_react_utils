@@ -239,7 +239,7 @@ class CategoryBrowse extends Component {
               name="search"
               placeholder="Palabras clave"
               onChange={this.state.apiFormFieldChangeHandler}
-              debounceTimeout={this.props.isExtraSmall ? 2000 : 500}
+              debounceTimeout={this.props.isExtraSmall ? 3000 : 1500}
           />
         }]
       }
@@ -253,7 +253,6 @@ class CategoryBrowse extends Component {
         apiFormFields.push(filter.name);
 
         const filterChoiceIdToNameDict = {};
-
         let originalFilterChoices = undefined;
 
         if (filter.type === 'exact') {
@@ -263,10 +262,35 @@ class CategoryBrowse extends Component {
         }
 
         for (const choice of originalFilterChoices) {
-          filterChoiceIdToNameDict[choice.id] = choice.name
+          filterChoiceIdToNameDict[choice.id] = choice.name;
         }
 
-        let filterAggs = resultsAggs[filter.name];
+        const filterDocCountsDict = {};
+
+        let filterAggs = [];
+        const rawFilterAggs = resultsAggs[filter.name];
+
+        if (rawFilterAggs) {
+          for (const filterDocCount of rawFilterAggs) {
+            filterDocCountsDict[filterDocCount.id] = filterDocCount.doc_count
+          }
+
+          for (const choice of originalFilterChoices) {
+            const choiceDocCount = filterDocCountsDict[choice.id];
+
+            if (!choiceDocCount) {
+              continue
+            }
+
+            filterAggs.push({
+              ...choice,
+              doc_count: choiceDocCount
+            })
+          }
+        } else {
+          filterAggs = originalFilterChoices
+        }
+
         let filterComponent = null;
 
         const value = this.state.formValues[filter.name];
@@ -388,12 +412,6 @@ class CategoryBrowse extends Component {
         } else if (filter.type === 'range') {
           if (filter.continuous_range_step) {
             // Continous (weight....)
-            let filterChoices = [];
-
-            if (filterAggs) {
-              filterChoices = filterAggs
-            }
-
             if (value && (value.startValue || value.endValue)) {
               fieldsetExpanded = true
             }
@@ -404,7 +422,7 @@ class CategoryBrowse extends Component {
                   name={filter.name}
                   label={filter.label}
                   onChange={this.state.apiFormFieldChangeHandler}
-                  choices={filterChoices}
+                  choices={rawFilterAggs}
                   step={filter.continuous_range_step}
                   unit={filter.continuous_range_unit}
                   resultCountSuffix="resultados"
