@@ -11,7 +11,7 @@ class ProductNormalPricesTable extends Component {
       <thead>
       <tr>
         <th scope="col">Tienda</th>
-        <th scope="col">Rating</th>
+        {this.props.displayStoreRatings && <th scope="col">Rating</th>}
         <th scope="col" className="text-right">
           <ReactTooltip id="offer-price" type="info" effect="solid" place="top">
             <span>Con el medio de pago preferido de la tienda</span>
@@ -36,12 +36,14 @@ class ProductNormalPricesTable extends Component {
 
               <EntityRefurbishedWarning entity={entity} />
             </td>
+            {this.props.displayStoreRatings &&
             <td>
               <RatingStars
                   value={this.props.storeRatings[entity.storeUrl] || 0}
                   linkUrl={`/stores/${entity.store.id}/ratings`}
               />
             </td>
+            }
             <td className="text-right">
               <LeadLinkComponent entity={entity} className="price-container">
                 {this.props.priceFormatter(entity.activeRegistry.offer_price, entity.currency)}

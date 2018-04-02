@@ -30,10 +30,10 @@ class ProductCellPricesTable extends Component {
             <td colSpan="3">
               <div className="d-flex flex-row">
                 <span className="mr-2">{group.store.name}</span>
-                <RatingStars
+                {this.props.displayStoreRatings && <RatingStars
                     value={this.props.storeRatings[group.store.url] || 0}
                     linkUrl={`/stores/${group.store.id}/ratings`}
-                />
+                />}
               </div>
             </td>
           </tr>
