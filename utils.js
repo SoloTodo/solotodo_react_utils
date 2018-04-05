@@ -265,6 +265,10 @@ export function areListsEqual(listA, listB) {
     return true;
   }
 
+  if ((listA === null && listB !== null) || (listA !== null && listB === null)) {
+    return false
+  }
+
   if (typeof(listA) !== typeof(listB)) {
     return false
   }
