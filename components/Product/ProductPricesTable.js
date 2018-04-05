@@ -95,7 +95,7 @@ class ProductPricesTable extends Component {
       return formatCurrency(value, currency, conversionCurrency, numberFormat.thousandsSeparator, numberFormat.decimalSeparator)
     };
 
-    return <PricesTableComponent entities={this.state.entities} countryLocale={this.props.countryLocale} leadLinkComponent={this.props.leadLinkComponent} priceFormatter={priceFormatter} storeRatings={this.state.storeRatingsDict} />
+    return <PricesTableComponent entities={this.state.entities} countryLocale={this.props.countryLocale} leadLinkComponent={this.props.leadLinkComponent} priceFormatter={priceFormatter} storeRatings={this.state.storeRatingsDict} displayStoreRatings={this.props.displayStoreRatings} />
   }
 }
 
