@@ -61,7 +61,7 @@ class CategoryBrowseResult extends Component {
       <h3><Link to={productUrl}>{product.name}</Link></h3>
       <div className="image-container d-flex flex-column justify-content-center">
         <Link to={productUrl}>
-          <Img src={product.thumbnail_300_300}
+          <Img src={`${product.url}picture/?width=300&height=300`}
                alt={product.name}
                loader={<Spinner name="line-scale" />}
           />
