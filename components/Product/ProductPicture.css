@@ -22,7 +22,8 @@
 }
 
 #product-detail-images .image-gallery-slide img, #product-detail-images .image-gallery-slide-wrapper {
-	width: auto
+	max-width: 100%;
+	width: auto;
 }
 
 #product-detail-images .image-gallery-content.fullscreen .image-gallery-slide img {
