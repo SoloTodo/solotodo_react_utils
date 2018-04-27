@@ -52,7 +52,7 @@ class ShortDescriptionProduct extends Component {
 
 
 function mapStateToProps(state, ownProps) {
-  const {ApiResourceObject, fetchAuth} = apiResourceStateToPropsUtils(state);
+  const {ApiResourceObject} = apiResourceStateToPropsUtils(state);
 
   const category_templates = filterApiResourceObjectsByType(state.apiResourceObjects, 'category_templates');
   const templateWebsiteUrl = apiSettings.apiResourceEndpoints.websites + ownProps.websiteId + '/';
@@ -69,7 +69,6 @@ function mapStateToProps(state, ownProps) {
 
   return {
     ApiResourceObject,
-    fetchAuth,
     template
   }
 }

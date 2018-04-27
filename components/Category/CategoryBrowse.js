@@ -5,6 +5,7 @@ import { Accordion, AccordionItem } from 'react-sanfona';
 import Menu from 'react-burger-menu/lib/menus/slide'
 import {Redirect} from "react-router-dom";
 
+import {fetchJson} from "../../utils";
 import {
   apiResourceStateToPropsUtils,
   filterApiResourceObjectsByType
@@ -112,7 +113,7 @@ class CategoryBrowse extends Component {
     const country = this.props.country;
 
     // Obtain layout of the form fields
-    this.props.fetchAuth(apiSettings.apiResourceEndpoints.category_specs_form_layouts + '?category=' + category.id + '&website=' + this.props.websiteId)
+    fetchJson(apiSettings.apiResourceEndpoints.category_specs_form_layouts + '?category=' + category.id + '&website=' + this.props.websiteId)
         .then(all_form_layouts => {
           const processed_form_layouts = all_form_layouts
               .map(layout => {
@@ -153,7 +154,7 @@ class CategoryBrowse extends Component {
     const endpoint = this.apiEndpoint();
 
     // Make an empty call to the endpoint to obtain the global min / max and 80th percentile values
-    this.props.fetchAuth(endpoint)
+    fetchJson(endpoint)
         .then(json => {
           this.setState({
             priceRange: {
@@ -572,7 +573,9 @@ class CategoryBrowse extends Component {
                 fields={apiFormFields}
                 onResultsChange={this.setProductsPage}
                 onFormValueChange={this.handleFormValueChange}
-                setFieldChangeHandler={this.setApiFormFieldChangeHandler}>
+                setFieldChangeHandler={this.setApiFormFieldChangeHandler}
+                anonymous={true}
+            >
               {this.props.isExtraSmall &&
               <div className="pt-2 pb-2" id="mobile-filter-and-ordering">
                 <div className="col-12 d-flex justify-content-between">
@@ -648,11 +651,10 @@ class CategoryBrowse extends Component {
 }
 
 function mapStateToProps(state) {
-  const {ApiResourceObject, fetchAuth} = apiResourceStateToPropsUtils(state);
+  const {ApiResourceObject} = apiResourceStateToPropsUtils(state);
 
   return {
     ApiResourceObject,
-    fetchAuth,
     currencies: filterApiResourceObjectsByType(state.apiResourceObjects, 'currencies'),
     isExtraSmall: state.browser.is.extraSmall
   }

@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from "react-redux";
 import {
-  apiResourceStateToPropsUtils,
   filterApiResourceObjectsByType
 } from "../../ApiResource";
 import {apiSettings} from "../../settings";
@@ -25,8 +24,6 @@ class ProductTechSpecs extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const {fetchAuth} = apiResourceStateToPropsUtils(state);
-
   const categoryTemplates = filterApiResourceObjectsByType(state.apiResourceObjects, 'category_templates');
   const templateWebsiteUrl = apiSettings.apiResourceEndpoints.websites + ownProps.websiteId + '/';
 
@@ -41,7 +38,6 @@ function mapStateToProps(state, ownProps) {
   }
 
   return {
-    fetchAuth,
     template
   }
 }

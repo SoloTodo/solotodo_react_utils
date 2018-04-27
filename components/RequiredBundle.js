@@ -1,22 +1,18 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-import {
-  apiResourceStateToPropsUtils,
-} from "../ApiResource";
 import {apiSettings} from "../settings";
-import {fetchAuth} from '../utils';
-
+import {fetchJson} from "../utils";
 
 class RequiredBundle extends Component {
   componentDidMount() {
-    this.componentUpdate(this.props.resources, this.props.loadedBundle, this.props.authToken)
+    this.componentUpdate(this.props.resources, this.props.loadedBundle)
   }
 
   componentWillReceiveProps(nextProps) {
-    this.componentUpdate(nextProps.resources, nextProps.loadedBundle, nextProps.authToken);
+    this.componentUpdate(nextProps.resources, nextProps.loadedBundle);
   }
 
-  componentUpdate(requiredResources, loadedBundle, authToken) {
+  componentUpdate(requiredResources, loadedBundle) {
     if (loadedBundle) {
       return
     }
@@ -27,7 +23,7 @@ class RequiredBundle extends Component {
       url += `names=${requiredResource}&`;
     }
     
-    fetchAuth(authToken, url).then(bundle => {
+    fetchJson(url).then(bundle => {
       this.props.addBundleToStore(bundle)
     })
   }
@@ -48,10 +44,7 @@ class RequiredBundle extends Component {
 }
 
 function mapStateToProps(state) {
-  const {authToken} = apiResourceStateToPropsUtils(state);
-
   return {
-    authToken,
     loadedBundle: state.loadedBundle,
   }
 }

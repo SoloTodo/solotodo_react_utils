@@ -11,6 +11,10 @@ export function camelize(str) {
   });
 }
 
+export function fetchJson(input, init = {}) {
+  return fetchAuth(null, input, init);
+}
+
 export function fetchAuth(authToken, input, init = {}) {
   if (!input.includes(apiSettings.endpoint)) {
     input = apiSettings.endpoint + input
@@ -246,14 +250,6 @@ export function areValuesEqual(valueA, valueB, valueField='url') {
   } else {
     return areObjectsEqual(valueA, valueB, valueField)
   }
-}
-
-export function getRedirectUrl(authToken, entity) {
-  return fetchAuth(authToken, `entities/${entity.id}/affiliate_url/`).then(response => {
-    return response.affiliate_url
-  }).catch(() => {
-    return entity.externalUrl || entity.external_url
-  })
 }
 
 export function registerLead(authToken, websiteId, entity) {

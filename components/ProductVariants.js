@@ -1,13 +1,10 @@
 import React, {Component} from 'react'
-import {
-  apiResourceStateToPropsUtils
-} from "../ApiResource";
-import {connect} from "react-redux";
+import {fetchJson} from "../utils";
 import AxisChoices from "./AxisChoices";
 import {areObjectsEqual, areObjectListsEqual} from "../utils";
 
 
-class ProductVariants extends Component {
+export default class ProductVariants extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +35,7 @@ class ProductVariants extends Component {
   componentUpdate = (stores, product, fields) => {
     let bucketUrl = `products/${product.id}/bucket/?fields=${fields}`;
 
-    this.props.fetchAuth(bucketUrl).then(products => {
+    fetchJson(bucketUrl).then(products => {
       let pricingEntriesUrl = `products/available_entities/?`;
 
       for (const product of products) {
@@ -49,7 +46,7 @@ class ProductVariants extends Component {
         pricingEntriesUrl += `stores=${store.id}&`
       }
 
-      this.props.fetchAuth(pricingEntriesUrl).then(response => {
+      fetchJson(pricingEntriesUrl).then(response => {
         const filteredEntries = response.results.map(pricingEntry => (
             {
               product: pricingEntry.product,
@@ -95,13 +92,3 @@ class ProductVariants extends Component {
     </div>
   }
 }
-
-function mapStateToProps(state) {
-  const {fetchAuth} = apiResourceStateToPropsUtils(state);
-
-  return {
-    fetchAuth
-  }
-}
-
-export default connect(mapStateToProps)(ProductVariants);

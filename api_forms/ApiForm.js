@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import './ApiForm.css'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {areListsEqual} from "../utils";
+import {areListsEqual, fetchJson} from "../utils";
 import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
@@ -141,7 +141,9 @@ class ApiForm extends Component {
 
       const finalEndpoint = endpoint + separator + apiSearch;
 
-      props.fetchAuth(finalEndpoint).then(json => {
+      const fetchFunction = props.anonymous ? fetchJson : props.fetchAuth;
+
+      fetchFunction(finalEndpoint).then(json => {
         const fieldValues = {};
         for (const fieldName of Object.keys(this.fieldsData)) {
           fieldValues[fieldName] = this.fieldsData[fieldName].fieldValues

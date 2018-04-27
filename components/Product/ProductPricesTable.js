@@ -5,7 +5,7 @@ import {
 } from "../../ApiResource";
 import ProductNormalPricesTable from "./ProductNormalPricesTable"
 import ProductCellPricesTable from "./ProductCellPricesTable"
-import {areObjectListsEqual, formatCurrency} from "../../utils";
+import {areObjectListsEqual, formatCurrency, fetchJson} from "../../utils";
 import {apiSettings} from "../../settings";
 
 
@@ -44,7 +44,7 @@ class ProductPricesTable extends Component {
       storesUrl += '&stores=' + store.id;
     }
 
-    this.props.fetchAuth(`products/available_entities/?ids=${product.id}${storesUrl}`).then(availableEntities => {
+    fetchJson(`products/available_entities/?ids=${product.id}${storesUrl}`).then(availableEntities => {
       let entities = availableEntities.results[0].entities.filter(entity => entity.active_registry.cell_monthly_payment === null);
 
       this.props.addEntities(entities);
@@ -100,11 +100,10 @@ class ProductPricesTable extends Component {
 }
 
 function mapStateToProps(state) {
-  const {ApiResourceObject, fetchAuth} = apiResourceStateToPropsUtils(state);
+  const {ApiResourceObject} = apiResourceStateToPropsUtils(state);
 
   return {
-    ApiResourceObject,
-    fetchAuth
+    ApiResourceObject
   }
 }
 

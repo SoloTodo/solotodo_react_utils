@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {apiResourceStateToPropsUtils} from "../ApiResource";
+import {fetchJson} from "../utils";
 import {connect} from "react-redux";
 import Slider from 'react-slick'
 
@@ -14,7 +14,7 @@ class BannerCarousel extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchAuth(`carousel_slides/?website=${this.props.websiteId}`).then(slides => (
+    fetchJson(`carousel_slides/?website=${this.props.websiteId}`).then(slides => (
       this.setState({
         slides
       })
@@ -71,10 +71,7 @@ class BannerCarousel extends Component {
 }
 
 function mapStateToProps(state) {
-  const {fetchAuth} = apiResourceStateToPropsUtils(state);
-
   return {
-    fetchAuth,
     mediaType: state.browser.mediaType
   }
 }
