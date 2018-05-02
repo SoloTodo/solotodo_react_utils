@@ -46,7 +46,7 @@ class ResourceObjectPermission extends Component {
   }
 
   componentUpdate(apiResourceObjectId, resource) {
-    this.props.fetchApiResourceObject(resource, apiResourceObjectId, this.props.dispatch).catch(err => {}).then(json => {
+    this.props.fetchApiResourceObject(resource, apiResourceObjectId, this.props.dispatch, this.props.anonymous).catch(err => {}).then(json => {
       this.setState({done: true})
     })
   }

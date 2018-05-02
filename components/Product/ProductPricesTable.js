@@ -66,7 +66,7 @@ class ProductPricesTable extends Component {
         storesRatingsUrl += 'ids=' + store.id + '&';
       }
 
-      fetch(`${apiSettings.endpoint}stores/average_ratings?${storesRatingsUrl}`).then(res => res.json()).then(storeRatings => {
+      fetch(`${apiSettings.endpoint}stores/average_ratings/?${storesRatingsUrl}`).then(res => res.json()).then(storeRatings => {
         const storeRatingsDict = {};
 
         for (const storeRating of storeRatings) {

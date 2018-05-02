@@ -54,8 +54,9 @@ export function apiResourceStateToPropsUtils(state) {
     fetchApiResource: (resource, dispatch, authToken=state.authToken) => {
       return fetchApiResource(resource, dispatch, authToken)
     },
-    fetchApiResourceObject: (resource, id, dispatch) => {
-      return fetchApiResourceObject(resource, id, dispatch, state.authToken)
+    fetchApiResourceObject: (resource, id, dispatch, anonymous=false) => {
+      const authToken = anonymous ? null : state.authToken;
+      return fetchApiResourceObject(resource, id, dispatch, authToken)
     },
     filterApiResourceObjectsByType: resource => {
       return filterApiResourceObjectsByType(state.apiResourceObjects, resource)
