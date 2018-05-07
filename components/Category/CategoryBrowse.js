@@ -553,6 +553,8 @@ class CategoryBrowse extends Component {
       return formatCurrency(value, currency, country.currency, numberFormat.thousandsSeparator, numberFormat.decimalSeparator)
     };
 
+    const topBanner = this.props.topBanner || null;
+
     return (
         <div className="row">
           <div id="page-wrap" className="flex-grow">
@@ -590,6 +592,10 @@ class CategoryBrowse extends Component {
                   </div>
                 </div>
               </div>
+              }
+
+              {this.props.isExtraSmall ?
+                  <div className="mobile-top-banner-container">{topBanner}</div> : topBanner
               }
               <div className="d-flex pt-2 pl-2 pr-2" id="filters-and-results">
                 {this.props.isExtraSmall ||
@@ -636,8 +642,8 @@ class CategoryBrowse extends Component {
                           pageSize={{id: this.props.resultsPerPage}}
                           resultCount={this.state.productsPage && this.state.productsPage.count}
                           onChange={this.state.apiFormFieldChangeHandler}
-                          previousLabel="Anterior"
-                          nextLabel="Siguiente"
+                          previousLabel={this.props.isExtraSmall ? 'Ant' : 'Anterior'}
+                          nextLabel={this.props.isExtraSmall ? 'Sig' : 'Siguiente'}
                       />
                     </div>
                   </div>

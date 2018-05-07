@@ -79,7 +79,7 @@ class ProductSearch extends Component {
         onResultsChange={this.setProductsPage}
         onFormValueChange={this.handleFormValueChange}
         setFieldChangeHandler={this.setApiFormFieldChangeHandler}>
-      <div className="row pt-3">
+      <div className="row">
         <div className="col-12">
           <h1>Resultados de la búsqueda</h1>
           <p><span className="font-weight-bold">Palabras clave:</span> {this.state.formValues.search}</p>

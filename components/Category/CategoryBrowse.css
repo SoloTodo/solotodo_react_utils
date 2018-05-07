@@ -118,3 +118,8 @@
 .rc-slider-tooltip {
     z-index: 1101;
 }
+
+.mobile-top-banner-container {
+    margin-top: 65px;
+    margin-bottom: -55px;
+}
