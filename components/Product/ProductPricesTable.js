@@ -51,8 +51,8 @@ class ProductPricesTable extends Component {
 
       entities = entities.map(entity => this.props.ApiResourceObject(entity));
 
-      if (this.props.setCheapestEntity) {
-        this.props.setCheapestEntity(entities[0] || null);
+      if (this.props.onEntitiesFound) {
+        this.props.onEntitiesFound(entities);
       }
 
       this.setState({
