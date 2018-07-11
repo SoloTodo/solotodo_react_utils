@@ -56,14 +56,17 @@ class CategoryBrowseResult extends Component {
 
     const params = this.props.categoryBrowseParams || {};
     const bucketProductLabelField = params.bucketProductLabelField || 'unicode';
+    const thumbnailSize = Math.round(300 * window.devicePixelRatio);
     
     return <div className="d-flex flex-column category-browse-result">
       <h3><Link to={productUrl}>{product.name}</Link></h3>
       <div className="image-container d-flex flex-column justify-content-center">
         <Link to={productUrl}>
-          <Img src={`${product.url}picture/?width=300&height=300`}
+          <Img src={`${product.url}picture/?width=${thumbnailSize}&height=${thumbnailSize}`}
                alt={product.name}
                loader={<Spinner name="line-scale" />}
+               width={300}
+               height={300}
           />
         </Link>
       </div>
