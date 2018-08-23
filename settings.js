@@ -28,6 +28,7 @@ export const apiSettings = {
     category_columns: endpoint + 'category_columns/',
     budgets: endpoint + 'budgets/',
     ratings: endpoint + 'ratings/',
+    alerts: endpoint + 'alerts/',
   },
   ownUserUrl: endpoint + 'users/me/',
   linioStoreId: 76,
