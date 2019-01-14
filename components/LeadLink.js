@@ -27,13 +27,13 @@ class LeadLink extends Component {
       url = `https://linio.go2cloud.org/aff_c?offer_id=18&aff_id=${apiSettings.linioAffiliateId}&url=${encodeURIComponent(intermediateUrl)}`;
       target = '_self';
     } else if (this.props.entity.store.id === apiSettings.abcdinStoreId) {
-      url = `http://ad.soicos.com/-149x?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
+      url = `https://ad.soicos.com/-149x?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
       target = '_self'
     } else if (this.props.entity.store.id === apiSettings.parisStoreId) {
-      url = `http://ad.soicos.com/-149A?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
+      url = `https://ad.soicos.com/-149A?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
       target = '_self'
     } else if (this.props.entity.store.id === apiSettings.ripleyStoreId) {
-      url = `http://ad.soicos.com/-149I?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
+      url = `https://ad.soicos.com/-149I?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
       target = '_self'
     } else {
       url = this.props.entity.externalUrl;
