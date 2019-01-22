@@ -52,9 +52,9 @@ class UserLoader extends Component {
       return this.props.loading || null
     }
 
-    return <div>
+    return <React.Fragment>
       {this.props.children}
-    </div>
+    </React.Fragment>
   }
 }
 
