@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import ApiFormChoiceField from "./ApiFormChoiceField";
 import {createPageSizeChoices} from "./utils";
-import {FormattedMessage} from "react-intl";
 import ApiFormPaginationField from "./ApiFormPaginationField";
 import ApiFormResultsTable from "./ApiFormResultsTable";
 import ApiFormResultPageCount from "./ApiFormResultPageCount";
@@ -11,7 +10,7 @@ class ApiFormResultTableWithPagination extends Component {
     return (
         <div className="card">
           <div className="card-header">
-            <i className="glyphicons glyphicons-list">&nbsp;</i>
+            <i className={this.props.icon || "glyphicons glyphicons-list"}>&nbsp;</i>
             {this.props.label}
             &nbsp;<ApiFormResultPageCount
               page={this.props.page}
@@ -19,7 +18,7 @@ class ApiFormResultTableWithPagination extends Component {
               resultCount={this.props.data && this.props.data.count}
           />
           </div>
-          <div className="card-block" id="results-container">
+          <div className={this.props.cardClass || "card-block"} id="results-container">
             <div className="d-flex justify-content-between flex-wrap align-items-center mb-3 api-form-filters">
               <div className="d-flex results-per-page-fields align-items-center mr-3">
                 <div className="results-per-page-dropdown ml-0 mr-2">
@@ -32,7 +31,7 @@ class ApiFormResultTableWithPagination extends Component {
                       searchable={false}
                   />
                 </div>
-                <label><FormattedMessage id="results_per_page" defaultMessage="Results per page" /></label>
+                <label>Resultados por página</label>
               </div>
               <div className="pagination-fields ml-auto d-flex align-items-center mr-0">
                 <ApiFormPaginationField
@@ -50,6 +49,7 @@ class ApiFormResultTableWithPagination extends Component {
                 ordering={this.props.ordering}
                 onChange={this.props.onChange}
                 loading={this.props.loading}
+                getExtraClasses={this.props.getExtraClasses}
             />
           </div>
         </div>);

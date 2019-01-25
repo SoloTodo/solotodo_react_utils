@@ -198,9 +198,12 @@ class ApiFormChoiceField extends Component {
           value={selectedChoices}
           onChange={this.handleValueChange}
           multi={this.props.multiple}
+          isMulti={this.props.multiple}
           placeholder={this.props.placeholder}
           searchable={this.props.searchable}
+          isSearchable={this.props.searchable}
           clearable={!this.props.required}
+          isClearable={!this.props.required}
           autoBlur={true}
       />
     }
