@@ -192,6 +192,7 @@ class ApiFormChoiceField extends Component {
       return null
     } else {
       return <Select
+          className="react-select"
           name={this.props.name}
           id={this.props.name}
           options={createOptions(choices)}
