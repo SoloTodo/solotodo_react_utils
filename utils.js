@@ -1,6 +1,7 @@
 import {apiSettings} from './settings';
 import Big from 'big.js';
 import moment from 'moment';
+import fetch from 'cross-fetch';
 import locale_es from "moment/locale/es";
 import {fetchApiResource, filterApiResourceObjectsByType} from "./ApiResource";
 
@@ -303,3 +304,10 @@ export function areValueListsEqual(listA, listB) {
 
   return true;
 }
+
+// A nice helper to tell us if we're on the server
+export const isServer = !(
+  typeof window !== 'undefined' &&
+  window.document &&
+  window.document.createElement
+);
