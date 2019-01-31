@@ -28,6 +28,10 @@ export function areDatesEqual(dateA, dateB) {
     return true;
   }
 
+  if (dateA === null || dateB === null) {
+    return false;
+  }
+
   if (typeof(dateA) !== typeof(dateB)) {
     return false;
   }
