@@ -61,7 +61,7 @@ class ApiFormOrderingColumn extends Component {
         orderingField = orderingComponents[2];
       }
 
-      return <a href="" onClick={this.onChangeOrdering}>
+      return <a href="/" onClick={this.onChangeOrdering}>
         {this.props.label} {this.renderOrderingArrow(this.props.name, orderingField, orderingDescending)}
       </a>
     } else {
