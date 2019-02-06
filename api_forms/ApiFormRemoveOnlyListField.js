@@ -131,7 +131,7 @@ class ApiFormRemoveOnlyListField extends Component {
       {values.map(value => {
         return <tr key={value.id}>
           <td className="pr-2">
-            <a href="" className="api-form-remove-only-list-field-remove" onClick={evt => this.handleItemRemove(evt, value)}>
+            <a href="/" className="api-form-remove-only-list-field-remove" onClick={evt => this.handleItemRemove(evt, value)}>
               <i className="fa fa-times" aria-hidden="true">&nbsp;</i>
             </a>
           </td>

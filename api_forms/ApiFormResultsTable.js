@@ -52,14 +52,18 @@ class ApiFormResultsTable extends Component {
         </tr>
         </thead>
         <tbody>
-        {results.length ? results.map(entry => (
-            <tr key={entry.id}>
+        {results.length ? results.map(entry => {
+            let extraClasses = "";
+            if(this.props.getExtraClasses){
+              extraClasses = this.props.getExtraClasses(entry);
+            }
+            return <tr key={entry.id} className={extraClasses}>
               {finalColumns.map(column => (
                   <td key={column.id} className={column.cssClasses}>
                     {column.renderer ? column.renderer(entry) : entry[column.field]}
                   </td>))}
             </tr>
-        )) : <tr>
+        }) : <tr>
           <td colSpan="10" className="text-center">
             <em><FormattedMessage id="no_results_found" defaultMessage="No results found"/></em>
           </td>

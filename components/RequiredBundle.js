@@ -36,9 +36,9 @@ class RequiredBundle extends Component {
     if (this.props.render) {
       return this.props.render({});
     } else {
-      return <div>
+      return <React.Fragment>
         {this.props.children}
-      </div>
+      </React.Fragment>
     }
   }
 }
