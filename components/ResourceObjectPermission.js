@@ -4,13 +4,15 @@ import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
 import {apiSettings} from "../settings";
+import {Redirect} from "react-router-dom";
 
 class ResourceObjectPermission extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      done: Boolean(props.apiResourceObject)
+      done: Boolean(props.apiResourceObject),
+      deleted: false,
     }
   }
 
@@ -32,6 +34,13 @@ class ResourceObjectPermission extends Component {
       }
 
       return;
+    }
+
+    if (this.props.apiResourceObject && !nextProps.apiResourceObject) {
+      console.log('Object deleted');
+      this.setState({
+        deleted: true
+      })
     }
 
     const currenctApiResourceObjectId = this.props.match.params.id;
@@ -68,6 +77,9 @@ class ResourceObjectPermission extends Component {
   };
 
   render = () => {
+    if (this.state.deleted) {
+      return <Redirect to={this.props.onDelete}/>
+    }
     const apiResourceObject = this.props.apiResourceObject;
 
     if (!this.state.done) {
