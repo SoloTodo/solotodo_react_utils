@@ -29,6 +29,8 @@ export const apiSettings = {
     budgets: endpoint + 'budgets/',
     ratings: endpoint + 'ratings/',
     alerts: endpoint + 'alerts/',
+    banner_assets: endpoint + 'banner_assets/',
+    brands: endpoint + 'brands/'
   },
   ownUserUrl: endpoint + 'users/me/',
   linioStoreId: 76,
