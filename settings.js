@@ -31,6 +31,8 @@ export const apiSettings = {
     alerts: endpoint + 'alerts/',
     banner_assets: endpoint + 'banner_assets/',
     brands: endpoint + 'brands/'
+    anonymous_alerts: endpoint + 'anonymous_alerts/',
+    user_alerts: endpoint + 'user_alerts/',
   },
   ownUserUrl: endpoint + 'users/me/',
   linioStoreId: 76,
