@@ -31,6 +31,7 @@ export const apiSettings = {
     alerts: endpoint + 'alerts/',
     banner_assets: endpoint + 'banner_assets/',
     banner_updates: endpoint + 'banner_updates/',
+    banner_sections: endpoint + 'banner_sections/',
     brands: endpoint + 'brands/',
     anonymous_alerts: endpoint + 'anonymous_alerts/',
     user_alerts: endpoint + 'user_alerts/',
