@@ -43,7 +43,6 @@ class ApiFormRemoveOnlyListField extends Component {
       for (const value of this.state.value) {
         endpoint += `ids=${value}&`
       }
-
       this.props.fetchAuth(endpoint)
           .then(json => {
             const apiResourceObjects = listToObject(json.results, 'id');
@@ -136,7 +135,7 @@ class ApiFormRemoveOnlyListField extends Component {
             </a>
           </td>
           <td>
-            <NavLink to={`/${this.props.resource}/${value.id}`}>{value.name}</NavLink>
+            <NavLink to={`/${this.props.resource}/${value.id}`}>{value.name || value.id}</NavLink>
           </td>
         </tr>
       })}
