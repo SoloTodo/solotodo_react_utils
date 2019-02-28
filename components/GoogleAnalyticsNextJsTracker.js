@@ -1,6 +1,6 @@
 import React from 'react';
 
-const withTracker = (WrappedComponent, trackPageHandler) => {
+const withTracker = (WrappedComponent, trackPageHandler, splitUrl=false) => {
   return class HOC extends React.Component {
     static async getInitialProps(ctx) {
       if (WrappedComponent.getInitialProps) {
@@ -15,8 +15,8 @@ const withTracker = (WrappedComponent, trackPageHandler) => {
     }
 
     componentWillReceiveProps(nextProps) {
-      const currentPage = this.props.router.asPath;
-      const nextPage = nextProps.router.asPath;
+      const currentPage = splitUrl ? this.props.router.asPath.split('?')[0] : this.props.router.asPath ;
+      const nextPage = splitUrl ? nextProps.router.asPath.split('?')[0] : nextProps.router.asPath;
 
       if (currentPage !== nextPage) {
         trackPageHandler(nextProps);
