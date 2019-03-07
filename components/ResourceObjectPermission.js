@@ -37,7 +37,6 @@ class ResourceObjectPermission extends Component {
     }
 
     if (this.props.apiResourceObject && !nextProps.apiResourceObject) {
-      console.log('Object deleted');
       this.setState({
         deleted: true
       })
