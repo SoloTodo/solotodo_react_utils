@@ -1,7 +1,7 @@
 import {apiSettings} from './settings';
 import Big from 'big.js';
 import moment from 'moment';
-import fetch from 'cross-fetch';
+import fetch from 'isomorphic-unfetch'
 import locale_es from "moment/locale/es";
 import {fetchApiResource, filterApiResourceObjectsByType} from "./ApiResource";
 
