@@ -311,3 +311,7 @@ export const isServer = !(
   window.document &&
   window.document.createElement
 );
+
+export const convertIdToObjectUrl = (id, resource) => {
+  return `${apiSettings.apiResourceEndpoints[resource]}${id}/`
+};
