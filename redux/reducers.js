@@ -48,3 +48,16 @@ export function loadedBundleReducer(state=false, action) {
 
   return state
 }
+
+export function loadedResourcesReducer(state=[], action) {
+  if (action.type === 'addApiResource') {
+    return [...state, action.resource]
+  }
+
+  if (action.type === 'setAuthToken') {
+    // If the user changes, invalidate the resources we may have fetched
+    return []
+  }
+
+  return state
+}
