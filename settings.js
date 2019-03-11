@@ -44,6 +44,7 @@ export const apiSettings = {
   abcdinStoreId: 30,
   parisStoreId: 11,
   ripleyStoreId: 18,
+  falabellaStoreId: 9,
   cellPhoneCategoryId: 6,
   technicalSpecificationsPurposeId: 1,
   categoryBrowseResultPurposeUrl: endpoint + 'category_template_purposes/3/',
