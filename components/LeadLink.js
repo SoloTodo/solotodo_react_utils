@@ -1,5 +1,4 @@
 import React from 'react';
-import {connect} from 'react-redux';
 import {registerLead} from "../utils";
 import {apiSettings} from "../settings";
 
@@ -52,12 +51,4 @@ class LeadLink extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  const store = state.apiResourceObjects[ownProps.entity.store];
-
-  return {
-    store
-  }
-}
-
-export default connect(mapStateToProps)(LeadLink);
+export default LeadLink;
