@@ -1,4 +1,5 @@
 import omit from 'lodash/omit';
+import {apiSettings} from "../settings";
 
 export function apiResourceObjectsReducer(state={}, action) {
   if (action.type === 'addApiResourceObjects' || action.type === 'addApiResource' || action.type === 'addBundle') {
@@ -24,18 +25,29 @@ export function apiResourceObjectsReducer(state={}, action) {
     return {...state, ...{[action.apiResourceObject.url]: newValue}}
   }
 
+  // LEGACY: Current architectures should not store the authToken in session
   if (action.type === 'setAuthToken') {
     // User changed, delete all API resources that include permissions,
     // this includes the user itself
     let filteredResources = {...state};
     Object.values(state)
-        .filter(x => Boolean(x.permissions))
-        .map(x => delete filteredResources[x.url]);
+      .filter(x => Boolean(x.permissions))
+      .map(x => delete filteredResources[x.url]);
     return filteredResources
   }
 
   if (action.type === 'deleteApiResourceObject') {
-    return omit(state, [action.url])
+    if (action.url === apiSettings.ownUserUrl) {
+      // User changed, delete all API resources that include permissions,
+      // this includes the user itself
+      let filteredResources = {...state};
+      Object.values(state)
+        .filter(x => Boolean(x.permissions))
+        .map(x => delete filteredResources[x.url]);
+      return filteredResources
+    } else {
+      return omit(state, [action.url])
+    }
   }
 
   return state
@@ -54,6 +66,7 @@ export function loadedResourcesReducer(state=[], action) {
     return [...state, action.resource]
   }
 
+  // LEGACY: Current architectures should not store the authToken in session
   if (action.type === 'setAuthToken') {
     // If the user changes, invalidate the resources we may have fetched
     return []

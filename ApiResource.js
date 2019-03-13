@@ -1,5 +1,5 @@
 import { apiSettings } from "./settings"
-import {camelize, fetchAuth} from './utils';
+import {camelize, convertIdToUrl, fetchAuth} from './utils';
 
 export function filterApiResourceObjectsByType(apiResourceObjects, resource) {
   const apiResourceEndpoint = apiSettings.apiResourceEndpoints[resource];
@@ -20,7 +20,7 @@ export function fetchApiResource(resource, dispatch, authToken=null) {
 }
 
 export function fetchApiResourceObject(resource, id, dispatch, authToken) {
-  const apiResourceObjectUrl = `${apiSettings.apiResourceEndpoints[resource]}${id}/`;
+  const apiResourceObjectUrl = convertIdToUrl(id, resource);
 
   return fetchAuth(authToken, apiResourceObjectUrl).then(json => {
     if (json.url) {

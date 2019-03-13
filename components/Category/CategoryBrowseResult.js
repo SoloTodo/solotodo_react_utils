@@ -12,6 +12,7 @@ import Select from 'react-select';
 import Img from 'react-image'
 import Spinner from 'react-spinkit';
 import Handlebars from 'handlebars/dist/handlebars.min'
+import {convertIdToUrl} from "../../utils";
 
 
 class CategoryBrowseResult extends Component {
@@ -97,8 +98,7 @@ class CategoryBrowseResult extends Component {
 function mapStateToProps(state, ownProps) {
   const category = state.apiResourceObjects[ownProps.bucket.product_entries[0].product.category];
   const category_templates = filterApiResourceObjectsByType(state.apiResourceObjects, 'category_templates');
-
-  const templateWebsiteUrl = apiSettings.apiResourceEndpoints.websites + ownProps.websiteId + '/';
+  const templateWebsiteUrl = convertIdToUrl(ownProps.websiteId, 'websites');
 
   let template = category_templates.filter(categoryTemplate => {
     return categoryTemplate.category === category.url &&
