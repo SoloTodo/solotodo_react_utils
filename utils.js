@@ -1,9 +1,15 @@
 import {apiSettings} from './settings';
 import Big from 'big.js';
 import moment from 'moment';
+import {parseCookies} from "nookies";
 import fetch from 'isomorphic-unfetch'
 import locale_es from "moment/locale/es";
 import {fetchApiResource, filterApiResourceObjectsByType} from "./ApiResource";
+
+
+export const getAuthToken = ctx => {
+  return parseCookies(ctx)['authToken'];
+};
 
 // REF: https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
 export function camelize(str) {

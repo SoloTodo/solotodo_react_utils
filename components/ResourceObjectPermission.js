@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
-import {apiSettings} from "../settings";
 import {Redirect} from "react-router-dom";
 import {convertIdToUrl} from "../utils";
 

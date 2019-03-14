@@ -1,6 +1,6 @@
 import { apiSettings } from "./settings"
 import {camelize, convertIdToUrl, fetchAuth} from './utils';
-import {getAuthToken} from "../utils";
+import {getAuthToken} from "./utils";
 
 export function filterApiResourceObjectsByType(apiResourceObjects, resource) {
   const apiResourceEndpoint = apiSettings.apiResourceEndpoints[resource];
@@ -58,8 +58,8 @@ export function apiResourceStateToPropsUtils(state) {
       return fetchApiResource(resource, dispatch, authToken)
     },
     fetchApiResourceObject: (resource, id, dispatch, anonymous=false) => {
-      const authToken = anonymous ? null : authToken;
-      return fetchApiResourceObject(resource, id, dispatch, authToken)
+      const customAuthToken = anonymous ? null : authToken;
+      return fetchApiResourceObject(resource, id, dispatch, customAuthToken)
     },
     filterApiResourceObjectsByType: resource => {
       return filterApiResourceObjectsByType(state.apiResourceObjects, resource)
