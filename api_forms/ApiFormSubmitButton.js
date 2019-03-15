@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import LaddaButton from "react-ladda";
 import queryString from "query-string";
-import {withRouter} from "react-router-dom";
+import createHistory from 'history/createBrowserHistory'
+
 
 class ApiFormSubmitButton extends Component {
   constructor(props) {
@@ -29,7 +30,8 @@ class ApiFormSubmitButton extends Component {
   }
 
   componentWillMount() {
-    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    const history = createHistory();
+    this.unlisten = history.listen(() => this.componentUpdate());
     this.componentUpdate();
   }
 
@@ -91,4 +93,4 @@ class ApiFormSubmitButton extends Component {
   }
 }
 
-export default withRouter(ApiFormSubmitButton)
+export default ApiFormSubmitButton

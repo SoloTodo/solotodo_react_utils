@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import {createOption, createOptions} from "../form_utils";
 import changeCase from 'change-case'
 import {areValuesEqual} from "../utils";
-import {withRouter} from "react-router-dom";
+import createHistory from 'history/createBrowserHistory'
 
 
 class ApiFormChoiceField extends Component {
@@ -31,7 +31,8 @@ class ApiFormChoiceField extends Component {
   }
 
   componentWillMount() {
-    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    const history = createHistory();
+    this.unlisten = history.listen(() => this.componentUpdate());
     this.componentUpdate();
   }
 
@@ -211,4 +212,4 @@ class ApiFormChoiceField extends Component {
   }
 }
 
-export default withRouter(ApiFormChoiceField)
+export default ApiFormChoiceField

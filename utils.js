@@ -123,7 +123,7 @@ export function setLocale(locale) {
  * @param s: sections delimiter
  * @param c: decimal delimiter
  */
-function _formatCurrency(value, n, x, s, c) {
+export function _formatCurrency(value, n, x, s, c) {
   const re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
     num = value.toFixed(Math.max(0, ~~n));
 

@@ -7,7 +7,7 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcContinuousRange from "./RcContinuousRange";
-import {withRouter} from "react-router-dom";
+import createHistory from 'history/createBrowserHistory'
 
 
 class ApiFormContinuousRangeField extends Component {
@@ -34,7 +34,8 @@ class ApiFormContinuousRangeField extends Component {
   }
 
   componentWillMount() {
-    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    const history = createHistory()
+    this.unlisten = history.listen(() => this.componentUpdate());
     this.componentUpdate();
   }
 
@@ -261,4 +262,4 @@ class ApiFormContinuousRangeField extends Component {
   }
 }
 
-export default withRouter(ApiFormContinuousRangeField)
+export default ApiFormContinuousRangeField

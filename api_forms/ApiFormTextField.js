@@ -2,8 +2,7 @@ import React, {Component} from 'react'
 import queryString from 'query-string';
 import changeCase from 'change-case'
 import {DebounceInput} from 'react-debounce-input';
-import {withRouter} from "react-router-dom";
-
+import createHistory from 'history/createBrowserHistory'
 
 class ApiFormTextField extends Component {
   constructor(props) {
@@ -29,7 +28,8 @@ class ApiFormTextField extends Component {
   }
 
   componentWillMount() {
-    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    const history = createHistory();
+    this.unlisten = history.listen(() => this.componentUpdate());
     this.componentUpdate();
   }
 
@@ -118,4 +118,4 @@ class ApiFormTextField extends Component {
   }
 }
 
-export default withRouter(ApiFormTextField)
+export default ApiFormTextField
