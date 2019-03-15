@@ -7,6 +7,7 @@ import {apiSettings} from "../../settings";
 
 import './ProductTechSpecs.css'
 import Handlebars from "handlebars/dist/handlebars.min";
+import {convertIdToUrl} from "../../utils";
 
 class ProductTechSpecs extends Component {
   formatSpecs = () => {
@@ -25,7 +26,7 @@ class ProductTechSpecs extends Component {
 
 function mapStateToProps(state, ownProps) {
   const categoryTemplates = filterApiResourceObjectsByType(state.apiResourceObjects, 'category_templates');
-  const templateWebsiteUrl = apiSettings.apiResourceEndpoints.websites + ownProps.websiteId + '/';
+  const templateWebsiteUrl = convertIdToUrl(ownProps.websiteId, 'websites');
 
   let template = categoryTemplates.filter(categoryTemplate => {
     return categoryTemplate.category === ownProps.product.categoryUrl &&

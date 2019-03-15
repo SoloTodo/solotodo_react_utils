@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
-import {apiSettings} from "../settings";
 import {Redirect} from "react-router-dom";
+import {convertIdToUrl} from "../utils";
 
 class ResourceObjectPermission extends Component {
   constructor(props) {
@@ -37,7 +37,6 @@ class ResourceObjectPermission extends Component {
     }
 
     if (this.props.apiResourceObject && !nextProps.apiResourceObject) {
-      console.log('Object deleted');
       this.setState({
         deleted: true
       })
@@ -101,7 +100,7 @@ function mapStateToProps(state, ownProps) {
 
   const id = ownProps.match.params.id;
   const resource = ownProps.resource;
-  const apiResourceObjectUrl = `${apiSettings.apiResourceEndpoints[resource]}${id}/`;
+  const apiResourceObjectUrl = convertIdToUrl(id, resource);
 
   return {
     apiResourceObject: state.apiResourceObjects[apiResourceObjectUrl],

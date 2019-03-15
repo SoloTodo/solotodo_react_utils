@@ -1,5 +1,6 @@
 import { apiSettings } from "./settings"
-import {camelize, fetchAuth} from './utils';
+import {camelize, convertIdToUrl, fetchAuth} from './utils';
+import {getAuthToken} from "./utils";
 
 export function filterApiResourceObjectsByType(apiResourceObjects, resource) {
   const apiResourceEndpoint = apiSettings.apiResourceEndpoints[resource];
@@ -20,7 +21,7 @@ export function fetchApiResource(resource, dispatch, authToken=null) {
 }
 
 export function fetchApiResourceObject(resource, id, dispatch, authToken) {
-  const apiResourceObjectUrl = `${apiSettings.apiResourceEndpoints[resource]}${id}/`;
+  const apiResourceObjectUrl = convertIdToUrl(id, resource);
 
   return fetchAuth(authToken, apiResourceObjectUrl).then(json => {
     if (json.url) {
@@ -43,20 +44,22 @@ export function apiResourceObjectForeignKey(rawApiResource, field, state) {
 }
 
 export function apiResourceStateToPropsUtils(state) {
+  const authToken = state.authToken || getAuthToken();
+
   return {
-    authToken: state.authToken,
+    authToken,
     ApiResourceObject: (jsonData) => {
       return new ApiResourceObject(jsonData, state.apiResourceObjects)
     },
     fetchAuth: (input, init={}) => {
-      return fetchAuth(state.authToken, input, init);
+      return fetchAuth(authToken, input, init);
     },
     fetchApiResource: (resource, dispatch, authToken=state.authToken) => {
       return fetchApiResource(resource, dispatch, authToken)
     },
     fetchApiResourceObject: (resource, id, dispatch, anonymous=false) => {
-      const authToken = anonymous ? null : state.authToken;
-      return fetchApiResourceObject(resource, id, dispatch, authToken)
+      const customAuthToken = anonymous ? null : authToken;
+      return fetchApiResourceObject(resource, id, dispatch, customAuthToken)
     },
     filterApiResourceObjectsByType: resource => {
       return filterApiResourceObjectsByType(state.apiResourceObjects, resource)

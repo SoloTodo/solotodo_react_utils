@@ -5,7 +5,7 @@ import {
   filterApiResourceObjectsByType
 } from "../../ApiResource";
 import {apiSettings} from "../../settings";
-import {formatCurrency} from '../../utils';
+import {convertIdToUrl, formatCurrency} from '../../utils';
 import {Link} from 'react-router-dom';
 
 import './ShortDescriptionProduct.css';
@@ -55,7 +55,7 @@ function mapStateToProps(state, ownProps) {
   const {ApiResourceObject} = apiResourceStateToPropsUtils(state);
 
   const category_templates = filterApiResourceObjectsByType(state.apiResourceObjects, 'category_templates');
-  const templateWebsiteUrl = apiSettings.apiResourceEndpoints.websites + ownProps.websiteId + '/';
+  const templateWebsiteUrl = convertIdToUrl(ownProps.websiteId, 'websites');
 
   let template = category_templates.filter(categoryTemplate => {
     return categoryTemplate.category === ownProps.productEntry.product.category &&
