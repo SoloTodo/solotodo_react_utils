@@ -5,61 +5,50 @@ import {createOption, createOptions} from "../form_utils";
 import changeCase from 'change-case'
 import {areValuesEqual} from "../utils";
 import createHistory from 'history/createBrowserHistory'
+import {addContextToField} from "./utils";
 
 
 class ApiFormChoiceField extends Component {
   constructor(props) {
     super(props);
 
+    const initialValue = ApiFormChoiceField.parseValueFromUrl(props);
+
     this.state = {
-      value: this.parseValueFromUrl(props)
-    }
+      value: initialValue
+    };
+
+    ApiFormChoiceField.notifyNewParams(initialValue, props, false);
   }
 
-  setValue(newValue, props, pushUrl=false) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return
-    }
-
-    if (!areValuesEqual(this.state.value, newValue, 'id')) {
-      this.setState({
-        value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl))
-    }
-  }
-
-  componentWillMount() {
+  componentDidMount() {
     const history = createHistory();
-    this.unlisten = history.listen(() => this.componentUpdate());
-    this.componentUpdate();
+    this.unlisten = history.listen(() => {
+      const newValue = ApiFormChoiceField.parseValueFromUrl(this.props);
+      this.setValue(newValue, this.props);
+    });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
+  setValue(newValue, props, pushUrl=false) {
+    props = props || this.props;
+
+    if (!areValuesEqual(this.state.value, newValue, 'id')) {
+      this.setState({
+        value: newValue
+      }, () => ApiFormChoiceField.notifyNewParams(newValue, props, pushUrl))
     }
   }
 
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
-
-  parseValueFromUrl = props => {
-    props = props || this.props;
-
-    const parameters = queryString.parse(window.location.search);
+  static parseValueFromUrl = props => {
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
     const urlField = props.urlField || changeCase.snake(props.name);
     let valueIds = parameters[urlField];
-    const choices = this.sanitizeChoices(props);
+    const choices = ApiFormChoiceField.sanitizeChoices(props);
 
     if (props.multiple) {
       if (!valueIds) {
@@ -102,9 +91,7 @@ class ApiFormChoiceField extends Component {
     }
   };
 
-  notifyNewParams(valueOrValues, props, pushUrl) {
-    props = props || this.props;
-
+  static getNotificationValue(valueOrValues, props) {
     let values = undefined;
 
     if (valueOrValues) {
@@ -140,14 +127,17 @@ class ApiFormChoiceField extends Component {
       }
     }
 
-    const result = {
-      [this.props.name]: {
+    return {
+      [props.name]: {
         apiParams: apiParams,
         urlParams: urlParams,
         fieldValues: valueOrValues
       }
     };
+  }
 
+  static notifyNewParams(valueOrValues, props, pushUrl) {
+    const result = ApiFormChoiceField.getNotificationValue(valueOrValues, props);
     props.onChange(result, pushUrl)
   }
 
@@ -163,14 +153,14 @@ class ApiFormChoiceField extends Component {
     this.setValue(sanitizedValue, this.props, true)
   };
 
-  sanitizeChoices(props) {
+  static sanitizeChoices(props) {
     return props.choices.map(choice => ({...choice, id: choice.id.toString()}))
   }
 
   render() {
     let selectedChoices = null;
 
-    const choices = this.sanitizeChoices(this.props);
+    const choices = ApiFormChoiceField.sanitizeChoices(this.props);
 
     if (this.props.multiple) {
       if (this.state.value) {
@@ -212,4 +202,4 @@ class ApiFormChoiceField extends Component {
   }
 }
 
-export default ApiFormChoiceField
+export default addContextToField(ApiFormChoiceField)

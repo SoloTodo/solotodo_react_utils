@@ -3,22 +3,23 @@ import queryString from 'query-string';
 import changeCase from 'change-case'
 import {DebounceInput} from 'react-debounce-input';
 import createHistory from 'history/createBrowserHistory'
+import {addContextToField} from "./utils";
 
 class ApiFormTextField extends Component {
   constructor(props) {
     super(props);
 
+    const initialValue = this.parseValueFromUrl(props);
+
     this.state = {
-      value: this.parseValueFromUrl(props)
-    }
+      value: initialValue
+    };
+
+    this.notifyNewParams(initialValue, props, false);
   }
 
   setValue(newValue, props, pushUrl=false) {
     props = props || this.props;
-
-    if (!props.onChange) {
-      return
-    }
 
     if (this.state.value !== newValue) {
       this.setState({
@@ -27,20 +28,13 @@ class ApiFormTextField extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const history = createHistory();
     this.unlisten = history.listen(() => this.componentUpdate());
-    this.componentUpdate();
   }
 
   componentWillUnmount() {
     this.unlisten();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
-    }
   }
 
   componentUpdate = props => {
@@ -53,7 +47,8 @@ class ApiFormTextField extends Component {
   parseValueFromUrl = props => {
     props = props || this.props;
 
-    const parameters = queryString.parse(window.location.search);
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
 
     let value = parameters[changeCase.snake(props.name)];
 
@@ -67,10 +62,6 @@ class ApiFormTextField extends Component {
   notifyNewParams(value, props, pushUrl=false) {
     props = props ? props : this.props;
 
-    if (!props.onChange) {
-      return;
-    }
-
     const fieldName = changeCase.snake(props.name);
 
     const urlParams = {};
@@ -81,7 +72,7 @@ class ApiFormTextField extends Component {
     const apiParams = value ? {[fieldName]: [value]} : {};
 
     const result = {
-      [this.props.name]: {
+      [props.name]: {
         apiParams: apiParams,
         urlParams: urlParams,
         fieldValues: value
@@ -118,4 +109,4 @@ class ApiFormTextField extends Component {
   }
 }
 
-export default ApiFormTextField
+export default addContextToField(ApiFormTextField)

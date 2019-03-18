@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import './ApiForm.css'
 import {connect} from "react-redux";
 import {areListsEqual, fetchJson} from "../utils";
@@ -7,8 +7,9 @@ import {
 } from "../ApiResource";
 import createHistory from 'history/createBrowserHistory'
 
+export const ApiFormContext = React.createContext(() => {});
 
-class ApiForm extends Component {
+class ApiForm extends React.Component {
   constructor(props) {
     super(props);
 
@@ -21,10 +22,6 @@ class ApiForm extends Component {
     this.fieldsData = fieldsData;
   }
 
-  componentWillMount() {
-    this.props.setFieldChangeHandler(this.handleFieldChange);
-  }
-
   componentWillReceiveProps(nextProps) {
     if (!areListsEqual(this.props.endpoints, nextProps.endpoints)) {
       this.updateSearchResults(nextProps, false)
@@ -33,9 +30,9 @@ class ApiForm extends Component {
 
   isFormValid = () => {
     return Object.values(this.fieldsData).every(
-        param => {
-          return Boolean(param)
-        });
+      param => {
+        return Boolean(param)
+      });
   };
 
   handleFieldChange = (updatedFieldsData={}, pushUrl) => {
@@ -121,7 +118,7 @@ class ApiForm extends Component {
     history.push(newRoute)
   };
 
-  updateSearchResults = (props, pushUrlOnFinish) => {
+  updateSearchResults = async (props, pushUrlOnFinish) => {
     props = props || this.props;
 
     props.onResultsChange(null);
@@ -137,6 +134,8 @@ class ApiForm extends Component {
     }
 
     let i = 0;
+    const promises = [];
+
     for (const endpoint of props.endpoints) {
       const separator = endpoint.indexOf('?') === -1 ? '?' : '&';
       const loopIndex = i;
@@ -145,7 +144,7 @@ class ApiForm extends Component {
 
       const fetchFunction = props.anonymous ? fetchJson : props.fetchAuth;
 
-      fetchFunction(finalEndpoint).then(json => {
+      promises.push(fetchFunction(finalEndpoint).then(json => {
         const fieldValues = {};
         for (const fieldName of Object.keys(this.fieldsData)) {
           fieldValues[fieldName] = this.fieldsData[fieldName].fieldValues
@@ -160,16 +159,22 @@ class ApiForm extends Component {
         if (pushUrlOnFinish) {
           this.pushUrl(true)
         }
-      });
+
+        return json
+      }));
 
       i++;
     }
+
+    await Promise.all(promises);
   };
 
   render() {
-    return <form>
-      {this.props.children}
-    </form>
+    return <ApiFormContext.Provider value={this.handleFieldChange}>
+      <form>
+        {this.props.children}
+      </form>
+    </ApiFormContext.Provider>
   }
 }
 

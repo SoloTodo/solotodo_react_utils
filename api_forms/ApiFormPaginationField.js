@@ -3,22 +3,23 @@ import ReactPaginate from 'react-paginate';
 import queryString from 'query-string';
 import {connect} from "react-redux";
 import createHistory from 'history/createBrowserHistory'
+import {addContextToField} from "./utils";
 
 class ApiFormPaginationField extends Component {
   constructor(props) {
     super(props);
 
+    const initialValue = this.parseValueFromUrl(props);
+
     this.state = {
-      value: this.parseValueFromUrl(props)
-    }
+      value: initialValue
+    };
+
+    this.notifyNewParams(initialValue, props, false);
   }
 
   setValue(newValue, props, pushUrl=false) {
     props = props || this.props;
-
-    if (!props.onChange) {
-      return
-    }
 
     if (this.state.value !== newValue) {
       this.setState({
@@ -27,20 +28,13 @@ class ApiFormPaginationField extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const history = createHistory();
     this.unlisten = history.listen(() => this.componentUpdate());
-    this.componentUpdate();
   }
 
   componentWillUnmount() {
     this.unlisten();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
-    }
   }
 
   componentUpdate = props => {
@@ -50,8 +44,9 @@ class ApiFormPaginationField extends Component {
     this.setValue(newValue, props);
   };
 
-  parseValueFromUrl = () => {
-    const parameters = queryString.parse(window.location.search);
+  parseValueFromUrl = props => {
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
     let value = parseInt(parameters['page'], 10);
 
     if (Number.isNaN(value)) {
@@ -63,10 +58,6 @@ class ApiFormPaginationField extends Component {
 
   notifyNewParams(value, props, pushUrl) {
     props = props ? props : this.props;
-
-    if (!props.onChange) {
-      return;
-    }
 
     const params = {};
 
@@ -135,4 +126,5 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(ApiFormPaginationField)
+const ApiFormPaginationFieldWithContext = addContextToField(ApiFormPaginationField);
+export default connect(mapStateToProps)(ApiFormPaginationFieldWithContext)

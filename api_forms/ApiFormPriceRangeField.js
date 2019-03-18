@@ -10,23 +10,24 @@ import RcPriceRange from "./RcPriceRange";
 import {ApiResourceObject} from "../ApiResource";
 import {formatCurrency} from "../utils";
 import createHistory from 'history/createBrowserHistory'
+import {addContextToField} from "./utils";
 
 
 class ApiFormPriceRangeField extends Component {
   constructor(props) {
     super(props);
 
+    const initialValue = this.parseValueFromUrl(props);
+
     this.state = {
-      value: this.parseValueFromUrl(props)
-    }
+      value: initialValue
+    };
+
+    this.notifyNewParams(initialValue, props, false);
   }
 
   setValue(newValue, props, pushUrl=false) {
     props = props || this.props;
-
-    if (!props.onChange) {
-      return
-    }
 
     const oldValue = this.state.value;
 
@@ -37,20 +38,13 @@ class ApiFormPriceRangeField extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const history = createHistory();
     this.unlisten = history.listen(() => this.componentUpdate());
-    this.componentUpdate();
   }
 
   componentWillUnmount() {
     this.unlisten();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
-    }
   }
 
   componentUpdate = props => {
@@ -62,7 +56,9 @@ class ApiFormPriceRangeField extends Component {
 
   parseValueFromUrl = props => {
     props = props || this.props;
-    const parameters = queryString.parse(window.location.search);
+
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
 
     const startValue = parseFloat(parameters[changeCase.snakeCase(props.name) + '_start']) || null;
     const endValue = parseFloat(parameters[changeCase.snakeCase(props.name) + '_end']) || null;
@@ -75,10 +71,6 @@ class ApiFormPriceRangeField extends Component {
 
   notifyNewParams(values, props=null, pushUrl=false) {
     props = props || this.props;
-
-    if (!props.onChange) {
-      return;
-    }
 
     const apiParams = {};
     const urlParams = {};
@@ -95,7 +87,7 @@ class ApiFormPriceRangeField extends Component {
     }
 
     const result = {
-      [this.props.name]: {
+      [props.name]: {
         apiParams,
         urlParams,
         fieldValues: {
@@ -156,35 +148,35 @@ class ApiFormPriceRangeField extends Component {
       const formattedValue = formatCurrency(valueForConversion, currency, conversionCurrency, numberFormat.thousands_separator, numberFormat.decimal_separator);
 
       return (
-          <Tooltip
-              prefixCls="rc-slider-tooltip"
-              overlay={<span>{formattedValue}</span>}
-              visible={dragging}
-              placement="top"
-              key={index}
-          >
-            <Handle value={value || 0} {...restProps} />
-          </Tooltip>
+        <Tooltip
+          prefixCls="rc-slider-tooltip"
+          overlay={<span>{formattedValue}</span>}
+          visible={dragging}
+          placement="top"
+          key={index}
+        >
+          <Handle value={value || 0} {...restProps} />
+        </Tooltip>
       );
     };
 
     return (
-        <div className="row">
-          <div className="col-12 pb-3">
-            <label>{this.props.label}</label>
-            <div className="pb-2">
-              <RcPriceRange
-                  value={[startValue, endValue]}
-                  min={min}
-                  max={max}
-                  p80th={this.props.p80th}
-                  onAfterChange={handleValueChange}
-                  handle={handle}
-              />
-            </div>
+      <div className="row">
+        <div className="col-12 pb-3">
+          <label>{this.props.label}</label>
+          <div className="pb-2">
+            <RcPriceRange
+              value={[startValue, endValue]}
+              min={min}
+              max={max}
+              p80th={this.props.p80th}
+              onAfterChange={handleValueChange}
+              handle={handle}
+            />
           </div>
-        </div>)
+        </div>
+      </div>)
   }
 }
 
-export default ApiFormPriceRangeField
+export default addContextToField(ApiFormPriceRangeField)

@@ -1,3 +1,6 @@
+import React from 'react';
+import {ApiFormContext} from "./ApiForm";
+
 export function createOrderingOptionChoices(fields) {
   const result = [];
 
@@ -38,3 +41,11 @@ export function areDatesEqual(dateA, dateB) {
 
   return dateA.isSame(dateB)
 }
+
+export const addContextToField = Component => {
+  return React.forwardRef((props, ref) => (
+    <ApiFormContext.Consumer>
+      {handleFieldChange => <Component {...props} onChange={handleFieldChange} ref={ref} />}
+    </ApiFormContext.Consumer>
+  ));
+};
