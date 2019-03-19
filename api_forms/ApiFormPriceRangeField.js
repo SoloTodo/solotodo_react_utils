@@ -13,17 +13,19 @@ import createHistory from 'history/createBrowserHistory'
 import {addContextToField} from "./utils";
 
 
-class ApiFormPriceRangeField extends Component {
+export class ApiFormPriceRangeField extends Component {
   constructor(props) {
     super(props);
 
-    const initialValue = this.parseValueFromUrl(props);
+    const initialValue = props.initialValue || ApiFormPriceRangeField.parseValueFromUrl(props);
 
     this.state = {
       value: initialValue
     };
 
-    this.notifyNewParams(initialValue, props, false);
+    if (!props.initialValue) {
+      ApiFormPriceRangeField.notifyNewParams(initialValue, props, false);
+    }
   }
 
   setValue(newValue, props, pushUrl=false) {
@@ -34,7 +36,7 @@ class ApiFormPriceRangeField extends Component {
     if (!oldValue || oldValue.startValue !== newValue.startValue || oldValue.endValue !== newValue.endValue) {
       this.setState({
         value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl))
+      }, () => ApiFormPriceRangeField.notifyNewParams(newValue, props, pushUrl))
     }
   }
 
@@ -50,13 +52,11 @@ class ApiFormPriceRangeField extends Component {
   componentUpdate = props => {
     props = props || this.props;
 
-    const newValue = this.parseValueFromUrl(props);
+    const newValue = ApiFormPriceRangeField.parseValueFromUrl(props);
     this.setValue(newValue, props);
   };
 
-  parseValueFromUrl = props => {
-    props = props || this.props;
-
+  static parseValueFromUrl = props => {
     const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
     const parameters = queryString.parse(search);
 
@@ -69,9 +69,7 @@ class ApiFormPriceRangeField extends Component {
     }
   };
 
-  notifyNewParams(values, props=null, pushUrl=false) {
-    props = props || this.props;
-
+  static getNotificationValue(values, props) {
     const apiParams = {};
     const urlParams = {};
     const baseFieldName = changeCase.snake(props.name);
@@ -86,7 +84,7 @@ class ApiFormPriceRangeField extends Component {
       urlParams[baseFieldName + '_end'] = [values.endValue]
     }
 
-    const result = {
+    return {
       [props.name]: {
         apiParams,
         urlParams,
@@ -96,7 +94,10 @@ class ApiFormPriceRangeField extends Component {
         }
       }
     };
+  }
 
+  static notifyNewParams(values, props, pushUrl=false) {
+    const result = this.getNotificationValue(values, props);
     props.onChange(result, pushUrl)
   }
 

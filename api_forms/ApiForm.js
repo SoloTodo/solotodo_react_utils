@@ -13,10 +13,16 @@ class ApiForm extends React.Component {
   constructor(props) {
     super(props);
 
-    let fieldsData = {};
+    let fieldsData = undefined;
 
-    for (const field of this.props.fields) {
-      fieldsData[field] = undefined
+    if (props.initialFormData) {
+      fieldsData = props.initialFormData
+    } else {
+      fieldsData = {};
+
+      for (const field of this.props.fields) {
+        fieldsData[field] = undefined
+      }
     }
 
     this.fieldsData = fieldsData;
@@ -118,55 +124,51 @@ class ApiForm extends React.Component {
     history.push(newRoute)
   };
 
-  updateSearchResults = async (props, pushUrlOnFinish) => {
-    props = props || this.props;
-
-    props.onResultsChange(null);
-
+  static async getSearchResults(fieldsData, endpoints, fetchFunction) {
     let apiSearch = '';
 
-    for (const fieldName of Object.keys(this.fieldsData)) {
-      for (const apiParamKey of Object.keys(this.fieldsData[fieldName].apiParams)) {
-        for (const apiParamValue of this.fieldsData[fieldName].apiParams[apiParamKey]) {
+    for (const fieldName of Object.keys(fieldsData)) {
+      for (const apiParamKey of Object.keys(fieldsData[fieldName].apiParams)) {
+        for (const apiParamValue of fieldsData[fieldName].apiParams[apiParamKey]) {
           apiSearch += `${apiParamKey}=${apiParamValue}&`
         }
       }
     }
 
-    let i = 0;
     const promises = [];
 
-    for (const endpoint of props.endpoints) {
+    for (const endpoint of endpoints) {
       const separator = endpoint.indexOf('?') === -1 ? '?' : '&';
-      const loopIndex = i;
-
       const finalEndpoint = endpoint + separator + apiSearch;
-
-      const fetchFunction = props.anonymous ? fetchJson : props.fetchAuth;
-
-      promises.push(fetchFunction(finalEndpoint).then(json => {
-        const fieldValues = {};
-        for (const fieldName of Object.keys(this.fieldsData)) {
-          fieldValues[fieldName] = this.fieldsData[fieldName].fieldValues
-        }
-
-        props.onResultsChange({
-          index: loopIndex,
-          payload: json,
-          fieldValues
-        });
-
-        if (pushUrlOnFinish) {
-          this.pushUrl(true)
-        }
-
-        return json
-      }));
-
-      i++;
+      promises.push(fetchFunction(finalEndpoint));
     }
 
-    await Promise.all(promises);
+    return await Promise.all(promises)
+  }
+
+  updateSearchResults = async (props, pushUrlOnFinish) => {
+    props.onResultsChange(null);
+    const fetchFunction = props.anonymous ? fetchJson : props.fetchAuth;
+    const searchResults = await ApiForm.getSearchResults(this.fieldsData, props.endpoints, fetchFunction);
+
+    for (let i = 0; i < searchResults.length; i++) {
+      const json = searchResults[i];
+
+      const fieldValues = {};
+      for (const fieldName of Object.keys(this.fieldsData)) {
+        fieldValues[fieldName] = this.fieldsData[fieldName].fieldValues
+      }
+
+      props.onResultsChange({
+        index: i,
+        payload: json,
+        fieldValues
+      });
+    }
+
+    if (pushUrlOnFinish) {
+      this.pushUrl(true)
+    }
   };
 
   render() {

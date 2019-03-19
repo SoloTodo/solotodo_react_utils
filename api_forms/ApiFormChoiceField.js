@@ -8,17 +8,19 @@ import createHistory from 'history/createBrowserHistory'
 import {addContextToField} from "./utils";
 
 
-class ApiFormChoiceField extends Component {
+export class ApiFormChoiceField extends Component {
   constructor(props) {
     super(props);
 
-    const initialValue = ApiFormChoiceField.parseValueFromUrl(props);
+    const initialValue = props.initialValue || ApiFormChoiceField.parseValueFromUrl(props);
 
     this.state = {
       value: initialValue
     };
 
-    ApiFormChoiceField.notifyNewParams(initialValue, props, false);
+    if (!props.initialValue) {
+      ApiFormChoiceField.notifyNewParams(initialValue, props, false);
+    }
   }
 
   componentDidMount() {

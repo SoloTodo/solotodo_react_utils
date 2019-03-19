@@ -1,17 +1,29 @@
+import React from 'react';
 import {withRouter} from 'next/router';
-import ApiFormPriceRangeField from './ApiFormPriceRangeField'
-import ApiFormTextField from './ApiFormTextField'
-import ApiFormChoiceField from './ApiFormChoiceField'
-import ApiFormPaginationField from './ApiFormPaginationField'
+// Use the named imports for the fields to inject the next router inside the ContextConsumer!
+import { ApiFormPriceRangeField } from './ApiFormPriceRangeField'
+import { ApiFormTextField } from './ApiFormTextField'
+import { ApiFormChoiceField } from './ApiFormChoiceField'
+import { ApiFormPaginationField } from './ApiFormPaginationField'
+import {ApiFormContext} from "./ApiForm";
 
 const convertFieldToNext = ApiFormField => {
-  const ApiFormFieldNext = withRouter(ApiFormField);
-  ApiFormField.getInitialProps = props => {
-    const initialValue = ApiFormField.parseValueFromUrl(props);
-    return ApiFormField.getNotificationValue(initialValue, props);
+  let ApiFormFieldNext = withRouter(ApiFormField);
+
+  const ApiFormFieldNextWithContext = React.forwardRef((props, ref) => (
+    <ApiFormContext.Consumer>
+      {handleFieldChange => <ApiFormFieldNext {...props} onChange={handleFieldChange} ref={ref} />}
+    </ApiFormContext.Consumer>
+  ));
+
+  ApiFormFieldNextWithContext.getInitialProps = (props, asPath) => {
+    const composedProps = {...props, router: {asPath: asPath}};
+    const initialValue = ApiFormFieldNext.parseValueFromUrl(composedProps);
+    return ApiFormFieldNext.getNotificationValue(initialValue, composedProps);
   };
 
-  return withRouter(ApiFormFieldNext);
+  return ApiFormFieldNextWithContext
+
 };
 
 export const ApiFormPriceRangeFieldNext = convertFieldToNext(ApiFormPriceRangeField);

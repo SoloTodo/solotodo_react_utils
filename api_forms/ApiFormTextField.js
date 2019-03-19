@@ -5,17 +5,20 @@ import {DebounceInput} from 'react-debounce-input';
 import createHistory from 'history/createBrowserHistory'
 import {addContextToField} from "./utils";
 
-class ApiFormTextField extends Component {
+export class ApiFormTextField extends Component {
   constructor(props) {
     super(props);
 
-    const initialValue = this.parseValueFromUrl(props);
+    const usePropsInitialValue = typeof props.initialValue === 'string';
+    const initialValue = usePropsInitialValue ? props.initialValue : ApiFormTextField.parseValueFromUrl(props);
 
     this.state = {
       value: initialValue
     };
 
-    this.notifyNewParams(initialValue, props, false);
+    if (!usePropsInitialValue) {
+      ApiFormTextField.notifyNewParams(initialValue, props, false);
+    }
   }
 
   setValue(newValue, props, pushUrl=false) {
@@ -24,29 +27,23 @@ class ApiFormTextField extends Component {
     if (this.state.value !== newValue) {
       this.setState({
         value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl))
+      }, () => ApiFormTextField.notifyNewParams(newValue, props, pushUrl))
     }
   }
 
   componentDidMount() {
     const history = createHistory();
-    this.unlisten = history.listen(() => this.componentUpdate());
+    this.unlisten = history.listen(() => {
+      const newValue = ApiFormTextField.parseValueFromUrl(this.props);
+      this.setValue(newValue, this.props);
+    });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
 
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
-
-  parseValueFromUrl = props => {
-    props = props || this.props;
-
+  static parseValueFromUrl = props => {
     const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
     const parameters = queryString.parse(search);
 
@@ -59,9 +56,7 @@ class ApiFormTextField extends Component {
     return value ? value : props.initial || '';
   };
 
-  notifyNewParams(value, props, pushUrl=false) {
-    props = props ? props : this.props;
-
+  static getNotificationValue(value, props) {
     const fieldName = changeCase.snake(props.name);
 
     const urlParams = {};
@@ -71,14 +66,17 @@ class ApiFormTextField extends Component {
 
     const apiParams = value ? {[fieldName]: [value]} : {};
 
-    const result = {
+    return {
       [props.name]: {
         apiParams: apiParams,
         urlParams: urlParams,
         fieldValues: value
       }
     };
+  }
 
+  static notifyNewParams(value, props, pushUrl=false) {
+    const result = this.getNotificationValue(value, props);
     props.onChange(result, pushUrl)
   }
 

@@ -5,17 +5,19 @@ import {connect} from "react-redux";
 import createHistory from 'history/createBrowserHistory'
 import {addContextToField} from "./utils";
 
-class ApiFormPaginationField extends Component {
+export class ApiFormPaginationField extends Component {
   constructor(props) {
     super(props);
 
-    const initialValue = this.parseValueFromUrl(props);
+    const initialValue = props.initialValue ? props.initialValue.id : ApiFormPaginationField.parseValueFromUrl(props);
 
     this.state = {
       value: initialValue
     };
 
-    this.notifyNewParams(initialValue, props, false);
+    if (!props.initialValue) {
+      ApiFormPaginationField.notifyNewParams(initialValue, props, false);
+    }
   }
 
   setValue(newValue, props, pushUrl=false) {
@@ -24,27 +26,23 @@ class ApiFormPaginationField extends Component {
     if (this.state.value !== newValue) {
       this.setState({
         value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl))
+      }, () => ApiFormPaginationField.notifyNewParams(newValue, props, pushUrl))
     }
   }
 
   componentDidMount() {
     const history = createHistory();
-    this.unlisten = history.listen(() => this.componentUpdate());
+    this.unlisten = history.listen(() => {
+      const newValue = ApiFormPaginationField.parseValueFromUrl(this.props);
+      this.setValue(newValue, this.props);
+    });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
 
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
-
-  parseValueFromUrl = props => {
+  static parseValueFromUrl = props => {
     const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
     const parameters = queryString.parse(search);
     let value = parseInt(parameters['page'], 10);
@@ -56,23 +54,24 @@ class ApiFormPaginationField extends Component {
     return value
   };
 
-  notifyNewParams(value, props, pushUrl) {
-    props = props ? props : this.props;
-
+  static getNotificationValue(value) {
     const params = {};
 
     if (value && value !== 1) {
       params['page'] = [value]
     }
 
-    const result = {
+    return {
       page: {
         apiParams: params,
         urlParams: params,
         fieldValues: {id: value, name: ''}
       }
     };
+  }
 
+  static notifyNewParams(value, props, pushUrl) {
+    const result = this.getNotificationValue(value);
     props.onChange(result, pushUrl)
   }
 
