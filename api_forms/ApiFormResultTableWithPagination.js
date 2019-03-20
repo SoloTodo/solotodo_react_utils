@@ -9,14 +9,15 @@ class ApiFormResultTableWithPagination extends Component {
   render() {
     return (
         <div className="card">
-          <div className="card-header">
-            <i className={this.props.icon || "glyphicons glyphicons-list"}>&nbsp;</i>
-            {this.props.label}
-            &nbsp;<ApiFormResultPageCount
+          <div className="card-header d-flex justify-content-between align-items-center">
+            <span><i className={this.props.icon || "glyphicons glyphicons-list"}/> {this.props.label}</span>
+            <div>
+              <ApiFormResultPageCount
               page={this.props.page}
               pageSize={this.props.page_size}
-              resultCount={this.props.data && this.props.data.count}
-          />
+              resultCount={this.props.data && this.props.data.count}/>
+              {this.props.headerButton}
+            </div>
           </div>
           <div className={this.props.cardClass || "card-block"} id="results-container">
             <div className="d-flex justify-content-between flex-wrap align-items-center mb-3 api-form-filters">
