@@ -26,19 +26,19 @@ class LeadLink extends React.Component {
       const intermediateUrl = `${entity.external_url}${separator}utm_source=affiliates&utm_medium=hasoffers&utm_campaign=${apiSettings.linioAffiliateId}&aff_sub=`;
 
       url = `https://linio.go2cloud.org/aff_c?offer_id=18&aff_id=${apiSettings.linioAffiliateId}&url=${encodeURIComponent(intermediateUrl)}`;
-      target = '_self';
+      target = '_top';
     } else if (store.id === apiSettings.abcdinStoreId) {
       url = `https://ad.soicos.com/-149x?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}`;
-      target = '_self'
+      target = '_top'
     } else if (store.id === apiSettings.parisStoreId) {
       url = `https://ad.soicos.com/-149A?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}`;
-      target = '_self'
+      target = '_top'
     } else if (store.id === apiSettings.ripleyStoreId) {
       url = `https://ad.soicos.com/-149I?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}`;
-      target = '_self'
+      target = '_top'
     } else if (store.id === apiSettings.falabellaStoreId) {
       url = `https://ad.soicos.com/-14Zg?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}`;
-      target = '_self'
+      target = '_top'
     } else {
       url = entity.external_url;
       target = '_blank';

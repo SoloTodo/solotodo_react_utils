@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
 import './ApiForm.css'
-import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {areListsEqual, fetchJson} from "../utils";
 import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
+import createHistory from 'history/createBrowserHistory'
+
 
 class ApiForm extends Component {
   constructor(props) {
@@ -115,8 +116,9 @@ class ApiForm extends Component {
       }
     }
 
-    const newRoute = props.history.location.pathname + urlSearch + pageAndOrderingParams;
-    props.history.push(newRoute)
+    const newRoute = window.location.pathname + urlSearch + pageAndOrderingParams;
+    const history = createHistory();
+    history.push(newRoute)
   };
 
   updateSearchResults = (props, pushUrlOnFinish) => {
@@ -179,4 +181,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(ApiForm));
+export default connect(mapStateToProps)(ApiForm);

@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import ReactPaginate from 'react-paginate';
 import queryString from 'query-string';
 import {connect} from "react-redux";
-import {withRouter} from "react-router-dom";
+import createHistory from 'history/createBrowserHistory'
 
 class ApiFormPaginationField extends Component {
   constructor(props) {
@@ -28,7 +28,8 @@ class ApiFormPaginationField extends Component {
   }
 
   componentWillMount() {
-    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    const history = createHistory();
+    this.unlisten = history.listen(() => this.componentUpdate());
     this.componentUpdate();
   }
 
@@ -134,4 +135,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(ApiFormPaginationField))
+export default connect(mapStateToProps)(ApiFormPaginationField)

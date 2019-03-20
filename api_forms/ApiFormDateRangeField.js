@@ -5,7 +5,7 @@ import moment from "moment";
 import './ApiFormDateRangeField.css'
 import {parseDateToCurrentTz} from "../utils";
 import {areDatesEqual} from "./utils";
-import {withRouter} from "react-router-dom";
+import createHistory from 'history/createBrowserHistory'
 
 class ApiFormDateRangeField extends Component {
   constructor(props) {
@@ -31,7 +31,8 @@ class ApiFormDateRangeField extends Component {
   }
 
   componentWillMount() {
-    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    const history = createHistory();
+    this.unlisten = history.listen(() => this.componentUpdate());
     this.componentUpdate();
   }
 
@@ -204,4 +205,4 @@ class ApiFormDateRangeField extends Component {
   }
 }
 
-export default withRouter(ApiFormDateRangeField)
+export default ApiFormDateRangeField

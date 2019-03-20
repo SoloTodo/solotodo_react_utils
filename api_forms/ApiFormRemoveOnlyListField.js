@@ -3,12 +3,13 @@ import queryString from 'query-string';
 import changeCase from 'change-case'
 import {connect} from "react-redux";
 import { apiSettings } from '../settings'
-import {NavLink, withRouter} from "react-router-dom";
 import './ApiFormRemoveOnlyListField.css'
 import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
 import {areListsEqual, listToObject} from "../utils";
+import createHistory from 'history/createBrowserHistory'
+
 
 class ApiFormRemoveOnlyListField extends Component {
   constructor(props) {
@@ -35,7 +36,8 @@ class ApiFormRemoveOnlyListField extends Component {
   }
 
   componentWillMount() {
-    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    const history = createHistory();
+    this.unlisten = history.listen(() => this.componentUpdate());
     this.componentUpdate();
 
     if (this.state.value.length) {
@@ -135,7 +137,7 @@ class ApiFormRemoveOnlyListField extends Component {
             </a>
           </td>
           <td>
-            <NavLink to={`/${this.props.resource}/${value.id}`}>{value.name || value.id}</NavLink>
+            <a href={`/${this.props.resource}/${value.id}`}>{value.name || value.id}</a>
           </td>
         </tr>
       })}
@@ -152,4 +154,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(ApiFormRemoveOnlyListField));
+export default connect(mapStateToProps)(ApiFormRemoveOnlyListField);

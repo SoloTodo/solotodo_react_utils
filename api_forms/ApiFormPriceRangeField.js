@@ -9,7 +9,7 @@ import 'rc-tooltip/assets/bootstrap.css';
 import RcPriceRange from "./RcPriceRange";
 import {ApiResourceObject} from "../ApiResource";
 import {formatCurrency} from "../utils";
-import {withRouter} from "react-router-dom";
+import createHistory from 'history/createBrowserHistory'
 
 
 class ApiFormPriceRangeField extends Component {
@@ -38,7 +38,8 @@ class ApiFormPriceRangeField extends Component {
   }
 
   componentWillMount() {
-    this.unlisten = this.props.history.listen(() => this.componentUpdate());
+    const history = createHistory();
+    this.unlisten = history.listen(() => this.componentUpdate());
     this.componentUpdate();
   }
 
@@ -186,4 +187,4 @@ class ApiFormPriceRangeField extends Component {
   }
 }
 
-export default withRouter(ApiFormPriceRangeField)
+export default ApiFormPriceRangeField
