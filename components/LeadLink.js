@@ -2,16 +2,26 @@ import React from 'react';
 import {registerLead} from "../utils";
 import {apiSettings} from "../settings";
 
+import uuidv5 from "uuid/v5"
+import AppContext from "./Context"
+
 class LeadLink extends React.Component {
-  handleClick = () => {
+  handleClick = uuid => {
     registerLead(this.props.authToken, this.props.websiteId, this.props.entity);
     if (this.props.callback) {
-      this.props.callback();
+      this.props.callback(uuid);
     }
   };
 
-  render() {
+  generateUrl = namespace => {
     const { entity, store, soicosPrefix } = this.props;
+    let uuid;
+    let urlSuffix = '';
+    if (namespace) {
+      uuid = uuidv5(entity.active_registry.id.toString(), namespace);
+      urlSuffix = `_${uuid}`
+    }
+
     let url = undefined;
     let target = undefined;
 
@@ -28,26 +38,37 @@ class LeadLink extends React.Component {
       url = `https://linio.go2cloud.org/aff_c?offer_id=18&aff_id=${apiSettings.linioAffiliateId}&url=${encodeURIComponent(intermediateUrl)}`;
       target = '_top';
     } else if (store.id === apiSettings.abcdinStoreId) {
-      url = `https://ad.soicos.com/-149x?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}`;
+      url = `https://ad.soicos.com/-149x?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
     } else if (store.id === apiSettings.parisStoreId) {
-      url = `https://ad.soicos.com/-149A?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}`;
+      url = `https://ad.soicos.com/-149A?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
     } else if (store.id === apiSettings.ripleyStoreId) {
-      url = `https://ad.soicos.com/-149I?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}`;
+      url = `https://ad.soicos.com/-149I?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
     } else if (store.id === apiSettings.falabellaStoreId) {
-      url = `https://ad.soicos.com/-14Zg?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}`;
+      url = `https://ad.soicos.com/-14Zg?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
     } else {
       url = entity.external_url;
       target = '_blank';
     }
 
-    return <a href={url} target={target} className={this.props.className || ''} rel="noopener nofollow"
-              onMouseDown={this.handleClick}>
-      {this.props.children}
-    </a>
+    return {
+      href: url,
+      target,
+      onMouseDown: () => this.handleClick(uuid)
+    };
+  };
+
+  render() {
+
+    return <AppContext.Consumer>
+      {context =>
+        <a {...this.generateUrl(context && context.namespace)} className={this.props.className || ''} rel="noopener nofollow">
+          {this.props.children}
+        </a>}
+    </AppContext.Consumer>
   }
 }
 
