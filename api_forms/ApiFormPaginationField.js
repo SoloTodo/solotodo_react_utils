@@ -9,7 +9,7 @@ export class ApiFormPaginationField extends Component {
   constructor(props) {
     super(props);
 
-    const initialValue = props.initialValue ? props.initialValue.id : ApiFormPaginationField.parseValueFromUrl(props);
+    const initialValue = props.initialValue || ApiFormPaginationField.parseValueFromUrl(props);
 
     this.state = {
       value: initialValue
@@ -23,7 +23,7 @@ export class ApiFormPaginationField extends Component {
   setValue(newValue, props, pushUrl=false) {
     props = props || this.props;
 
-    if (this.state.value !== newValue) {
+    if (this.state.value.id !== newValue.id) {
       this.setState({
         value: newValue
       }, () => ApiFormPaginationField.notifyNewParams(newValue, props, pushUrl))
@@ -48,24 +48,30 @@ export class ApiFormPaginationField extends Component {
     let value = parseInt(parameters['page'], 10);
 
     if (Number.isNaN(value)) {
-      return 1
+      return {
+        id: 1,
+        name: ''
+      }
     }
 
-    return value
+    return {
+        id: value,
+        name: ''
+      }
   };
 
   static getNotificationValue(value) {
     const params = {};
 
-    if (value && value !== 1) {
-      params['page'] = [value]
+    if (value && value.id !== 1) {
+      params['page'] = [value.id]
     }
 
     return {
       page: {
         apiParams: params,
         urlParams: params,
-        fieldValues: {id: value, name: ''}
+        fieldValues: value
       }
     };
   }
@@ -76,7 +82,7 @@ export class ApiFormPaginationField extends Component {
   }
 
   onPageChange = (selection) => {
-    this.setValue(selection.selected + 1, this.props, true)
+    this.setValue({id: selection.selected + 1, name:''}, this.props, true)
   };
 
   render() {
@@ -92,7 +98,7 @@ export class ApiFormPaginationField extends Component {
       pageCount = Math.ceil(this.props.resultCount / this.props.pageSize.id);
     }
 
-    const page = this.state.value || 1;
+    const page = this.state.value ? this.state.value.id : 1;
 
     const previousLabel = this.props.previousLabel || <span>&lsaquo;</span>;
     const nextLabel = this.props.nextLabel || <span>&rsaquo;</span>;

@@ -18,7 +18,7 @@ export class ApiFormChoiceField extends Component {
       value: initialValue
     };
 
-    if (!props.initialValue) {
+    if (typeof props.initialValue === 'undefined') {
       ApiFormChoiceField.notifyNewParams(initialValue, props, false);
     }
   }
@@ -139,14 +139,14 @@ export class ApiFormChoiceField extends Component {
   }
 
   static notifyNewParams(valueOrValues, props, pushUrl) {
-    const result = ApiFormChoiceField.getNotificationValue(valueOrValues, props);
+    const result = this.getNotificationValue(valueOrValues, props);
     props.onChange(result, pushUrl)
   }
 
   handleValueChange = (vals) => {
     let sanitizedValue = null;
     if (this.props.multiple) {
-      sanitizedValue = vals.map(val => val.option)
+      sanitizedValue = vals.map(val => val.option);
       sanitizedValue.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);});
     } else if (vals) {
       sanitizedValue = vals.option
