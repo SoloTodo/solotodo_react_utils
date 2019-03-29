@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import queryString from 'query-string';
 import changeCase from 'change-case'
 import './ApiFormDateRangeField.css'
@@ -7,60 +7,49 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcDiscreteRange from "./RcDiscreteRange";
-import createHistory from 'history/createBrowserHistory'
+import {addContextToField} from "./utils";
 
 
-class ApiFormDiscreteRangeField extends Component {
+export class ApiFormDiscreteRangeField extends React.Component {
   constructor(props) {
     super(props);
 
+    const initialValue = props.initialValue || ApiFormDiscreteRangeField.parseValueFromUrl(props);
+
     this.state = {
-      value: this.parseValueFromUrl(props)
+      value: initialValue
+    };
+
+    if (!props.initialValue) {
+      ApiFormDiscreteRangeField.notifyNewParams(initialValue, props, false);
     }
   }
 
-  setValue(newValue, props, pushUrl=false) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return
-    }
-
-    if (!this.state.value || this.state.value.startId !== newValue.startId || this.state.value.endId !== newValue.endId) {
-      this.setState({
-        value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl))
-    }
-  }
-
-  componentWillMount() {
-    const history = createHistory();
-    this.unlisten = history.listen(() => this.componentUpdate());
-    this.componentUpdate();
+  componentDidMount() {
+    this.unlisten = this.props.history.listen(() => {
+      const newValue = ApiFormDiscreteRangeField.parseValueFromUrl(this.props);
+      this.setValue(newValue, this.props);
+    });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
+  setValue(newValue, props, pushUrl=false) {
+    props = props || this.props;
+
+    if (!this.state.value || this.state.value.startId !== newValue.startId || this.state.value.endId !== newValue.endId) {
+      this.setState({
+        value: newValue
+      }, () => ApiFormDiscreteRangeField.notifyNewParams(newValue, props, pushUrl))
     }
   }
 
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
-
-  parseValueFromUrl = props => {
-    props = props || this.props;
-
+  static parseValueFromUrl = props => {
     // Obtain URL params
-    const parameters = queryString.parse(window.location.search);
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
 
     let startId = parseInt(parameters[changeCase.snakeCase(props.name) + '_start'], 10);
     const startChoice = props.choices.filter(choice => choice.id === startId)[0] || null;
@@ -80,13 +69,7 @@ class ApiFormDiscreteRangeField extends Component {
     }
   };
 
-  notifyNewParams(ids, props=null, pushUrl=false) {
-    props = props ? props : this.props;
-
-    if (!props.onChange) {
-      return;
-    }
-
+  static getNotificationValue(ids, props) {
     const apiParams = {};
     const urlParams = {};
     const baseFieldName = changeCase.snake(props.name);
@@ -101,8 +84,8 @@ class ApiFormDiscreteRangeField extends Component {
       urlParams[baseFieldName + '_end'] = [ids.endId]
     }
 
-    const result = {
-      [this.props.name]: {
+    return {
+      [props.name]: {
         apiParams,
         urlParams,
         fieldValues: {
@@ -111,7 +94,10 @@ class ApiFormDiscreteRangeField extends Component {
         }
       }
     };
+  }
 
+  static notifyNewParams(ids, props, pushUrl=false) {
+    const result = this.getNotificationValue(ids, props);
     props.onChange(result, pushUrl)
   }
 
@@ -219,4 +205,4 @@ class ApiFormDiscreteRangeField extends Component {
   }
 }
 
-export default ApiFormDiscreteRangeField
+export default addContextToField(ApiFormDiscreteRangeField)

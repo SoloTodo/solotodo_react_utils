@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import './ApiForm.css'
 import {connect} from "react-redux";
 import {areListsEqual, fetchJson} from "../utils";
@@ -7,22 +7,26 @@ import {
 } from "../ApiResource";
 import createHistory from 'history/createBrowserHistory'
 
+export const ApiFormContext = React.createContext(() => {});
 
-class ApiForm extends Component {
+class ApiForm extends React.Component {
   constructor(props) {
     super(props);
 
-    let fieldsData = {};
+    let fieldsData = undefined;
 
-    for (const field of this.props.fields) {
-      fieldsData[field] = undefined
+    if (props.initialFormData) {
+      fieldsData = props.initialFormData
+    } else {
+      fieldsData = {};
+
+      for (const field of this.props.fields) {
+        fieldsData[field] = undefined
+      }
     }
 
     this.fieldsData = fieldsData;
-  }
-
-  componentWillMount() {
-    this.props.setFieldChangeHandler(this.handleFieldChange);
+    this.history = createHistory();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,9 +37,9 @@ class ApiForm extends Component {
 
   isFormValid = () => {
     return Object.values(this.fieldsData).every(
-        param => {
-          return Boolean(param)
-        });
+      param => {
+        return Boolean(param)
+      });
   };
 
   handleFieldChange = (updatedFieldsData={}, pushUrl) => {
@@ -117,59 +121,62 @@ class ApiForm extends Component {
     }
 
     const newRoute = window.location.pathname + urlSearch + pageAndOrderingParams;
-    const history = createHistory();
-    history.push(newRoute)
+    this.history.push(newRoute)
   };
 
-  updateSearchResults = (props, pushUrlOnFinish) => {
-    props = props || this.props;
-
-    props.onResultsChange(null);
-
+  static async getSearchResults(fieldsData, endpoints, fetchFunction) {
     let apiSearch = '';
 
-    for (const fieldName of Object.keys(this.fieldsData)) {
-      for (const apiParamKey of Object.keys(this.fieldsData[fieldName].apiParams)) {
-        for (const apiParamValue of this.fieldsData[fieldName].apiParams[apiParamKey]) {
+    for (const fieldName of Object.keys(fieldsData)) {
+      for (const apiParamKey of Object.keys(fieldsData[fieldName].apiParams)) {
+        for (const apiParamValue of fieldsData[fieldName].apiParams[apiParamKey]) {
           apiSearch += `${apiParamKey}=${apiParamValue}&`
         }
       }
     }
 
-    let i = 0;
-    for (const endpoint of props.endpoints) {
+    const promises = [];
+
+    for (const endpoint of endpoints) {
       const separator = endpoint.indexOf('?') === -1 ? '?' : '&';
-      const loopIndex = i;
-
       const finalEndpoint = endpoint + separator + apiSearch;
+      promises.push(fetchFunction(finalEndpoint));
+    }
 
-      const fetchFunction = props.anonymous ? fetchJson : props.fetchAuth;
+    return await Promise.all(promises)
+  }
 
-      fetchFunction(finalEndpoint).then(json => {
-        const fieldValues = {};
-        for (const fieldName of Object.keys(this.fieldsData)) {
-          fieldValues[fieldName] = this.fieldsData[fieldName].fieldValues
-        }
+  updateSearchResults = async (props, pushUrlOnFinish) => {
+    props.onResultsChange(null);
+    const fetchFunction = props.anonymous ? fetchJson : props.fetchAuth;
+    const searchResults = await ApiForm.getSearchResults(this.fieldsData, props.endpoints, fetchFunction);
 
-        props.onResultsChange({
-          index: loopIndex,
-          payload: json,
-          fieldValues
-        });
+    for (let i = 0; i < searchResults.length; i++) {
+      const json = searchResults[i];
 
-        if (pushUrlOnFinish) {
-          this.pushUrl(true)
-        }
+      const fieldValues = {};
+      for (const fieldName of Object.keys(this.fieldsData)) {
+        fieldValues[fieldName] = this.fieldsData[fieldName].fieldValues
+      }
+
+      props.onResultsChange({
+        index: i,
+        payload: json,
+        fieldValues
       });
+    }
 
-      i++;
+    if (pushUrlOnFinish) {
+      this.pushUrl(true)
     }
   };
 
   render() {
-    return <form>
-      {this.props.children}
-    </form>
+    return <ApiFormContext.Provider value={{handleFieldChange: this.handleFieldChange, history: this.history}}>
+      <form>
+        {this.props.children}
+      </form>
+    </ApiFormContext.Provider>
   }
 }
 

@@ -1,96 +1,83 @@
-import React, {Component} from 'react';
+import React from 'react';
 import LaddaButton from "react-ladda";
 import queryString from "query-string";
-import createHistory from 'history/createBrowserHistory'
+import {addContextToField} from "./utils";
 
 
-class ApiFormSubmitButton extends Component {
+export class ApiFormSubmitButton extends React.Component {
   constructor(props) {
     super(props);
 
+    const initialValue = props.initialValue || ApiFormSubmitButton.parseValueFromUrl(props);
+
     this.state = {
-      value: this.parseValueFromUrl(props)
+      value: initialValue
+    };
+
+    if (typeof(props.initialValue) === 'undefined') {
+      ApiFormSubmitButton.notifyNewParams(initialValue, props, false);
     }
   }
 
-  setValue(newValue, props, pushUrl=false) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return
-    }
-
+  setValue(newValue, pushUrl=false) {
     if (newValue !== this.state.value) {
       this.setState({
         value: newValue
       }, () => {
-        this.notifyNewParams(newValue, props, pushUrl)
+        ApiFormSubmitButton.notifyNewParams(newValue, this.props, pushUrl)
       })
     }
   }
 
-  componentWillMount() {
-    const history = createHistory();
-    this.unlisten = history.listen(() => this.componentUpdate());
-    this.componentUpdate();
+  componentDidMount() {
+    this.unlisten = this.props.history.listen(() => {
+      const newValue = ApiFormSubmitButton.parseValueFromUrl(this.props);
+      this.setValue(newValue);
+    });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
-    }
-  }
+  static parseValueFromUrl = props => {
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
 
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
-
-  parseValueFromUrl = () => {
-    const parameters = queryString.parse(window.location.search);
     return Boolean(parameters.submit);
   };
 
-  notifyNewParams(value, props, pushUrl=false) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return;
-    }
-
-    const result = {
+  static getNotificationValue(value) {
+    return {
       submit: {
         apiParams: {submit: []},
         urlParams: value ? {submit: [1]} : {submit: []},
         fieldValues: value
       }
     };
+  }
 
+  static notifyNewParams(value, props, pushUrl) {
+    const result = this.getNotificationValue(value);
     props.onChange(result, pushUrl)
   }
 
-  handleValueChange = (evt) => {
+  handleValueChange = evt => {
     evt.preventDefault();
-    this.setValue(true, this.props, true);
+    this.setValue(true, true);
   };
 
   render() {
     return <LaddaButton
-        loading={this.state.value}
-        onClick={this.handleValueChange}
-        className="btn btn-primary">
+      loading={this.state.value}
+      onClick={this.handleValueChange}
+      className="btn btn-primary">
       {this.state.value ?
-          this.props.loadingLabel :
-          this.props.label
+        this.props.loadingLabel :
+        this.props.label
       }
     </LaddaButton>
   }
 }
 
-export default ApiFormSubmitButton
+export default addContextToField(ApiFormSubmitButton)

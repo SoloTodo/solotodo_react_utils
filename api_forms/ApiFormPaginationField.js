@@ -2,56 +2,47 @@ import React, {Component} from 'react'
 import ReactPaginate from 'react-paginate';
 import queryString from 'query-string';
 import {connect} from "react-redux";
-import createHistory from 'history/createBrowserHistory'
+import {addContextToField} from "./utils";
 
-class ApiFormPaginationField extends Component {
+export class ApiFormPaginationField extends Component {
   constructor(props) {
     super(props);
 
+    const initialValue = props.initialValue ? props.initialValue.id : ApiFormPaginationField.parseValueFromUrl(props);
+
     this.state = {
-      value: this.parseValueFromUrl(props)
+      value: initialValue
+    };
+
+    if (!props.initialValue) {
+      ApiFormPaginationField.notifyNewParams(initialValue, props, false);
     }
   }
 
   setValue(newValue, props, pushUrl=false) {
     props = props || this.props;
 
-    if (!props.onChange) {
-      return
-    }
-
     if (this.state.value !== newValue) {
       this.setState({
         value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl))
+      }, () => ApiFormPaginationField.notifyNewParams(newValue, props, pushUrl))
     }
   }
 
-  componentWillMount() {
-    const history = createHistory();
-    this.unlisten = history.listen(() => this.componentUpdate());
-    this.componentUpdate();
+  componentDidMount() {
+    this.unlisten = this.props.history.listen(() => {
+      const newValue = ApiFormPaginationField.parseValueFromUrl(this.props);
+      this.setValue(newValue, this.props);
+    });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
-    }
-  }
-
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
-
-  parseValueFromUrl = () => {
-    const parameters = queryString.parse(window.location.search);
+  static parseValueFromUrl = props => {
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
     let value = parseInt(parameters['page'], 10);
 
     if (Number.isNaN(value)) {
@@ -61,27 +52,24 @@ class ApiFormPaginationField extends Component {
     return value
   };
 
-  notifyNewParams(value, props, pushUrl) {
-    props = props ? props : this.props;
-
-    if (!props.onChange) {
-      return;
-    }
-
+  static getNotificationValue(value) {
     const params = {};
 
     if (value && value !== 1) {
       params['page'] = [value]
     }
 
-    const result = {
+    return {
       page: {
         apiParams: params,
         urlParams: params,
         fieldValues: {id: value, name: ''}
       }
     };
+  }
 
+  static notifyNewParams(value, props, pushUrl) {
+    const result = this.getNotificationValue(value);
     props.onChange(result, pushUrl)
   }
 
@@ -135,4 +123,5 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(ApiFormPaginationField)
+const ApiFormPaginationFieldWithContext = addContextToField(ApiFormPaginationField);
+export default connect(mapStateToProps)(ApiFormPaginationFieldWithContext)

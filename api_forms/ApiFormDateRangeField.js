@@ -1,63 +1,54 @@
-import React, {Component} from 'react'
+import React from 'react'
 import queryString from 'query-string';
 import changeCase from 'change-case'
 import moment from "moment";
 import './ApiFormDateRangeField.css'
 import {parseDateToCurrentTz} from "../utils";
 import {areDatesEqual} from "./utils";
-import createHistory from 'history/createBrowserHistory'
+import {addContextToField} from "./utils";
 
-class ApiFormDateRangeField extends Component {
+class ApiFormDateRangeField extends React.Component {
   constructor(props) {
     super(props);
 
+    const initialValue = props.initialValue || ApiFormDateRangeField.parseValueFromUrl(props);
+
     this.state = {
-      value: this.parseValueFromUrl(props)
+      value: initialValue
+    };
+
+    if (!props.initialValue) {
+      ApiFormDateRangeField.notifyNewParams(initialValue, props, false);
     }
   }
 
-  setValue(newValue, props, pushUrl=false) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return
-    }
-
-    if (!this.state.value || !areDatesEqual(this.state.value.startDate, newValue.startDate) || !areDatesEqual(this.state.value.endDate, newValue.endDate)) {
-      this.setState({
-        value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl))
-    }
-  }
-
-  componentWillMount() {
-    const history = createHistory();
-    this.unlisten = history.listen(() => this.componentUpdate());
-    this.componentUpdate();
+  componentDidMount() {
+    this.unlisten = this.props.history.listen(() => {
+      const newValue = ApiFormDateRangeField.parseValueFromUrl(this.props);
+      this.setValue(newValue, this.props);
+    });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
+  setValue(newValue, props, pushUrl=false) {
+    props = props || this.props;
+
+    if (!this.state.value || !areDatesEqual(this.state.value.startDate, newValue.startDate) || !areDatesEqual(this.state.value.endDate, newValue.endDate)) {
+      this.setState({
+        value: newValue
+      }, () => ApiFormDateRangeField.notifyNewParams(newValue, props, pushUrl))
     }
   }
 
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
-
-  parseValueFromUrl = props => {
+  static parseValueFromUrl = props => {
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
     // Obtain URL params
-    const parameters = queryString.parse(window.location.search);
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
     const startDateStr = parameters[changeCase.snakeCase(props.name) + '_start'];
     let startDate = null;
     if (dateRegex.test(startDateStr)) {
@@ -115,13 +106,7 @@ class ApiFormDateRangeField extends Component {
     }
   };
 
-  notifyNewParams(value, props=null, pushUrl=false) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return;
-    }
-
+  static getNotificationValue(value, props) {
     const apiParams = {};
     const urlParams = {};
     const baseFieldName = changeCase.snake(props.name);
@@ -136,7 +121,7 @@ class ApiFormDateRangeField extends Component {
       urlParams[baseFieldName + '_end'] = [value.endDate.format('YYYY-MM-DD')]
     }
 
-    const result = {
+    return {
       [props.name]: {
         apiParams,
         urlParams,
@@ -146,11 +131,14 @@ class ApiFormDateRangeField extends Component {
         }
       }
     };
+  }
 
+  static notifyNewParams(value, props, pushUrl=false) {
+    const result = this.getNotificationValue(value, props)
     props.onChange(result, pushUrl)
   }
 
-  handleDateChange = (event) => {
+  handleDateChange = () => {
     const startDateValue = document.getElementById(this.props.name + '_start').value;
     const endDateValue = document.getElementById(this.props.name + '_end').value;
 
@@ -205,4 +193,4 @@ class ApiFormDateRangeField extends Component {
   }
 }
 
-export default ApiFormDateRangeField
+export default addContextToField(ApiFormDateRangeField)

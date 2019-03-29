@@ -9,60 +9,50 @@ import 'rc-tooltip/assets/bootstrap.css';
 import RcPriceRange from "./RcPriceRange";
 import {ApiResourceObject} from "../ApiResource";
 import {formatCurrency} from "../utils";
-import createHistory from 'history/createBrowserHistory'
+import {addContextToField} from "./utils";
 
 
-class ApiFormPriceRangeField extends Component {
+export class ApiFormPriceRangeField extends Component {
   constructor(props) {
     super(props);
 
+    const initialValue = props.initialValue || ApiFormPriceRangeField.parseValueFromUrl(props);
+
     this.state = {
-      value: this.parseValueFromUrl(props)
+      value: initialValue
+    };
+
+    if (!props.initialValue) {
+      ApiFormPriceRangeField.notifyNewParams(initialValue, props, false);
     }
   }
 
   setValue(newValue, props, pushUrl=false) {
     props = props || this.props;
 
-    if (!props.onChange) {
-      return
-    }
-
     const oldValue = this.state.value;
 
     if (!oldValue || oldValue.startValue !== newValue.startValue || oldValue.endValue !== newValue.endValue) {
       this.setState({
         value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl))
+      }, () => ApiFormPriceRangeField.notifyNewParams(newValue, props, pushUrl))
     }
   }
 
-  componentWillMount() {
-    const history = createHistory();
-    this.unlisten = history.listen(() => this.componentUpdate());
-    this.componentUpdate();
+  componentDidMount() {
+    this.unlisten = this.props.history.listen(() => {
+      const newValue = ApiFormPriceRangeField.parseValueFromUrl(this.props);
+      this.setValue(newValue, this.props);
+    });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
-    }
-  }
-
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
-
-  parseValueFromUrl = props => {
-    props = props || this.props;
-    const parameters = queryString.parse(window.location.search);
+  static parseValueFromUrl = props => {
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
 
     const startValue = parseFloat(parameters[changeCase.snakeCase(props.name) + '_start']) || null;
     const endValue = parseFloat(parameters[changeCase.snakeCase(props.name) + '_end']) || null;
@@ -73,13 +63,7 @@ class ApiFormPriceRangeField extends Component {
     }
   };
 
-  notifyNewParams(values, props=null, pushUrl=false) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return;
-    }
-
+  static getNotificationValue(values, props) {
     const apiParams = {};
     const urlParams = {};
     const baseFieldName = changeCase.snake(props.name);
@@ -94,8 +78,8 @@ class ApiFormPriceRangeField extends Component {
       urlParams[baseFieldName + '_end'] = [values.endValue]
     }
 
-    const result = {
-      [this.props.name]: {
+    return {
+      [props.name]: {
         apiParams,
         urlParams,
         fieldValues: {
@@ -104,7 +88,10 @@ class ApiFormPriceRangeField extends Component {
         }
       }
     };
+  }
 
+  static notifyNewParams(values, props, pushUrl=false) {
+    const result = this.getNotificationValue(values, props);
     props.onChange(result, pushUrl)
   }
 
@@ -156,35 +143,35 @@ class ApiFormPriceRangeField extends Component {
       const formattedValue = formatCurrency(valueForConversion, currency, conversionCurrency, numberFormat.thousands_separator, numberFormat.decimal_separator);
 
       return (
-          <Tooltip
-              prefixCls="rc-slider-tooltip"
-              overlay={<span>{formattedValue}</span>}
-              visible={dragging}
-              placement="top"
-              key={index}
-          >
-            <Handle value={value || 0} {...restProps} />
-          </Tooltip>
+        <Tooltip
+          prefixCls="rc-slider-tooltip"
+          overlay={<span>{formattedValue}</span>}
+          visible={dragging}
+          placement="top"
+          key={index}
+        >
+          <Handle value={value || 0} {...restProps} />
+        </Tooltip>
       );
     };
 
     return (
-        <div className="row">
-          <div className="col-12 pb-3">
-            <label>{this.props.label}</label>
-            <div className="pb-2">
-              <RcPriceRange
-                  value={[startValue, endValue]}
-                  min={min}
-                  max={max}
-                  p80th={this.props.p80th}
-                  onAfterChange={handleValueChange}
-                  handle={handle}
-              />
-            </div>
+      <div className="row">
+        <div className="col-12 pb-3">
+          <label>{this.props.label}</label>
+          <div className="pb-2">
+            <RcPriceRange
+              value={[startValue, endValue]}
+              min={min}
+              max={max}
+              p80th={this.props.p80th}
+              onAfterChange={handleValueChange}
+              handle={handle}
+            />
           </div>
-        </div>)
+        </div>
+      </div>)
   }
 }
 
-export default ApiFormPriceRangeField
+export default addContextToField(ApiFormPriceRangeField)
