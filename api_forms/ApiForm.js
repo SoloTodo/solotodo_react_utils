@@ -106,7 +106,7 @@ class ApiForm extends React.Component {
       pageAndOrderingParams += `ordering=${props.ordering}&`;
     }
 
-    let urlSearch = '?';
+    let urlSearch = '';
 
     for (const fieldName of Object.keys(this.fieldsData)) {
       if (fieldName === 'submit' && ignoreSubmit) {
@@ -120,8 +120,12 @@ class ApiForm extends React.Component {
       }
     }
 
-    const newRoute = window.location.pathname + urlSearch + pageAndOrderingParams;
-    this.history.push(newRoute)
+    if (this.props.onPushUrl) {
+      this.props.onPushUrl(urlSearch + pageAndOrderingParams)
+    } else {
+      const newRoute = window.location.pathname + '?' + urlSearch + pageAndOrderingParams;
+      this.history.push(newRoute)
+    }
   };
 
   static async getSearchResults(fieldsData, endpoints, fetchFunction) {

@@ -1,10 +1,12 @@
 import React from 'react';
 import {withRouter} from 'next/router';
-// Use the named imports for the fields to inject the next router inside the ContextConsumer!
+// Use the named imports for the fields to inject the nextJS router inside the ContextConsumer!
 import { ApiFormPriceRangeField } from './ApiFormPriceRangeField'
 import { ApiFormTextField } from './ApiFormTextField'
 import { ApiFormChoiceField } from './ApiFormChoiceField'
 import { ApiFormPaginationField } from './ApiFormPaginationField'
+import { ApiFormDiscreteRangeField } from './ApiFormDiscreteRangeField'
+import { ApiFormContinuousRangeField } from './ApiFormContinouousRangeField'
 import {ApiFormContext} from "./ApiForm";
 
 const convertFieldToNext = ApiFormField => {
@@ -30,3 +32,5 @@ export const ApiFormPriceRangeFieldNext = convertFieldToNext(ApiFormPriceRangeFi
 export const ApiFormTextFieldNext = convertFieldToNext(ApiFormTextField);
 export const ApiFormChoiceFieldNext = convertFieldToNext(ApiFormChoiceField);
 export const ApiFormPaginationFieldNext = convertFieldToNext(ApiFormPaginationField);
+export const ApiFormDiscreteRangeFieldNext = convertFieldToNext(ApiFormDiscreteRangeField);
+export const ApiFormContinuousRangeFieldNext = convertFieldToNext(ApiFormContinuousRangeField);

@@ -17,7 +17,7 @@ export class ApiFormChoiceField extends Component {
       value: initialValue
     };
 
-    if (!props.initialValue) {
+    if (typeof props.initialValue === 'undefined') {
       ApiFormChoiceField.notifyNewParams(initialValue, props, false);
     }
   }
@@ -137,7 +137,7 @@ export class ApiFormChoiceField extends Component {
   }
 
   static notifyNewParams(valueOrValues, props, pushUrl) {
-    const result = ApiFormChoiceField.getNotificationValue(valueOrValues, props);
+    const result = this.getNotificationValue(valueOrValues, props);
     props.onChange(result, pushUrl)
   }
 
