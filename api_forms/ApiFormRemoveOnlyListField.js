@@ -8,7 +8,6 @@ import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
 import {areListsEqual, listToObject} from "../utils";
-import createHistory from 'history/createBrowserHistory'
 
 
 class ApiFormRemoveOnlyListField extends Component {
@@ -36,8 +35,7 @@ class ApiFormRemoveOnlyListField extends Component {
   }
 
   componentWillMount() {
-    const history = createHistory();
-    this.unlisten = history.listen(() => this.componentUpdate());
+    this.unlisten = this.props.history.listen(() => this.componentUpdate());
     this.componentUpdate();
 
     if (this.state.value.length) {

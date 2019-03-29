@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import queryString from 'query-string';
 import changeCase from 'change-case'
 import {DebounceInput} from 'react-debounce-input';
-import createHistory from 'history/createBrowserHistory'
 import {addContextToField} from "./utils";
 
 export class ApiFormTextField extends Component {
@@ -32,8 +31,7 @@ export class ApiFormTextField extends Component {
   }
 
   componentDidMount() {
-    const history = createHistory();
-    this.unlisten = history.listen(() => {
+    this.unlisten = this.props.history.listen(() => {
       const newValue = ApiFormTextField.parseValueFromUrl(this.props);
       this.setValue(newValue, this.props);
     });

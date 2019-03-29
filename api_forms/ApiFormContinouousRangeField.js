@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import queryString from 'query-string';
 import changeCase from 'change-case'
 import './ApiFormDateRangeField.css'
@@ -7,58 +7,46 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcContinuousRange from "./RcContinuousRange";
-import createHistory from 'history/createBrowserHistory'
+import {addContextToField} from "./utils";
 
 
-class ApiFormContinuousRangeField extends Component {
+class ApiFormContinuousRangeField extends React.Component {
   constructor(props) {
     super(props);
 
+    const initialValue = props.initialValue || ApiFormContinuousRangeField.parseValueFromUrl(props);
+
     this.state = {
-      value: this.parseValueFromUrl(props)
+      value: initialValue
+    };
+
+    if (!props.initialValue) {
+      ApiFormContinuousRangeField.notifyNewParams(initialValue, props, false);
     }
   }
 
-  setValue(newValue, props, pushUrl=false) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return
-    }
-
-    if (!this.state.value || this.state.value.startValue !== newValue.startValue || this.state.value.endValue !== newValue.endValue) {
-      this.setState({
-        value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl))
-    }
-  }
-
-  componentWillMount() {
-    const history = createHistory()
-    this.unlisten = history.listen(() => this.componentUpdate());
-    this.componentUpdate();
+  componentDidMount() {
+    this.unlisten = this.props.history.listen(() => {
+      const newValue = ApiFormContinuousRangeField.parseValueFromUrl(this.props);
+      this.setValue(newValue);
+    });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
+  setValue(newValue, pushUrl=false) {
+    if (!this.state.value || this.state.value.startValue !== newValue.startValue || this.state.value.endValue !== newValue.endValue) {
+      this.setState({
+        value: newValue
+      }, () => ApiFormContinuousRangeField.notifyNewParams(newValue, this.props, pushUrl))
     }
   }
 
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
-
-  parseValueFromUrl = props => {
-    props = props || this.props;
-    const parameters = queryString.parse(window.location.search);
+  static parseValueFromUrl = props => {
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
 
     const startValue = parseInt(parameters[changeCase.snakeCase(props.name) + '_start'], 10) || null;
     const endValue = parseInt(parameters[changeCase.snakeCase(props.name) + '_end'], 10) || null;
@@ -69,13 +57,7 @@ class ApiFormContinuousRangeField extends Component {
     }
   };
 
-  notifyNewParams(values, props, pushUrl=false) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return;
-    }
-
+  static getNotificationValue(values, props) {
     const apiParams = {};
     const urlParams = {};
     const baseFieldName = changeCase.snake(props.name);
@@ -90,8 +72,8 @@ class ApiFormContinuousRangeField extends Component {
       urlParams[baseFieldName + '_end'] = [values.endValue]
     }
 
-    const result = {
-      [this.props.name]: {
+    return {
+      [props.name]: {
         apiParams,
         urlParams,
         fieldValues: {
@@ -100,7 +82,10 @@ class ApiFormContinuousRangeField extends Component {
         }
       }
     };
+  }
 
+  static notifyNewParams(values, props, pushUrl=false) {
+    const result = this.getNotificationValue(values, props);
     props.onChange(result, pushUrl)
   }
 
@@ -204,7 +189,7 @@ class ApiFormContinuousRangeField extends Component {
         this.setValue({
           startValue: newStartValue,
           endValue: newEndValue
-        }, this.props, true)
+        }, true)
       }
     };
 
@@ -262,4 +247,4 @@ class ApiFormContinuousRangeField extends Component {
   }
 }
 
-export default ApiFormContinuousRangeField
+export default addContextToField(ApiFormContinuousRangeField)

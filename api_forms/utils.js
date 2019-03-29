@@ -45,7 +45,7 @@ export function areDatesEqual(dateA, dateB) {
 export const addContextToField = Component => {
   return React.forwardRef((props, ref) => (
     <ApiFormContext.Consumer>
-      {handleFieldChange => <Component {...props} onChange={handleFieldChange} ref={ref} />}
+      {({handleFieldChange, history}) => <Component {...props} onChange={handleFieldChange} history={history} ref={ref} />}
     </ApiFormContext.Consumer>
   ));
 };

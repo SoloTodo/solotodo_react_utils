@@ -26,6 +26,7 @@ class ApiForm extends React.Component {
     }
 
     this.fieldsData = fieldsData;
+    this.history = createHistory();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -120,8 +121,7 @@ class ApiForm extends React.Component {
     }
 
     const newRoute = window.location.pathname + urlSearch + pageAndOrderingParams;
-    const history = createHistory();
-    history.push(newRoute)
+    this.history.push(newRoute)
   };
 
   static async getSearchResults(fieldsData, endpoints, fetchFunction) {
@@ -172,7 +172,7 @@ class ApiForm extends React.Component {
   };
 
   render() {
-    return <ApiFormContext.Provider value={this.handleFieldChange}>
+    return <ApiFormContext.Provider value={{handleFieldChange: this.handleFieldChange, history: this.history}}>
       <form>
         {this.props.children}
       </form>

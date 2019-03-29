@@ -9,7 +9,6 @@ import 'rc-tooltip/assets/bootstrap.css';
 import RcPriceRange from "./RcPriceRange";
 import {ApiResourceObject} from "../ApiResource";
 import {formatCurrency} from "../utils";
-import createHistory from 'history/createBrowserHistory'
 import {addContextToField} from "./utils";
 
 
@@ -41,20 +40,15 @@ export class ApiFormPriceRangeField extends Component {
   }
 
   componentDidMount() {
-    const history = createHistory();
-    this.unlisten = history.listen(() => this.componentUpdate());
+    this.unlisten = this.props.history.listen(() => {
+      const newValue = ApiFormPriceRangeField.parseValueFromUrl(this.props);
+      this.setValue(newValue, this.props);
+    });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
-
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = ApiFormPriceRangeField.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
 
   static parseValueFromUrl = props => {
     const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;

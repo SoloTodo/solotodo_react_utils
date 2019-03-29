@@ -4,7 +4,6 @@ import queryString from 'query-string';
 import {createOption, createOptions} from "../form_utils";
 import changeCase from 'change-case'
 import {areValuesEqual} from "../utils";
-import createHistory from 'history/createBrowserHistory'
 import {addContextToField} from "./utils";
 
 
@@ -24,8 +23,7 @@ export class ApiFormChoiceField extends Component {
   }
 
   componentDidMount() {
-    const history = createHistory();
-    this.unlisten = history.listen(() => {
+    this.unlisten = this.props.history.listen(() => {
       const newValue = ApiFormChoiceField.parseValueFromUrl(this.props);
       this.setValue(newValue, this.props);
     });
@@ -143,10 +141,10 @@ export class ApiFormChoiceField extends Component {
     props.onChange(result, pushUrl)
   }
 
-  handleValueChange = (vals) => {
+  handleValueChange = vals => {
     let sanitizedValue = null;
     if (this.props.multiple) {
-      sanitizedValue = vals.map(val => val.option)
+      sanitizedValue = vals.map(val => val.option);
       sanitizedValue.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);});
     } else if (vals) {
       sanitizedValue = vals.option

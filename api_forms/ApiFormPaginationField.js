@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import ReactPaginate from 'react-paginate';
 import queryString from 'query-string';
 import {connect} from "react-redux";
-import createHistory from 'history/createBrowserHistory'
 import {addContextToField} from "./utils";
 
 export class ApiFormPaginationField extends Component {
@@ -31,8 +30,7 @@ export class ApiFormPaginationField extends Component {
   }
 
   componentDidMount() {
-    const history = createHistory();
-    this.unlisten = history.listen(() => {
+    this.unlisten = this.props.history.listen(() => {
       const newValue = ApiFormPaginationField.parseValueFromUrl(this.props);
       this.setValue(newValue, this.props);
     });
