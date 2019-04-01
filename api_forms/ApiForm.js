@@ -73,6 +73,7 @@ class ApiForm extends React.Component {
     }
 
     this.props.onFormValueChange(formValues);
+    this.props.onFormFieldsChange && this.props.onFormFieldsChange(this.fieldsData);
 
     if (!this.isFormValid()) {
       return;
