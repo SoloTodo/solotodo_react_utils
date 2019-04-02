@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {createOrderingOptionChoice} from "./utils";
+import {addContextToField, createOrderingOptionChoice} from "./utils";
 
 class ApiFormOrderingColumn extends Component {
   renderOrderingArrow = (field, orderingField, orderingDescending) => {
@@ -14,10 +14,6 @@ class ApiFormOrderingColumn extends Component {
 
   onChangeOrdering = evt => {
     evt.preventDefault();
-
-    if (!this.props.onChange) {
-      return
-    }
 
     const orderingPattern = /^(-?)(.+)$/;
     const orderingComponents = orderingPattern.exec(this.props.ordering.name);
@@ -70,4 +66,4 @@ class ApiFormOrderingColumn extends Component {
   }
 }
 
-export default ApiFormOrderingColumn;
+export default addContextToField(ApiFormOrderingColumn);

@@ -44,7 +44,6 @@ class ApiFormResultsTable extends Component {
                     name={column.ordering}
                     label={column.label}
                     ordering={this.props.ordering}
-                    onChange={this.props.onChange}
                 />
               </th>
           ))}
