@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import queryString from 'query-string';
 import changeCase from 'change-case'
 import {connect} from "react-redux";
@@ -8,35 +8,30 @@ import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
 import {areListsEqual, listToObject} from "../utils";
+import {addContextToField} from "./utils";
 
 
-class ApiFormRemoveOnlyListField extends Component {
+class ApiFormRemoveOnlyListField extends React.Component {
   constructor(props) {
     super(props);
 
+    const initialValue = props.initialValue || ApiFormRemoveOnlyListField.parseValueFromUrl(props);
+
     this.state = {
       apiResourceObjects: undefined,
-      value: this.parseValueFromUrl(props)
+      value: initialValue
     };
-  }
 
-  setValue(newValue, props, pushUrl=false) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return
-    }
-
-    if (!areListsEqual(this.state.value, newValue)) {
-      this.setState({
-        value: newValue
-      }, () => this.notifyNewParams(newValue, props, pushUrl));
+    if (typeof props.initialValue === 'undefined') {
+      ApiFormRemoveOnlyListField.notifyNewParams(initialValue, props, false);
     }
   }
 
-  componentWillMount() {
-    this.unlisten = this.props.history.listen(() => this.componentUpdate());
-    this.componentUpdate();
+  componentDidMount() {
+    this.unlisten = this.props.history.listen(() => {
+      const newValue = ApiFormRemoveOnlyListField.parseValueFromUrl(this.props);
+      this.setValue(newValue, this.props);
+    });
 
     if (this.state.value.length) {
       let endpoint = apiSettings.apiResourceEndpoints[this.props.resource] + '?';
@@ -59,21 +54,19 @@ class ApiFormRemoveOnlyListField extends Component {
     this.unlisten();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.onChange && nextProps.onChange) {
-      this.notifyNewParams(this.state.value, nextProps)
+  setValue(newValue, props, pushUrl=false) {
+    props = props || this.props;
+
+    if (!areListsEqual(this.state.value, newValue)) {
+      this.setState({
+        value: newValue
+      }, () => ApiFormRemoveOnlyListField.notifyNewParams(newValue, props, pushUrl));
     }
   }
 
-  componentUpdate = props => {
-    props = props || this.props;
-
-    const newValue = this.parseValueFromUrl(props);
-    this.setValue(newValue, props);
-  };
-
-  parseValueFromUrl = props => {
-    const parameters = queryString.parse(window.location.search);
+  static parseValueFromUrl = props => {
+    const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
+    const parameters = queryString.parse(search);
 
     let values = parameters[changeCase.snake(props.name)];
 
@@ -88,33 +81,28 @@ class ApiFormRemoveOnlyListField extends Component {
     return values
   };
 
-  notifyNewParams(value, props, pushUrl) {
-    props = props || this.props;
-
-    if (!props.onChange) {
-      return;
-    }
-
+  static getNotificationValue(value, props) {
     const fieldName = changeCase.snake(props.name);
 
     const params = value ? {[fieldName] : value} : {};
 
-    const result = {
-      [this.props.name]: {
+    return {
+      [props.name]: {
         apiParams: params,
         urlParams: params,
         fieldValues: value
       }
     };
+  }
 
+  static notifyNewParams(value, props, pushUrl) {
+    const result = this.getNotificationValue(value, props);
     props.onChange(result, pushUrl)
   }
 
   handleItemRemove = (evt, value) => {
     evt.preventDefault();
-
     const newValues = this.state.value.filter(x => parseInt(x, 10) !== value.id);
-
     this.setValue(newValues, this.props, true)
   };
 
@@ -152,4 +140,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(ApiFormRemoveOnlyListField);
+export default connect(mapStateToProps)(addContextToField(ApiFormRemoveOnlyListField));
