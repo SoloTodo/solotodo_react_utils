@@ -40,6 +40,7 @@ export const apiSettings = {
     product_lists: endpoint + 'product_lists/',
     brand_comparisons: endpoint + 'brand_comparisons/',
     keyword_searches: endpoint + 'keyword_searches/',
+    keyword_search_updates: endpoint + 'keyword_search_updates/',
     keyword_search_entity_positions: endpoint + 'keyword_search_entity_positions/'
   },
   ownUserUrl: endpoint + 'users/me/',
