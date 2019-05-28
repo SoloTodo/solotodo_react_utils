@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import Select from "react-select";
 import queryString from 'query-string';
 import {createOption, createOptions} from "../form_utils";
@@ -7,7 +7,7 @@ import {areValuesEqual} from "../utils";
 import {addContextToField} from "./utils";
 
 
-export class ApiFormChoiceField extends Component {
+export class ApiFormChoiceField extends React.Component {
   constructor(props) {
     super(props);
 

@@ -46,9 +46,9 @@ class LeadLink extends React.Component {
     } else if (store.id === apiSettings.ripleyStoreId) {
       url = `https://ad.soicos.com/-149I?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
-    } else if (store.id === apiSettings.falabellaStoreId) {
-      url = `https://ad.soicos.com/-14Zg?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
-      target = '_top'
+    // } else if (store.id === apiSettings.falabellaStoreId) {
+    //   url = `https://ad.soicos.com/-14Zg?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
+    //   target = '_top'
     } else {
       url = entity.external_url;
       target = '_blank';

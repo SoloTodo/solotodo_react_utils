@@ -26,7 +26,6 @@ class ApiFormResultTableWithPagination extends Component {
                   <ApiFormChoiceField
                       name="page_size"
                       choices={createPageSizeChoices(this.props.page_size_choices)}
-                      onChange={this.props.onChange}
                       value={this.props.page_size}
                       required={true}
                       searchable={false}
@@ -39,7 +38,6 @@ class ApiFormResultTableWithPagination extends Component {
                     page={this.props.page}
                     pageSize={this.props.page_size}
                     resultCount={this.props.data && this.props.data.count}
-                    onChange={this.props.onChange}
                 />
               </div>
             </div>
@@ -48,7 +46,6 @@ class ApiFormResultTableWithPagination extends Component {
                 results={this.props.data && this.props.data.results}
                 columns={this.props.columns}
                 ordering={this.props.ordering}
-                onChange={this.props.onChange}
                 loading={this.props.loading}
                 getExtraClasses={this.props.getExtraClasses}
             />
