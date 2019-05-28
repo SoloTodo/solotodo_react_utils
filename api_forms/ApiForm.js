@@ -6,6 +6,7 @@ import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
 import createHistory from 'history/createBrowserHistory'
+import createMemoryHistory from 'history/createMemoryHistory'
 
 export const ApiFormContext = React.createContext(() => {});
 
@@ -26,11 +27,14 @@ class ApiForm extends React.Component {
     }
 
     this.fieldsData = fieldsData;
-    this.history = createHistory();
+    this.history = process.browser ? createHistory() : createMemoryHistory();
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!areListsEqual(this.props.endpoints, nextProps.endpoints)) {
+    // If the endpoint changed, update the form results, except if the form is
+    // being managed by NextJS, in which case the updated search results should
+    // be handled by our container
+    if (!areListsEqual(this.props.endpoints, nextProps.endpoints) && !nextProps.initialFormData) {
       this.updateSearchResults(nextProps, false)
     }
   }
@@ -43,6 +47,7 @@ class ApiForm extends React.Component {
   };
 
   handleFieldChange = (updatedFieldsData={}, pushUrl) => {
+    console.log(updatedFieldsData);
     // If the page was reset by a previous call from another field, do nothing
     if (updatedFieldsData.page && !pushUrl) {
       if (this.fieldsData.page && this.fieldsData.page.fieldValues.id === updatedFieldsData.page.fieldValues.id) {

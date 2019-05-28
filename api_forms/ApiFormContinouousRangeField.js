@@ -10,7 +10,7 @@ import RcContinuousRange from "./RcContinuousRange";
 import {addContextToField} from "./utils";
 
 
-class ApiFormContinuousRangeField extends React.Component {
+export class ApiFormContinuousRangeField extends React.Component {
   constructor(props) {
     super(props);
 
