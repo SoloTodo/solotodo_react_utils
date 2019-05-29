@@ -49,7 +49,10 @@ class LeadLink extends React.Component {
     // } else if (store.id === apiSettings.falabellaStoreId) {
     //   url = `https://ad.soicos.com/-14Zg?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
     //   target = '_top'
-    } else {
+    } else if (store.id === apiSettings.panafotoId) {
+      url = entity.external_url + '?utm_source=LG&utm_medium=wheretobuy';
+      target = '_blank'
+    }else {
       url = entity.external_url;
       target = '_blank';
     }

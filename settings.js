@@ -50,6 +50,7 @@ export const apiSettings = {
   parisStoreId: 11,
   ripleyStoreId: 18,
   falabellaStoreId: 9,
+  panafotoId: 196,
   cellPhoneCategoryId: 6,
   technicalSpecificationsPurposeId: 1,
   categoryBrowseResultPurposeUrl: endpoint + 'category_template_purposes/3/',
