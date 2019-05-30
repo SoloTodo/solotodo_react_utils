@@ -1,12 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from "react-redux";
-import {
-  filterApiResourceObjectsByType
-} from "../../ApiResource";
+import Handlebars from "handlebars/dist/handlebars.min";
+
+import {filterApiResourceObjectsByType} from "../../ApiResource";
 import {apiSettings} from "../../settings";
 
 import './ProductTechSpecs.css'
-import Handlebars from "handlebars/dist/handlebars.min";
 import {convertIdToUrl} from "../../utils";
 
 class ProductTechSpecs extends Component {
@@ -27,9 +26,10 @@ class ProductTechSpecs extends Component {
 function mapStateToProps(state, ownProps) {
   const categoryTemplates = filterApiResourceObjectsByType(state.apiResourceObjects, 'category_templates');
   const templateWebsiteUrl = convertIdToUrl(ownProps.websiteId, 'websites');
+  const categoryUrl = ownProps.product.categoryUrl || ownProps.product.category;
 
   let template = categoryTemplates.filter(categoryTemplate => {
-    return categoryTemplate.category === ownProps.product.categoryUrl &&
+    return categoryTemplate.category === categoryUrl &&
         categoryTemplate.purpose === apiSettings.detailPurposeUrl &&
         categoryTemplate.website === templateWebsiteUrl
   })[0] || null;
