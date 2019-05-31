@@ -259,8 +259,22 @@ export function areValuesEqual(valueA, valueB, valueField='url') {
   }
 }
 
-export function registerLead(authToken, websiteId, entity) {
-  return fetchAuth(authToken, `entities/${entity.id}/register_lead/`, {method: 'POST', body: JSON.stringify({website: websiteId})});
+export function registerLead(authToken, websiteId, entity, uuid) {
+  const requestBody = {
+    website: websiteId
+  };
+
+  if (uuid) {
+    requestBody['uuid'] = uuid
+  }
+
+  return fetchAuth(
+    authToken,
+    `entities/${entity.id}/register_lead/`,
+    {
+      method: 'POST',
+      body: JSON.stringify(requestBody)
+    });
 }
 
 export function areListsEqual(listA, listB) {

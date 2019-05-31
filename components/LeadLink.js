@@ -7,7 +7,7 @@ import AppContext from "./Context"
 
 class LeadLink extends React.Component {
   handleClick = uuid => {
-    registerLead(this.props.authToken, this.props.websiteId, this.props.entity);
+    registerLead(this.props.authToken, this.props.websiteId, this.props.entity, uuid);
     if (this.props.callback) {
       this.props.callback(uuid);
     }
