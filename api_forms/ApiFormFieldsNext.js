@@ -14,7 +14,7 @@ const convertFieldToNext = ApiFormField => {
 
   const ApiFormFieldNextWithContext = React.forwardRef((props, ref) => (
     <ApiFormContext.Consumer>
-      {handleFieldChange => <ApiFormFieldNext {...props} onChange={handleFieldChange} ref={ref} />}
+      {({handleFieldChange, history}) => <ApiFormFieldNext {...props} onChange={handleFieldChange} history={history} ref={ref} />}
     </ApiFormContext.Consumer>
   ));
 
