@@ -32,9 +32,6 @@ class LeadLink extends Component {
     } else if (this.props.entity.store.id === apiSettings.ripleyStoreId) {
       url = `https://ad.soicos.com/-149I?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
       target = '_self'
-    } else if (this.props.entity.store.id === apiSettings.falabellaStoreId) {
-      url = `https://ad.soicos.com/-14Zg?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
-      target = '_self'
     } else {
       url = this.props.entity.externalUrl;
       target = '_blank';
