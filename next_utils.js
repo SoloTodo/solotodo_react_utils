@@ -9,7 +9,7 @@ export function formatCurrency(value, valueCurrency, conversionCurrency, thousan
   let formattingCurrency = valueCurrency;
 
   if (conversionCurrency && (valueCurrency.url !== conversionCurrency.url)) {
-    value *= new Big(conversionCurrency.exchange_rate) / new Big(valueCurrency.exchange_rate);
+    value = convertCurrency(value, valueCurrency, conversionCurrency);
     formattingCurrency = conversionCurrency
   }
 
@@ -18,4 +18,16 @@ export function formatCurrency(value, valueCurrency, conversionCurrency, thousan
   const decimalValue = new Big(value);
 
   return prefix + ' ' + _formatCurrency(decimalValue, decimalPlaces, 3, thousandsSeparator, decimalSeparator);
+}
+
+export function convertCurrency(value, valueCurrency, conversionCurrency) {
+  if (typeof value === 'undefined' || value === null || Number.isNaN(value)) {
+    return ''
+  }
+
+  if (conversionCurrency && (valueCurrency.url !== conversionCurrency.url)) {
+    value *= new Big(conversionCurrency.exchange_rate) / new Big(valueCurrency.exchange_rate);
+  }
+
+  return value;
 }

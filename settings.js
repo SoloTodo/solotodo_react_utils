@@ -56,5 +56,6 @@ export const apiSettings = {
   shortDescriptionPurposeUrl: endpoint + 'category_template_purposes/2/',
   detailPurposeUrl: endpoint + 'category_template_purposes/1/',
   usdCurrencyId: 4,
+  clpCurrencyId: 1,
   backendUrl: 'https://backend.solotodo.com/',
 };
