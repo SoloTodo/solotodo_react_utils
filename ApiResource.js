@@ -43,8 +43,8 @@ export function apiResourceObjectForeignKey(rawApiResource, field, state) {
   return state.apiResourceObjects[rawApiResource[field]]
 }
 
-export function apiResourceStateToPropsUtils(state) {
-  const authToken = state.authToken || getAuthToken();
+export function apiResourceStateToPropsUtils(state, ctx) {
+  const authToken = state.authToken || getAuthToken(ctx);
 
   return {
     authToken,
