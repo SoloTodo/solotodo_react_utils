@@ -47,7 +47,6 @@ class ApiForm extends React.Component {
   };
 
   handleFieldChange = (updatedFieldsData={}, pushUrl) => {
-    console.log(updatedFieldsData);
     // If the page was reset by a previous call from another field, do nothing
     if (updatedFieldsData.page && !pushUrl) {
       if (this.fieldsData.page && this.fieldsData.page.fieldValues.id === updatedFieldsData.page.fieldValues.id) {
