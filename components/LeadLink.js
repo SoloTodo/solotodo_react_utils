@@ -25,7 +25,10 @@ class LeadLink extends React.Component {
     let url = undefined;
     let target = undefined;
 
-    if (store.id === apiSettings.linioStoreId) {
+    if (this.props.targetUrl) {
+      url = this.props.targetUrl;
+      target = '_blank';
+    } else if (store.id === apiSettings.linioStoreId) {
       let separator = null;
       if (entity.external_url.indexOf('?') === -1) {
         separator = '?';
@@ -46,7 +49,7 @@ class LeadLink extends React.Component {
     } else if (store.id === apiSettings.panafotoId) {
       url = entity.external_url + '?utm_source=LG&utm_medium=wheretobuy';
       target = '_blank'
-    }else {
+    } else {
       url = entity.external_url;
       target = '_blank';
     }
