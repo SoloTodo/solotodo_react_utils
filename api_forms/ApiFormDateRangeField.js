@@ -3,7 +3,6 @@ import queryString from 'query-string';
 import changeCase from 'change-case'
 import moment from "moment";
 import './ApiFormDateRangeField.css'
-import {parseDateToCurrentTz} from "../utils";
 import {areDatesEqual} from "./utils";
 import {addContextToField} from "./utils";
 
@@ -52,13 +51,13 @@ class ApiFormDateRangeField extends React.Component {
     const startDateStr = parameters[changeCase.snakeCase(props.name) + '_start'];
     let startDate = null;
     if (dateRegex.test(startDateStr)) {
-      startDate = parseDateToCurrentTz(startDateStr);
+      startDate = moment.utc(startDateStr);
     }
 
     const endDateStr = parameters[changeCase.snakeCase(props.name) + '_end'];
     let endDate = null;
     if (dateRegex.test(endDateStr)) {
-      endDate = parseDateToCurrentTz(endDateStr);
+      endDate = moment.utc(endDateStr);
     }
 
     let defaultStartDate = props.min;
@@ -117,7 +116,7 @@ class ApiFormDateRangeField extends React.Component {
     }
 
     if (value.endDate) {
-      apiParams[baseFieldName + '_1'] = [moment(value.endDate).add(1, 'days').toISOString()];
+      apiParams[baseFieldName + '_1'] = [moment(value.endDate).endOf("day").toISOString()];
       urlParams[baseFieldName + '_end'] = [value.endDate.format('YYYY-MM-DD')]
     }
 
@@ -142,8 +141,11 @@ class ApiFormDateRangeField extends React.Component {
     const startDateValue = document.getElementById(this.props.name + '_start').value;
     const endDateValue = document.getElementById(this.props.name + '_end').value;
 
-    const startDate = startDateValue ? parseDateToCurrentTz(startDateValue) : null;
-    const endDate = endDateValue ? parseDateToCurrentTz(endDateValue) : null;
+    const startDate = startDateValue ? moment.utc(startDateValue) : null;
+    const endDate = endDateValue ? moment.utc(endDateValue) : null;
+
+    console.log(startDate.format());
+    console.log(endDate.format());
 
     this.setValue({
       startDate,
