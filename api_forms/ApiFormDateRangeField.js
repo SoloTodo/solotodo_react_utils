@@ -62,10 +62,10 @@ class ApiFormDateRangeField extends React.Component {
 
     let defaultStartDate = props.min;
     if (!defaultStartDate) {
-      defaultStartDate = moment(endDate).subtract(30, 'days');
+      defaultStartDate = moment.utc(endDate).subtract(30, 'days');
     }
 
-    const max = props.max ? props.max : moment().startOf('day');
+    const max = props.max ? props.max : moment.utc().startOf('day');
 
     if (!props.nullable) {
       // If they are empty, replace with initial values, if given
@@ -143,9 +143,6 @@ class ApiFormDateRangeField extends React.Component {
 
     const startDate = startDateValue ? moment.utc(startDateValue) : null;
     const endDate = endDateValue ? moment.utc(endDateValue) : null;
-
-    console.log(startDate.format());
-    console.log(endDate.format());
 
     this.setValue({
       startDate,
