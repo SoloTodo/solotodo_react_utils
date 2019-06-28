@@ -57,9 +57,8 @@ export class ApiFormChoiceField extends React.Component {
         valueIds = [valueIds]
       }
 
-      valueIds.sort();
-
-      return choices.filter(choice => valueIds.includes(choice.id))
+      const result = choices.filter(choice => valueIds.includes(choice.id));
+      return result
     } else {
       let valueId = undefined;
 
@@ -144,8 +143,9 @@ export class ApiFormChoiceField extends React.Component {
   handleValueChange = vals => {
     let sanitizedValue = null;
     if (this.props.multiple) {
-      sanitizedValue = vals.map(val => val.option);
-      sanitizedValue.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);});
+      const choices = ApiFormChoiceField.sanitizeChoices(this.props);
+      const sanitizedValueIds = vals.map(val => val.value);
+      sanitizedValue = choices.filter(choice => sanitizedValueIds.includes(choice.id));
     } else if (vals) {
       sanitizedValue = vals.option
     }
