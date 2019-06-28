@@ -29,15 +29,25 @@ export class ApiFormPaginationField extends Component {
     }
   }
 
+  routeChangeHandler = () => {
+    const newValue = ApiFormPaginationField.parseValueFromUrl(this.props);
+    this.setValue(newValue, this.props);
+  };
+
   componentDidMount() {
-    this.unlisten = this.props.history.listen(() => {
-      const newValue = ApiFormPaginationField.parseValueFromUrl(this.props);
-      this.setValue(newValue, this.props);
-    });
+    if (this.props.router) {
+      this.props.router.events.on('routeChangeComplete', this.routeChangeHandler)
+    } else {
+      this.unlisten = this.props.history.listen(this.routeChangeHandler);
+    }
   }
 
   componentWillUnmount() {
-    this.unlisten();
+    if (this.props.router) {
+      this.props.router.events.off('routeChangeComplete', this.routeChangeHandler)
+    } else {
+      this.unlisten();
+    }
   }
 
   static parseValueFromUrl = props => {

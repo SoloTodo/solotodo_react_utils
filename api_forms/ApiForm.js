@@ -128,8 +128,18 @@ class ApiForm extends React.Component {
     if (this.props.onPushUrl) {
       this.props.onPushUrl(urlSearch + pageAndOrderingParams)
     } else {
-      const newRoute = window.location.pathname + '?' + urlSearch + pageAndOrderingParams;
-      this.history.push(newRoute)
+      const asRoute = window.location.pathname + '?' + urlSearch + pageAndOrderingParams;
+
+      if (this.props.router) {
+        let hrefRoute = this.props.router.route + '?';
+        for (const key in this.props.router.query) {
+          hrefRoute += `${key}=${this.props.router.query[key]}&`
+        }
+        hrefRoute += urlSearch + pageAndOrderingParams;
+        this.props.router.push(hrefRoute, asRoute)
+      } else {
+        this.history.push(asRoute)
+      }
     }
   };
 

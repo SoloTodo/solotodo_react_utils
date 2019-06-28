@@ -1,5 +1,6 @@
 import React from 'react';
 import ApiForm from "./ApiForm";
+import {withRouter} from 'next/router'
 
 class ApiFormNext extends React.Component {
   static async getInitialProps(processedFormLayout, asPath, endpoints, fetchFunction) {
@@ -29,4 +30,4 @@ class ApiFormNext extends React.Component {
   }
 }
 
-export default ApiFormNext;
+export default withRouter(ApiFormNext);
