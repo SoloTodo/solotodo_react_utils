@@ -67,8 +67,7 @@ export class ApiFormChoiceField extends React.Component {
         valueIds = [valueIds]
       }
 
-      const result = choices.filter(choice => valueIds.includes(choice.id));
-      return result
+      return choices.filter(choice => valueIds.includes(choice.id));
     } else {
       let valueId = undefined;
 

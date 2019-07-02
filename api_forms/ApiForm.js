@@ -30,12 +30,15 @@ class ApiForm extends React.Component {
     this.history = process.browser ? createHistory() : createMemoryHistory();
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
+    if (this.props.initialFormData && this.props.initialFormData !== prevProps.initialFormData) {
+      this.fieldsData = this.props.initialFormData
+    }
     // If the endpoint changed, update the form results, except if the form is
     // being managed by NextJS, in which case the updated search results should
     // be handled by our container
-    if (!areListsEqual(this.props.endpoints, nextProps.endpoints) && !nextProps.initialFormData) {
-      this.updateSearchResults(nextProps, false)
+    if (!areListsEqual(this.props.endpoints, prevProps.endpoints) && !this.props.initialFormData) {
+      this.updateSearchResults(this.props, false)
     }
   }
 
@@ -91,7 +94,9 @@ class ApiForm extends React.Component {
       this.pushUrl(false)
     }
 
-    this.updateSearchResults(this.props, formValues.submit);
+    if (!this.props.initialFormData) {
+      this.updateSearchResults(this.props, formValues.submit);
+    }
   };
 
   pushUrl = (ignoreSubmit=false) => {
@@ -125,21 +130,19 @@ class ApiForm extends React.Component {
       }
     }
 
-    if (this.props.onPushUrl) {
-      this.props.onPushUrl(urlSearch + pageAndOrderingParams)
-    } else {
-      const asRoute = window.location.pathname + '?' + urlSearch + pageAndOrderingParams;
+    const asRoute = window.location.pathname + '?' + urlSearch + pageAndOrderingParams;
 
-      if (this.props.router) {
-        let hrefRoute = this.props.router.route + '?';
-        for (const key in this.props.router.query) {
-          hrefRoute += `${key}=${this.props.router.query[key]}&`
-        }
-        hrefRoute += urlSearch + pageAndOrderingParams;
-        this.props.router.push(hrefRoute, asRoute)
-      } else {
-        this.history.push(asRoute)
+    if (this.props.router) {
+      let hrefRoute = this.props.router.route + '?';
+      for (const key in this.props.router.query) {
+        hrefRoute += `${key}=${this.props.router.query[key]}&`
       }
+      hrefRoute += urlSearch + pageAndOrderingParams;
+      this.props.router.push(hrefRoute, asRoute).then(() => {
+        this.props.onPushUrl && this.props.onPushUrl();
+      });
+    } else {
+      this.history.push(asRoute)
     }
   };
 

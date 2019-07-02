@@ -17,11 +17,11 @@ class RcDiscreteRange extends Component {
     }
   }
 
-  componentWillReceiveProps(newProps) {
-    if (this.props.value[0] !== newProps.value[0] || this.props.value[1] !== newProps.value[1]) {
+  componentDidUpdate(prevProps) {
+    if (this.props.value[0] !== prevProps.value[0] || this.props.value[1] !== prevProps.value[1]) {
       this.setState({
-        startValue: newProps.value[0],
-        endValue: newProps.value[1]
+        startValue: this.props.value[0],
+        endValue: this.props.value[1]
       })
     }
   }

@@ -13,14 +13,14 @@ class RcPriceRange extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.min !== nextProps.min || this.props.max !== nextProps.max) {
-      const normalizedValues = this.normalizeValues(nextProps);
+  componentDidUpdate(prevProps) {
+    if (this.props.min !== prevProps.min || this.props.max !== prevProps.max) {
+      const normalizedValues = this.normalizeValues(this.props);
       this.onChange(normalizedValues)
     }
 
-    if (this.props.value[0] !== nextProps.value[0] || this.props.value[1] !== nextProps.value[1]) {
-      const normalizedValues = this.normalizeValues(nextProps);
+    if (this.props.value[0] !== prevProps.value[0] || this.props.value[1] !== prevProps.value[1]) {
+      const normalizedValues = this.normalizeValues(this.props);
       this.onChange(normalizedValues)
     }
   }
