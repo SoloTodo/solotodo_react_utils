@@ -58,9 +58,6 @@ class LeadLink extends React.Component {
     } else if (store.id === apiSettings.hitesStoreId) {
       url = `https://ad.soicos.com/-16ON?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
       target = '_self'
-    } else if (store.id === apiSettings.panafotoId) {
-      url = entity.external_url + '?utm_source=LG&utm_medium=wheretobuy';
-      target = '_blank'
     } else {
       url = entity.external_url;
       target = '_blank';
