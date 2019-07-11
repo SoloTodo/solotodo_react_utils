@@ -40,12 +40,24 @@ class LeadLink extends React.Component {
 
       url = `https://linio.go2cloud.org/aff_c?offer_id=18&aff_id=${apiSettings.linioAffiliateId}&url=${encodeURIComponent(intermediateUrl)}`;
       target = '_top';
+    } else if (store.id === apiSettings.abcdinStoreId) {
+      url = `https://ad.soicos.com/-149x?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
+      target = '_self'
     } else if (store.id === apiSettings.parisStoreId) {
       url = `https://ad.soicos.com/-149A?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
     } else if (store.id === apiSettings.ripleyStoreId) {
       url = `https://ad.soicos.com/-149I?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
+    } else if (store.id === apiSettings.lenovoChileStoreId) {
+      url = `https://ad.soicos.com/-15Dd?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
+      target = '_self'
+    } else if (store.id === apiSettings.laPolarStoreId) {
+      url = `https://ad.soicos.com/-16OM?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
+      target = '_self'
+    } else if (store.id === apiSettings.hitesStoreId) {
+      url = `https://ad.soicos.com/-16ON?dl=${encodeURIComponent(this.props.entity.externalUrl)}`;
+      target = '_self'
     } else if (store.id === apiSettings.panafotoId) {
       url = entity.external_url + '?utm_source=LG&utm_medium=wheretobuy';
       target = '_blank'
