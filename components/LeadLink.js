@@ -2,24 +2,42 @@ import React from 'react';
 import {registerLead} from "../utils";
 import {apiSettings} from "../settings";
 
-import uuidv5 from "uuid/v5"
-import AppContext from "./Context"
+import uuidv4 from "uuid/v4"
 
 class LeadLink extends React.Component {
-  handleClick = uuid => {
-    registerLead(this.props.authToken, this.props.websiteId, this.props.entity, uuid);
-    if (this.props.callback) {
-      this.props.callback(uuid);
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      uuid: null
     }
+  }
+
+  componentDidMount() {
+    this.resetUuid();
+  }
+
+  resetUuid() {
+    this.setState({
+      uuid: uuidv4()
+    })
+  }
+
+  handleClick = () => {
+    registerLead(this.props.authToken, this.props.websiteId, this.props.entity, this.state.uuid);
+    if (this.props.callback) {
+      this.props.callback(this.state.uuid);
+    }
+
+    this.resetUuid();
   };
 
-  generateUrl = namespace => {
+  generateUrl = () => {
     const { entity, store, soicosPrefix } = this.props;
-    let uuid;
+
     let urlSuffix = '';
-    if (namespace) {
-      uuid = uuidv5(entity.active_registry.id.toString(), namespace);
-      urlSuffix = `_${uuid}`
+    if (this.state.uuid) {
+      urlSuffix = `_${this.state.uuid}`
     }
 
     let url = undefined;
@@ -66,18 +84,14 @@ class LeadLink extends React.Component {
     return {
       href: url,
       target,
-      onMouseDown: () => this.handleClick(uuid)
+      onMouseDown: this.handleClick
     };
   };
 
   render() {
-
-    return <AppContext.Consumer>
-      {context =>
-        <a {...this.generateUrl(context && context.namespace)} className={this.props.className || ''} rel="noopener nofollow">
-          {this.props.children}
-        </a>}
-    </AppContext.Consumer>
+    return <a {...this.generateUrl()} className={this.props.className || ''} rel="noopener nofollow">
+      {this.props.children}
+    </a>
   }
 }
 
