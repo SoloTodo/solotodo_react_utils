@@ -89,8 +89,12 @@ export class ApiFormPaginationField extends Component {
     props.onChange(result, pushUrl)
   }
 
-  onPageChange = (selection) => {
+  onPageChange = selection => {
     this.setValue({id: selection.selected + 1, name:''}, this.props, true)
+  };
+
+  hrefBuilder = (page, urlParams) => {
+    return '?' + queryString.stringify({...urlParams, page})
   };
 
   render() {
@@ -98,6 +102,8 @@ export class ApiFormPaginationField extends Component {
       return null
     }
 
+    const search = this.props.router ? this.props.router.asPath.split('?')[1] : window.location.search;
+    const urlParams = queryString.parse(search);
     const pageRangeDisplayed = this.props.isExtraSmall ? 2 : 3;
     const marginPagesDisplayed = this.props.isExtraSmall ? 1 : 2;
 
@@ -125,7 +131,7 @@ export class ApiFormPaginationField extends Component {
         previousLinkClassName="page-link"
         nextLinkClassName="page-link"
         disabledClassName="disabled"
-        hrefBuilder={page => `?page=${page}`}
+        hrefBuilder={page => this.hrefBuilder(page, urlParams)}
         onPageChange={this.onPageChange}
         previousLabel={previousLabel}
         nextLabel={nextLabel}
