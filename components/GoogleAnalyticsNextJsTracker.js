@@ -14,12 +14,12 @@ const withTracker = (WrappedComponent, trackPageHandler, splitUrl=false) => {
       trackPageHandler(this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
-      const currentPage = splitUrl ? this.props.router.asPath.split('?')[0] : this.props.router.asPath ;
-      const nextPage = splitUrl ? nextProps.router.asPath.split('?')[0] : nextProps.router.asPath;
+    componentDidUpdate(prevProps) {
+      const prevPage = splitUrl ? prevProps.router.asPath.split('?')[0] : prevProps.router.asPath ;
+      const currentPage = splitUrl ? this.props.router.asPath.split('?')[0] : this.props.router.asPath;
 
-      if (currentPage !== nextPage) {
-        trackPageHandler(nextProps);
+      if (currentPage !== prevPage) {
+        trackPageHandler(this.props);
       }
     }
 
