@@ -70,9 +70,9 @@ class LeadLink extends React.Component {
     } else if (store.id === apiSettings.lenovoChileStoreId) {
       url = `https://ad.soicos.com/-15Dd?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_self'
-    } else if (store.id === apiSettings.laPolarStoreId) {
-      url = `https://ad.soicos.com/-16OM?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
-      target = '_self'
+    // } else if (store.id === apiSettings.laPolarStoreId) {
+    //   url = `https://ad.soicos.com/-16OM?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
+    //   target = '_self'
     } else if (store.id === apiSettings.hitesStoreId) {
       url = `https://ad.soicos.com/-16ON?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_self'
