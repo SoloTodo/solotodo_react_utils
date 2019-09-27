@@ -1,7 +1,9 @@
-import React, {Component} from 'react'
+import React from 'react'
+import Big from 'big.js';
+
 import {Range} from "rc-slider";
 
-class RcContinuousRange extends Component {
+class RcContinuousRange extends React.Component {
   constructor(props) {
     super(props);
 
@@ -12,7 +14,7 @@ class RcContinuousRange extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.value[0] !== prevProps.value[0] || this.props.value[1] !== prevProps.value[1]) {
+    if (!this.props.value[0].eq(prevProps.value[0]) || !this.props.value[1].eq(prevProps.value[1])) {
       this.setState({
         startValue: this.props.value[0],
         endValue: this.props.value[1]
@@ -22,8 +24,8 @@ class RcContinuousRange extends Component {
 
   onChange = values => {
     this.setState({
-      startValue: values[0],
-      endValue: values[1]
+      startValue: new Big(values[0]),
+      endValue: new Big(values[1])
     })
   };
 
@@ -32,11 +34,11 @@ class RcContinuousRange extends Component {
     const endValue = this.state.endValue || this.props.max;
 
     return <Range
-        min={this.props.min}
-        max={this.props.max}
-        value={[startValue, endValue]}
+        min={Number(this.props.min)}
+        max={Number(this.props.max)}
+        value={[Number(startValue), Number(endValue)]}
         onChange={this.onChange}
-        step={this.props.step}
+        step={Number(this.props.step)}
         onAfterChange={this.props.onAfterChange}
         handle={this.props.handle}
         allowCross={false}

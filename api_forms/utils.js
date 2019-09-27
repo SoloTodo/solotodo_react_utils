@@ -42,6 +42,18 @@ export function areDatesEqual(dateA, dateB) {
   return dateA.isSame(dateB)
 }
 
+export function areBigNumbersEqual(bigA, bigB) {
+  if (bigA === null && bigB === null) {
+    return true
+  }
+
+  if (bigA === null || bigB === null) {
+    return false
+  }
+
+  return bigA.eq(bigB)
+}
+
 export const addContextToField = Component => {
   return React.forwardRef((props, ref) => (
     <ApiFormContext.Consumer>

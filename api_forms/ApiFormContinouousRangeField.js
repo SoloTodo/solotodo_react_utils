@@ -1,4 +1,5 @@
 import React from 'react'
+import Big from 'big.js';
 import queryString from 'query-string';
 import changeCase from 'change-case'
 import './ApiFormDateRangeField.css'
@@ -7,14 +8,23 @@ import {Range, Handle} from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import RcContinuousRange from "./RcContinuousRange";
-import {addContextToField} from "./utils";
+import {addContextToField, areBigNumbersEqual} from "./utils";
 
 
 export class ApiFormContinuousRangeField extends React.Component {
   constructor(props) {
     super(props);
 
-    const initialValue = props.initialValue || ApiFormContinuousRangeField.parseValueFromUrl(props);
+    let initialValue = null;
+
+    if (props.initialValue) {
+      initialValue = {
+        startValue: props.initialValue.startValue ? new Big(props.initialValue.startValue) : null,
+        endValue: props.initialValue.endValue ? new Big(props.initialValue.endValue) : null
+      };
+    } else {
+      initialValue = ApiFormContinuousRangeField.parseValueFromUrl(props)
+    }
 
     this.state = {
       value: initialValue
@@ -47,7 +57,7 @@ export class ApiFormContinuousRangeField extends React.Component {
   }
 
   setValue(newValue, pushUrl=false) {
-    if (!this.state.value || this.state.value.startValue !== newValue.startValue || this.state.value.endValue !== newValue.endValue) {
+    if (!this.state.value || !areBigNumbersEqual(this.state.value.startValue, newValue.startValue) || !areBigNumbersEqual(this.state.value.endValue, newValue.endValue)) {
       this.setState({
         value: newValue
       }, () => ApiFormContinuousRangeField.notifyNewParams(newValue, this.props, pushUrl))
@@ -58,8 +68,11 @@ export class ApiFormContinuousRangeField extends React.Component {
     const search = props.router ? props.router.asPath.split('?')[1] : window.location.search;
     const parameters = queryString.parse(search);
 
-    const startValue = parseInt(parameters[changeCase.snakeCase(props.name) + '_start'], 10) || null;
-    const endValue = parseInt(parameters[changeCase.snakeCase(props.name) + '_end'], 10) || null;
+    const startValueString = parameters[changeCase.snakeCase(props.name) + '_start'];
+    const endValueString = parameters[changeCase.snakeCase(props.name) + '_end'];
+
+    const startValue = startValueString ? new Big(startValueString) : null;
+    const endValue = endValueString ? new Big(endValueString) : null;
 
     return {
       startValue,
@@ -73,13 +86,13 @@ export class ApiFormContinuousRangeField extends React.Component {
     const baseFieldName = changeCase.snake(props.name);
 
     if (values.startValue !== null) {
-      apiParams[baseFieldName + '_0'] = [values.startValue];
-      urlParams[baseFieldName + '_start'] = [values.startValue]
+      apiParams[baseFieldName + '_0'] = [values.startValue.toString()];
+      urlParams[baseFieldName + '_start'] = [values.startValue.toString()]
     }
 
     if (values.endValue !== null) {
-      apiParams[baseFieldName + '_1'] = [values.endValue];
-      urlParams[baseFieldName + '_end'] = [values.endValue]
+      apiParams[baseFieldName + '_1'] = [values.endValue.toString()];
+      urlParams[baseFieldName + '_end'] = [values.endValue.toString()]
     }
 
     return {
@@ -115,11 +128,11 @@ export class ApiFormContinuousRangeField extends React.Component {
 
     originalChoices.sort((a, b) => a.id - b.id);
 
-    const step = this.props.step;
+    const step = new Big(this.props.step);
     const bucketDocCountDict = {};
 
     for (const choice of originalChoices) {
-      const bucket = Math.floor(choice.value / step) * step;
+      const bucket = new Big(choice.value).div(step).round(0, 0).times(step);
 
       if (!bucketDocCountDict[bucket]) {
         bucketDocCountDict[bucket] = {
@@ -131,13 +144,12 @@ export class ApiFormContinuousRangeField extends React.Component {
       bucketDocCountDict[bucket].bucketDocCount += choice.doc_count;
     }
 
-    const originalMin = originalChoices[0].value;
-    const originalMax = originalChoices[originalChoices.length - 1].value;
-    const steppedMin = Math.floor((originalMin / step)) * step;
+    const originalMin = new Big(originalChoices[0].value);
+    const originalMax = new Big(originalChoices[originalChoices.length - 1].value);
+    const steppedMin = originalMin.div(step).round(0, 0).times(step);
     const newChoices = [];
 
-
-    for (let steppedValue = steppedMin; steppedValue < originalMax + step; steppedValue += step) {
+    for (let steppedValue = steppedMin; steppedValue.lt(originalMax.plus(step)); steppedValue = steppedValue.plus(step)) {
       const bucketDocData = bucketDocCountDict[steppedValue] || {};
 
       newChoices.push({
@@ -165,11 +177,11 @@ export class ApiFormContinuousRangeField extends React.Component {
     let startValue = this.state.value ? this.state.value.startValue : null;
     let endValue = this.state.value ? this.state.value.endValue : null;
 
-    if (startValue && (startValue < min || startValue > max)) {
+    if (startValue && (startValue.lt(min) || startValue.gt(max))) {
       startValue = null
     }
 
-    if (endValue && (endValue < min || endValue > max)) {
+    if (endValue && (endValue.lt(min) || endValue.gt(max))) {
       endValue = null
     }
 
@@ -177,25 +189,30 @@ export class ApiFormContinuousRangeField extends React.Component {
       let newStartValue = null;
       let newEndValue = null;
 
+      const newValues0 = new Big(newValues[0]);
+      const newValues1 = new Big(newValues[1]);
+
       for (const choice of newChoices) {
-        if (choice.value === newValues[0]) {
+        const choiceValue = new Big(choice.value);
+
+        if (choiceValue.eq(newValues0)) {
           newStartValue = choice.value
         }
 
-        if (choice.value === newValues[1]) {
+        if (choice.value.eq(newValues1)) {
           newEndValue = choice.value
         }
       }
 
-      if (newValues[0] <= min) {
+      if (newValues0.lte(min)) {
         newStartValue = null
       }
 
-      if (newValues[1] >= max) {
+      if (newValues1.gte(max)) {
         newEndValue = null
       }
 
-      if (!this.state.value || this.state.value.startValue !== newStartValue || this.state.value.endValue !== newEndValue) {
+      if (!this.state.value || !areBigNumbersEqual(this.state.value.startValue, newStartValue) || !areBigNumbersEqual(this.state.value.endValue, newEndValue)) {
         this.setValue({
           startValue: newStartValue,
           endValue: newEndValue
