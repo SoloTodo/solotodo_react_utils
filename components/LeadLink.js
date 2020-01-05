@@ -58,9 +58,9 @@ class LeadLink extends React.Component {
 
       url = `https://linio.go2cloud.org/aff_c?offer_id=18&aff_id=${apiSettings.linioAffiliateId}&url=${encodeURIComponent(intermediateUrl)}`;
       target = '_top';
-    } else if (store.id === apiSettings.abcdinStoreId) {
-      url = `https://ad.soicos.com/-149x?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
-      target = '_self'
+    // } else if (store.id === apiSettings.abcdinStoreId) {
+    //   url = `https://ad.soicos.com/-149x?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
+    //   target = '_self'
     } else if (store.id === apiSettings.parisStoreId) {
       url = `https://ad.soicos.com/-149A?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
