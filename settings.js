@@ -49,6 +49,7 @@ export const apiSettings = {
   abcdinStoreId: 30,
   parisStoreId: 11,
   ripleyStoreId: 18,
+  mercadoRipleyStoreId: 222,
   falabellaStoreId: 9,
   laPolarStoreId: 5,
   hitesStoreId: 87,
