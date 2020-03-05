@@ -24,7 +24,11 @@ class LeadLink extends React.Component {
   }
 
   handleClick = () => {
-    registerLead(this.props.authToken, this.props.websiteId, this.props.entity, this.state.uuid);
+    // TODO: This condition is for ignoring registering leads on harcoded stores. Ideally it should be removed soon
+    if (Number.isInteger(this.props.entity.id)) {
+      registerLead(this.props.authToken, this.props.websiteId, this.props.entity, this.state.uuid);
+    }
+
     if (this.props.callback) {
       this.props.callback(this.state.uuid);
     }
