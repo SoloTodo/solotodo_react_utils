@@ -64,7 +64,7 @@ class LeadLink extends React.Component {
       target = '_top';
     } else if (store.id === apiSettings.abcdinStoreId) {
       url = `https://ad.soicos.com/-149x?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
-      target = '_self'
+      target = '_top'
     } else if (store.id === apiSettings.parisStoreId) {
       url = `https://ad.soicos.com/-149A?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
@@ -73,16 +73,16 @@ class LeadLink extends React.Component {
     //   target = '_top'
     } else if (store.id === apiSettings.lenovoChileStoreId) {
       url = `https://ad.soicos.com/-15Dd?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
-      target = '_self'
+      target = '_top'
     // } else if (store.id === apiSettings.laPolarStoreId) {
     //   url = `https://ad.soicos.com/-16OM?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
-    //   target = '_self'
+    //   target = '_top'
     } else if (store.id === apiSettings.hitesStoreId) {
       url = `https://ad.soicos.com/-16ON?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
-      target = '_self'
+      target = '_top'
     } else if (store.id === apiSettings.hpOnlineStoreId) {
       url = `https://www.awin1.com/cread.php?awinmid=15305&awinaffid=641001&clickref=&p=%5B%5B${encodeURIComponent(entity.external_url)}%5D%5D`;
-      target = '_self'
+      target = '_top'
     } else {
       url = entity.external_url;
       target = '_blank';
