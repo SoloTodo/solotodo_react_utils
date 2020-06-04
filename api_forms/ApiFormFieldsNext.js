@@ -11,6 +11,8 @@ import {ApiFormContext} from "./ApiForm";
 
 const convertFieldToNext = ApiFormField => {
   let ApiFormFieldNext = withRouter(ApiFormField);
+  ApiFormFieldNext.parseValueFromUrl = ApiFormField.parseValueFromUrl;
+  ApiFormFieldNext.getNotificationValue = ApiFormField.getNotificationValue;
 
   const ApiFormFieldNextWithContext = React.forwardRef((props, ref) => (
     <ApiFormContext.Consumer>
