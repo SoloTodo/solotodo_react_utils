@@ -25,6 +25,8 @@ export const apiSettings = {
     wtb_brands: endpoint + 'wtb/brands/',
     wtb_brand_update_logs: endpoint + 'wtb/brand_update_logs/',
     wtb_entities: endpoint + 'wtb/entities/',
+    microsite_brands: endpoint + 'microsite/brands/',
+    microsite_entries: endpoint + 'microsite/entries/',
     category_columns: endpoint + 'category_columns/',
     budgets: endpoint + 'budgets/',
     ratings: endpoint + 'ratings/',
