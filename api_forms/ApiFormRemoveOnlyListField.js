@@ -3,7 +3,6 @@ import queryString from 'query-string';
 import changeCase from 'change-case'
 import {connect} from "react-redux";
 import { apiSettings } from '../settings'
-import './ApiFormRemoveOnlyListField.css'
 import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";

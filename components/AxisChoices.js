@@ -2,8 +2,6 @@ import React, {Component} from 'react'
 import uniqBy from 'lodash/uniqBy'
 import AxisChoice from './AxisChoice'
 
-import './AxisChoices.css'
-
 class AxisChoices extends Component {
   render() {
     const labelAndOrderingValues = this.props.pricingEntries.map(pricingEntry => (

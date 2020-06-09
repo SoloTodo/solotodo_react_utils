@@ -3,8 +3,6 @@ import {fetchJson} from "../utils";
 import {connect} from "react-redux";
 import Slider from 'react-slick'
 
-import './BannerCarousel.css'
-
 class BannerCarousel extends Component {
   constructor(props) {
     super(props);

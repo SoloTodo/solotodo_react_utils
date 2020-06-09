@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {FormattedMessage} from "react-intl";
 import {connect} from "react-redux";
-import './ApiFormResultsTable.css'
 import ApiFormOrderingColumn from "./ApiFormOrderingColumn";
 import {
   apiResourceStateToPropsUtils

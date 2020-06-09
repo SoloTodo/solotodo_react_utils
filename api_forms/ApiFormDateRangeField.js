@@ -2,7 +2,6 @@ import React from 'react'
 import queryString from 'query-string';
 import changeCase from 'change-case'
 import moment from "moment";
-import './ApiFormDateRangeField.css'
 import {areDatesEqual} from "./utils";
 import {addContextToField} from "./utils";
 

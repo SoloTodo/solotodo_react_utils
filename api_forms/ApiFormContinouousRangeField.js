@@ -2,11 +2,8 @@ import React from 'react'
 import Big from 'big.js';
 import queryString from 'query-string';
 import changeCase from 'change-case'
-import './ApiFormDateRangeField.css'
 import Tooltip from 'rc-tooltip';
 import {Range, Handle} from 'rc-slider';
-import 'rc-slider/assets/index.css';
-import 'rc-tooltip/assets/bootstrap.css';
 import RcContinuousRange from "./RcContinuousRange";
 import {addContextToField, areBigNumbersEqual} from "./utils";
 

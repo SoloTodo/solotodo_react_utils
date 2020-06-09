@@ -5,7 +5,6 @@ import Handlebars from "handlebars/dist/handlebars.min";
 import {filterApiResourceObjectsByType} from "../../ApiResource";
 import {apiSettings} from "../../settings";
 
-import './ProductTechSpecs.css'
 import {convertIdToUrl} from "../../utils";
 
 class ProductTechSpecs extends Component {
