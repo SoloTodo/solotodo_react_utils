@@ -110,12 +110,12 @@ class ApiFormDateRangeField extends React.Component {
     const baseFieldName = changeCase.snake(props.name);
 
     if (value.startDate) {
-      apiParams[baseFieldName + '_0'] = [value.startDate.toISOString()];
+      apiParams[baseFieldName + '_after'] = [value.startDate.toISOString()];
       urlParams[baseFieldName + '_start'] = [value.startDate.format('YYYY-MM-DD')]
     }
 
     if (value.endDate) {
-      apiParams[baseFieldName + '_1'] = [moment(value.endDate).endOf("day").toISOString()];
+      apiParams[baseFieldName + '_before'] = [moment(value.endDate).endOf("day").toISOString()];
       urlParams[baseFieldName + '_end'] = [value.endDate.format('YYYY-MM-DD')]
     }
 

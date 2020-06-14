@@ -82,12 +82,12 @@ export class ApiFormDiscreteRangeField extends React.Component {
     const baseFieldName = changeCase.snake(props.name);
 
     if (ids.startId) {
-      apiParams[baseFieldName + '_0'] = [ids.startId];
+      apiParams[baseFieldName + '_after'] = [ids.startId];
       urlParams[baseFieldName + '_start'] = [ids.startId]
     }
 
     if (ids.endId) {
-      apiParams[baseFieldName + '_1'] = [ids.endId];
+      apiParams[baseFieldName + '_before'] = [ids.endId];
       urlParams[baseFieldName + '_end'] = [ids.endId]
     }
 

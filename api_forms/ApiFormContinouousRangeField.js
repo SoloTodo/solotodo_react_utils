@@ -83,12 +83,12 @@ export class ApiFormContinuousRangeField extends React.Component {
     const baseFieldName = changeCase.snake(props.name);
 
     if (values.startValue !== null) {
-      apiParams[baseFieldName + '_0'] = [values.startValue.toString()];
+      apiParams[baseFieldName + '_after'] = [values.startValue.toString()];
       urlParams[baseFieldName + '_start'] = [values.startValue.toString()]
     }
 
     if (values.endValue !== null) {
-      apiParams[baseFieldName + '_1'] = [values.endValue.toString()];
+      apiParams[baseFieldName + '_before'] = [values.endValue.toString()];
       urlParams[baseFieldName + '_end'] = [values.endValue.toString()]
     }
 
