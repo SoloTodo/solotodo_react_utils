@@ -4,8 +4,7 @@ import {areListsEqual, fetchJson} from "../utils";
 import {
   apiResourceStateToPropsUtils
 } from "../ApiResource";
-import createHistory from 'history/createBrowserHistory'
-import createMemoryHistory from 'history/createMemoryHistory'
+import {createBrowserHistory, createMemoryHistory} from 'history';
 
 export const ApiFormContext = React.createContext(() => {});
 
@@ -26,7 +25,7 @@ class ApiForm extends React.Component {
     }
 
     this.fieldsData = fieldsData;
-    this.history = process.browser ? createHistory() : createMemoryHistory();
+    this.history = process.browser ? createBrowserHistory() : createMemoryHistory();
   }
 
   componentDidUpdate(prevProps) {
