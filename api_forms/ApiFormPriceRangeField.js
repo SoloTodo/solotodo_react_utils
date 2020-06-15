@@ -76,12 +76,12 @@ export class ApiFormPriceRangeField extends Component {
     const baseFieldName = changeCase.snake(props.name);
 
     if (values.startValue !== null) {
-      apiParams[baseFieldName + '_after'] = [values.startValue];
+      apiParams[baseFieldName + '_min'] = [values.startValue];
       urlParams[baseFieldName + '_start'] = [values.startValue]
     }
 
     if (values.endValue !== null) {
-      apiParams[baseFieldName + '_before'] = [values.endValue];
+      apiParams[baseFieldName + '_max'] = [values.endValue];
       urlParams[baseFieldName + '_end'] = [values.endValue]
     }
 
