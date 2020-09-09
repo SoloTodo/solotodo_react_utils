@@ -57,6 +57,7 @@ export const apiSettings = {
   hitesStoreId: 87,
   lenovoChileStoreId: 199,
   hpOnlineStoreId: 27,
+  huaweiShopStoreId: 281,
   cellPhoneCategoryId: 6,
   technicalSpecificationsPurposeId: 1,
   categoryBrowseResultPurposeUrl: endpoint + 'category_template_purposes/3/',

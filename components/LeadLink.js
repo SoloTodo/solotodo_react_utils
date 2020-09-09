@@ -86,6 +86,9 @@ class LeadLink extends React.Component {
     // } else if (store.id === apiSettings.falabellaStoreId) {
     //   url = `https://ad.soicos.com/-14Zg?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
     //   target = '_self'
+    } else if (store.id === apiSettings.huaweiShopStoreId) {
+      url = `https://ad.soicos.com/-1cEy?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
+      target = '_top'
     } else {
       url = entity.external_url;
       target = '_blank';
