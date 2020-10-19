@@ -58,9 +58,10 @@ class LeadLink extends React.Component {
         separator = '&'
       }
 
-      const intermediateUrl = `${entity.external_url}${separator}utm_source=affiliates&utm_medium=hasoffers&utm_campaign=${apiSettings.linioAffiliateId}&aff_sub=`;
-
-      url = `https://linio.go2cloud.org/aff_c?offer_id=18&aff_id=${apiSettings.linioAffiliateId}&url=${encodeURIComponent(intermediateUrl)}`;
+      const deeplinkPath = 'cl/' + entity.external_url.split('.cl/')[1]
+      const linioUrlWithUtm = `${entity.external_url}${separator}utm_source=affiliates&utm_medium=hasoffers&utm_campaign=${apiSettings.linioAffiliateId}&aff_sub=`;
+      const go2CloudUrl = `https://linio.go2cloud.org/aff_c?offer_id=18&aff_id=${apiSettings.linioAffiliateId}&url=${encodeURIComponent(linioUrlWithUtm)}`;
+      url = `https://ej28.adj.st/${deeplinkPath}?adjust_t=cz1j0l_5px5hy&adjust_campaign=2900&adjust_deeplink=linio%3A%2F%2F${encodeURIComponent(deeplinkPath)}&adjust_fallback=${encodeURIComponent(go2CloudUrl)}&adjust_redirect=${encodeURIComponent(go2CloudUrl)}`
       target = '_top';
     } else if (store.id === apiSettings.abcdinStoreId) {
       url = `https://ad.soicos.com/-149x?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
