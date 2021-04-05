@@ -59,6 +59,8 @@ export const apiSettings = {
   hpOnlineStoreId: 27,
   huaweiShopStoreId: 281,
   tottusStoreId: 170,
+  entelStoreId: 38,
+  tiendaEntelStoreId: 181,
   cellPhoneCategoryId: 6,
   technicalSpecificationsPurposeId: 1,
   categoryBrowseResultPurposeUrl: endpoint + 'category_template_purposes/3/',
