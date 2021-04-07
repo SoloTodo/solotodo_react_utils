@@ -90,11 +90,11 @@ class LeadLink extends React.Component {
     } else if (store.id === apiSettings.huaweiShopStoreId) {
       url = `https://ad.soicos.com/-1cEy?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
-    } else if (store.id === apiSettings.tottusStoreId) {
-      url = `https://ad.soicos.com/-1dVX?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
-      target = '_top'
+    // } else if (store.id === apiSettings.tottusStoreId) {
+    //   url = `https://ad.soicos.com/-1dVX?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
+    //   target = '_top'
     } else if (store.id === apiSettings.entelStoreId || store.id === apiSettings.tiendaEntelStoreId) {
-      url = `https://ad.soicos.com/-1eI7?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
+      url = `https://ad.soicos.com/-1eK1?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
     } else {
       url = entity.external_url;
