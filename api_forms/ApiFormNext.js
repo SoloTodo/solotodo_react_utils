@@ -3,20 +3,20 @@ import ApiForm from "./ApiForm";
 import {withRouter} from 'next/router'
 
 class ApiFormNext extends React.Component {
-  static async getInitialProps(processedFormLayout, asPath, endpoints, fetchFunction) {
+  static async getCustomInitialProps(processedFormLayout, asPath, endpoints, fetchFunction) {
     const {filtersLayout, ordering, pagination} = processedFormLayout;
 
     const initialFormData = {};
 
     filtersLayout.map(fieldset => {
       fieldset.filters.map(filter => {
-        const filterInitialProps = filter.component.getInitialProps(filter.props, asPath);
+        const filterInitialProps = filter.component.getCustomInitialProps(filter.props, asPath);
         Object.assign(initialFormData, filterInitialProps)
       })
     });
 
-    Object.assign(initialFormData, ordering.component.getInitialProps(ordering.props, asPath));
-    Object.assign(initialFormData, pagination.component.getInitialProps(pagination.props, asPath));
+    Object.assign(initialFormData, ordering.component.getCustomInitialProps(ordering.props, asPath));
+    Object.assign(initialFormData, pagination.component.getCustomInitialProps(pagination.props, asPath));
     const initialSearchResults = await ApiForm.getSearchResults(initialFormData, endpoints, fetchFunction);
 
     return {

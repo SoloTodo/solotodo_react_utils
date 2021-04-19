@@ -1,15 +1,7 @@
 import React from 'react';
 
 const withTracker = (WrappedComponent, trackPageHandler, splitUrl=false) => {
-  return class HOC extends React.Component {
-    static async getInitialProps(ctx) {
-      if (WrappedComponent.getInitialProps) {
-        return WrappedComponent.getInitialProps(ctx)
-      }
-
-      return {}
-    }
-
+  class HOC extends React.Component {
     componentDidMount() {
       trackPageHandler(this.props);
     }
@@ -26,7 +18,16 @@ const withTracker = (WrappedComponent, trackPageHandler, splitUrl=false) => {
     render() {
       return <WrappedComponent {...this.props} />;
     }
-  };
+  }
+
+  HOC.getServerSideProps = async function (ctx) {
+    if (WrappedComponent.getInitialProps) {
+      return WrappedComponent.getInitialProps(ctx)
+    }
+    return {}
+  }
+
+  return HOC
 };
 
 export default withTracker;

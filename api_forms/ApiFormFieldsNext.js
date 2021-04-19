@@ -20,7 +20,7 @@ const convertFieldToNext = ApiFormField => {
     </ApiFormContext.Consumer>
   ));
 
-  ApiFormFieldNextWithContext.getInitialProps = (props, asPath) => {
+  ApiFormFieldNextWithContext.getCustomInitialProps = (props, asPath) => {
     const composedProps = {...props, router: {asPath: asPath}};
     const initialValue = ApiFormFieldNext.parseValueFromUrl(composedProps);
     return ApiFormFieldNext.getNotificationValue(initialValue, composedProps);
