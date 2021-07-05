@@ -85,14 +85,14 @@ class LeadLink extends React.Component {
       url = `https://www.awin1.com/cread.php?awinmid=15305&awinaffid=641001&clickref=&p=%5B%5B${encodeURIComponent(entity.external_url)}%5D%5D`;
       target = '_self'
       // } else if (store.id === apiSettings.falabellaStoreId) {
-      //   url = `https://ad.soicos.com/-1duC?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
+      //   url = `https://ad.soicos.com/-1fo5?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       //   target = '_self'
     } else if (store.id === apiSettings.huaweiShopStoreId) {
       url = `https://ad.soicos.com/-1cEy?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
-    // } else if (store.id === apiSettings.tottusStoreId) {
-    //   url = `https://ad.soicos.com/-1dVX?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
-    //   target = '_top'
+    } else if (store.id === apiSettings.tottusStoreId) {
+      url = `https://ad.soicos.com/-1dVX?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
+      target = '_top'
     } else if (store.id === apiSettings.entelStoreId || store.id === apiSettings.tiendaEntelStoreId) {
       url = `https://ad.soicos.com/-1eK1?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
