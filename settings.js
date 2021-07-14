@@ -61,6 +61,7 @@ export const apiSettings = {
   tottusStoreId: 170,
   entelStoreId: 38,
   tiendaEntelStoreId: 181,
+  womStoreId: 85,
   cellPhoneCategoryId: 6,
   technicalSpecificationsPurposeId: 1,
   categoryBrowseResultPurposeUrl: endpoint + 'category_template_purposes/3/',
