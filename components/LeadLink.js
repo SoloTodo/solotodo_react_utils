@@ -81,6 +81,9 @@ class LeadLink extends React.Component {
     } else if (store.id === apiSettings.womStoreId) {
       url = `https://ohmyad.com/redirect/?cid=0ff71c16e6&url=${encodeURIComponent(entity.external_url)}`
       target = '_top'
+    } else if (store.id === apiSettings.tiendaClaroStoreId) {
+      url = `https://ohmyad.com/redirect/?cid=678b9f9f48&url=${encodeURIComponent(entity.external_url)}`
+      target = '_top'
     } else if (store.id === apiSettings.hitesStoreId) {
       url = `https://ad.soicos.com/-16ON?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'

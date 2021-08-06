@@ -62,6 +62,7 @@ export const apiSettings = {
   entelStoreId: 38,
   tiendaEntelStoreId: 181,
   womStoreId: 85,
+  tiendaClaroStoreId: 176,
   cellPhoneCategoryId: 6,
   technicalSpecificationsPurposeId: 1,
   categoryBrowseResultPurposeUrl: endpoint + 'category_template_purposes/3/',
