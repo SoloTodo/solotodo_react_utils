@@ -49,6 +49,11 @@ class LeadLink extends React.Component {
 
     if (this.props.targetUrl) {
       url = this.props.targetUrl;
+
+      if (this.props.appendUuidToUrl) {
+        url += '&uuid=' + this.state.uuid
+      }
+
       target = '_blank';
     } else if (store.id === apiSettings.linioStoreId) {
       let separator = null;
