@@ -118,7 +118,8 @@ class LeadLink extends React.Component {
     return {
       href: url,
       target,
-      onMouseDown: this.handleClick
+      onClick: this.handleClick,
+      onAuxClick: this.handleClick
     };
   };
 
