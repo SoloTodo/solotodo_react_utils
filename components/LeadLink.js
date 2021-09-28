@@ -33,7 +33,7 @@ class LeadLink extends React.Component {
       this.props.callback(this.state.uuid);
     }
 
-    setTimeout(() => this.resetUuid(), 300);
+    // setTimeout(() => this.resetUuid(), 300);
   };
 
   generateUrl = () => {
