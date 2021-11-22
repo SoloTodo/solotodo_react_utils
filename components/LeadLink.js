@@ -2,7 +2,7 @@ import React from 'react';
 import {registerLead} from "../utils";
 import {apiSettings} from "../settings";
 
-import uuidv4 from "uuid/v4"
+import { v4 as uuidv4 } from 'uuid';
 
 class LeadLink extends React.Component {
   constructor(props) {
