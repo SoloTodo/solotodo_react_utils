@@ -10,6 +10,7 @@ export const apiSettings = {
     currencies: endpoint + 'currencies/',
     countries: endpoint + 'countries/',
     categories: endpoint + 'categories/',
+    bundles: endpoint + 'bundles/',
     store_update_logs: endpoint + 'store_update_logs/',
     entities: endpoint + 'entities/',
     entity_histories: endpoint + 'entity_histories/',
