@@ -83,14 +83,14 @@ class LeadLink extends React.Component {
       // } else if (store.id === apiSettings.laPolarStoreId) {
       //   url = `https://ohmyad.com/redirect/?cid=d41e71430c&url=${encodeURIComponent(entity.external_url)}`
       //   target = '_top'
-    } else if (store.id === apiSettings.womStoreId) {
-      url = `https://ohmyad.com/redirect/?cid=0ff71c16e6&url=${encodeURIComponent(entity.external_url)}`
-      target = '_top'
-    } else if (store.id === apiSettings.tiendaClaroStoreId) {
-      url = `https://ohmyad.com/redirect/?cid=678b9f9f48&url=${encodeURIComponent(entity.external_url)}`
-      target = '_top'
+    // } else if (store.id === apiSettings.womStoreId) {
+    //   url = `https://ohmyad.com/redirect/?cid=0ff71c16e6&url=${encodeURIComponent(entity.external_url)}`
+    //   target = '_top'
+    // } else if (store.id === apiSettings.tiendaClaroStoreId) {
+    //   url = `https://ohmyad.com/redirect/?cid=678b9f9f48&url=${encodeURIComponent(entity.external_url)}`
+    //   target = '_top'
     } else if (store.id === apiSettings.reuseStoreId) {
-      url = `https://ohmyad.com/redirect/?cid=c639f07827&url=${encodeURIComponent(entity.external_url)}`
+      url = `https://ad.soicos.com/-1i2E?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
       target = '_top'
     } else if (store.id === apiSettings.hitesStoreId) {
       url = `https://ad.soicos.com/-16ON?dl=${encodeURIComponent(entity.external_url)}&trackerID=${soicosPrefix || ''}${entity.active_registry.id}${urlSuffix}`;
