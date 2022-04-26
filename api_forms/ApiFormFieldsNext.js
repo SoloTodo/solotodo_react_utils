@@ -8,6 +8,7 @@ import { ApiFormPaginationField } from './ApiFormPaginationField'
 import { ApiFormDiscreteRangeField } from './ApiFormDiscreteRangeField'
 import { ApiFormContinuousRangeField } from './ApiFormContinouousRangeField'
 import {ApiFormContext} from "./ApiForm";
+import {ApiFormTreeField} from "./ApiFormTreeField";
 
 const convertFieldToNext = ApiFormField => {
   let ApiFormFieldNext = withRouter(ApiFormField);
@@ -36,3 +37,4 @@ export const ApiFormChoiceFieldNext = convertFieldToNext(ApiFormChoiceField);
 export const ApiFormPaginationFieldNext = convertFieldToNext(ApiFormPaginationField);
 export const ApiFormDiscreteRangeFieldNext = convertFieldToNext(ApiFormDiscreteRangeField);
 export const ApiFormContinuousRangeFieldNext = convertFieldToNext(ApiFormContinuousRangeField);
+export const ApiFormTreeFieldNext = convertFieldToNext(ApiFormTreeField);

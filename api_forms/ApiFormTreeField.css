@@ -1,0 +1,35 @@
+#main-container .rstm-tree-item--active {
+    background-color: transparent;
+    color: black;
+    font-weight: bold;
+}
+
+#main-container .rstm-tree-item--focused {
+    box-shadow: none;
+}
+
+#main-container .rstm-tree-item {
+    border: none;
+}
+
+#main-container .rstm-tree-item-group {
+    border: none;
+}
+
+#main-container .rstm-tree-item--active {
+    background-color: transparent;
+    color: black;
+    font-weight: bold;
+}
+
+#main-container .rstm-tree-item--focused {
+    box-shadow: none;
+}
+
+#main-container .rstm-tree-item {
+    border: none;
+}
+
+#main-container .rstm-tree-item-group {
+    border: none;
+}
