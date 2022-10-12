@@ -23,14 +23,14 @@ class LeadLink extends React.Component {
     })
   }
 
-  handleClick = () => {
+  handleClick = (evt) => {
     // TODO: This condition is for ignoring registering leads on harcoded stores. Ideally it should be removed soon
     if (Number.isInteger(this.props.entity.id)) {
       registerLead(this.props.authToken, this.props.websiteId, this.props.entity, this.state.uuid);
     }
 
     if (this.props.callback) {
-      this.props.callback(this.state.uuid);
+      this.props.callback(this.state.uuid, evt);
     }
 
     // setTimeout(() => this.resetUuid(), 300);
@@ -121,13 +121,17 @@ class LeadLink extends React.Component {
     return {
       href: url,
       target,
-      onClick: this.handleClick,
-      onAuxClick: this.handleClick
     };
   };
 
   render() {
-    return <a {...this.generateUrl()} className={this.props.className || ''} rel="noopener nofollow">
+    return <a
+        {...this.generateUrl()}
+        className={this.props.className || ''}
+        rel="noopener nofollow"
+        onClick={this.handleClick}
+        onAuxClick={this.handleClick}
+    >
       {this.props.children}
     </a>
   }
