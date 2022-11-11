@@ -50,6 +50,8 @@ export const apiSettings = {
   abcdinStoreId: 30,
   parisStoreId: 11,
   falabellaStoreId: 9,
+  sodimacStoreId: 67,
+  tottusStoreId: 170,
   lenovoChileStoreId: 199,
   hpOnlineStoreId: 27,
   entelStoreId: 38,
